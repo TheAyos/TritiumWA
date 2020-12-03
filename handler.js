@@ -14,7 +14,6 @@ module.exports = handler = async function (client, message) {
     try {
         if (message.body === 'Hi')
             client.reply(message.from, `👋 *Hello ${message.sender.pushname} !*`);
-        if (!message.body.startsWith(client.prefix)) return;
 
         let body = message.body
 
