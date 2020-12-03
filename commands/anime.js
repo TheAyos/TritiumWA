@@ -1,17 +1,13 @@
 const request = require('request');
-const moment = require('moment');
 
 exports.name = 'anime'
-exports.desc = `*Command: ${this.name}*\n\n` +
-    '*Description:* ```Send Anime info according to search.```\n' +
-    '*Remind:* ```Don\'t use [] or <> in commands.```\n' +
-    '*Usage*\n' +
-    ` .prefix${this.name} [search]\n` +
-    //` ${client.prefix}${command} [search] sticker _(with a sticker :D)_\n` +
-    '*Example*\n' +
-    ` .prefix${this.name} Doctor Stone`;
+
+exports.desc = 'Send Anime info according to search.';
+exports.usage = `.prefix${this.name} [search]\n`;
+exports.example = `.prefix${this.name} Doctor Stone`;
+
 exports.needArgs = true;
-exports.run = async function (client, message, args, command) {
+exports.run = async function (client, message, args) {
     const { jikan } = client.utils;
     let query = args.join(' ');
     try {
@@ -25,7 +21,7 @@ exports.run = async function (client, message, args, command) {
             if (error) return console.error(error);
             let result = response.body.results[0];
             if (result == undefined)
-                return client.reply(message.from, `_[${[client.prefix, command].join('')}]_ *Anime not found !*`, message.id);
+                return client.reply(message.from, '*Anime not found !*', message.id);
             //client.sendStickerfromUrl(message.from, result.image_url);
 
             let caption = "*_Anime found !_*\n\n" +

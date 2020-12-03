@@ -1,7 +1,6 @@
 /** TODO
          * 
          * add help manager first like koya style ```
-         * if args empty send help in commands
          * and maybe categories
          * add aliases support
          * 
@@ -39,7 +38,7 @@ module.exports = handler = async function (client, message) {
             return helpThisPoorMan.run(client, message, [cmd.name]); // as array
 
         // Run the command
-        cmd.run(client, message, args, command);
+        cmd.run(client, message, args);
 
     } catch (error) {
         console.error(error);
