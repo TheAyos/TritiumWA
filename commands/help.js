@@ -1,9 +1,16 @@
-const moment = require('moment');
-
 exports.name = 'help'
-exports.desc = 'Shows curated list of help'
-exports.needArgs = false; // maybe add optional ??
+
+exports.desc = 'Show commands list.'
+exports.usage = `.prefix${this.name}\n` +
+    `.prefix${this.name} [command]`;
+//`.prefix${this.name} [category]` + <-- add later
+exports.example = `.prefix${this.name} ytmp3`;
+
+exports.needArgs = false;
+
 exports.run = async function (client, message, args) {
+
+    const moment = require('moment');
 
     try {
         if (!args || args.length == 0) {
@@ -16,7 +23,7 @@ exports.run = async function (client, message, args) {
             });
 
             let helpMessageFull = `*Commands*\n\n` +
-                `Use ${client.prefix}help <command> to get information about a command.\n` +
+                `Use \`\`\`${client.prefix}help <command>\`\`\` to get information about a command.\n` +
                 `*Example:* \`\`\`${client.prefix}help ytmp3\`\`\`\n` +
                 '*Remind:* ```Don\'t use [] or <> in commands.```\n\n' +
                 `*A total of ${count} commands*\n` + commandNames;
@@ -25,21 +32,23 @@ exports.run = async function (client, message, args) {
             client.reply(message.from, helpMessageFull, message.id);
         } else {
             let cmdProps = client.commands.get(args);
-            if (!cmdProps) {
-                client.reply(message.from, '*That command doesn\'t exist 😲 !!!*', message.id);
-            }
+            if (!cmdProps) return client.reply(message.from, '*That command doesn\'t exist 😲 !!!*', message.id);
 
             // /g global flag in regex to replace all matches
             let desc = cmdProps.desc.replace(/.prefix/g, client.prefix); //replace with prefix cuz can't access in modules
+            let usage = cmdProps.usage.replace(/.prefix/g, client.prefix); //same
+            let example;
+            if (cmdProps.example) // cuz example can be optional
+                example = cmdProps.example.replace(/.prefix/g, client.prefix); //same
             let helpMessage = `*Command: ${cmdProps.name}*\n\n` +
-                '*Description:* ```' + `${desc}` + '```\n' +
-                '*Remind:* ```Don\'t use [] or <> in commands.```\n' +
+                '*Description:* ' + `${desc}` + '\n' +
+                '*Remind:* Don\'t use [] or <> in commands.\n' +
                 '*Usage*\n' +
-                ` ${cmdProps.usage}` +
-                '*Example*\n' +
-                ` ${cmdProps.example}` +
-                `\n\n*🤖 Tritium • ${moment().format("HH:mm")}* ` // signature ;)
+                `\`\`\`${usage}\`\`\``;
+            if (example) helpMessage = helpMessage + '\n*Example*\n' +
+                `\`\`\`${example}\`\`\``;
 
+            helpMessage = helpMessage + `\n\n*🤖 Tritium • ${moment().format("HH:mm")}* ` // signature ;)
             client.reply(message.from, helpMessage, message.id);
         }
 

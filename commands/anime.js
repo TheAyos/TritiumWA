@@ -1,15 +1,17 @@
-const request = require('request');
-
 exports.name = 'anime'
 
-exports.desc = 'Send Anime info according to search.';
-exports.usage = `.prefix${this.name} [search]\n`;
+exports.desc = 'Send anime info according to search.';
+exports.usage = `.prefix${this.name} [search]`;
 exports.example = `.prefix${this.name} Doctor Stone`;
 
 exports.needArgs = true;
+
 exports.run = async function (client, message, args) {
+
+    const request = require('request');
     const { jikan } = client.utils;
     let query = args.join(' ');
+
     try {
         client.reply(message.from, '_J\'y travaille..._', message.id);
         console.log('[Command request] (anime) ' + query);
