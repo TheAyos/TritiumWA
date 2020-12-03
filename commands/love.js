@@ -1,9 +1,18 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
-const fs = require('fs')
-//const request = require('request');
+exports.name = 'love'
 
-exports.run = async (client, message, args) => {
+/**
+ * add userResolvable
+ */
+
+exports.desc = 'Calculate the love percentage between two users.💞'
+exports.usage = `.prefix${this.name} [name] [name]`;
+exports.example = `.prefix${this.name} Chaplin Dicaprio`;
+
+exports.needArgs = true;
+
+exports.run = async function (client, message, args) {
+
+    const fs = require('fs')
     let fname = args[0];
     let sname = args[1];
     if (!args || args.length != 2) {
@@ -32,18 +41,30 @@ exports.run = async (client, message, args) => {
             love(hold);
         } else {
             result = parseInt(array[0] + "" + array[1]);
+            let emoji = '💞';
+            let advice = 'A relationship is possible !';
+
+            if (result === 0) {
+                emoji = '💔';
+                advice = 'No relationship is possible.'
+            }
+
             if (result < 25) {
-                const crying = await fs.readFileSync(`./assets/love/crying${Math.floor(Math.random() * 4) + 1}.gif`, { encoding: 'base64' });
+                emoji = '💔';
+                advice = 'No relationship is possible.'
+                //const crying = await fs.readFileSync(`./assets/love/crying${Math.floor(Math.random() * 4) + 1}.gif`, { encoding: 'base64' });
                 console.log(crying)
                 await client.sendImageAsSticker(message.from, crying);
             } else if (result < 50) {
-                client.sendImageAsSticker(message.from, `../assets/love/nope${Math.floor(Math.random() * 5) + 1}.gif`);
+                emoji = '❤️';
+                advice = 'It\'s below average, you have to find someone else.'
+                //client.sendImageAsSticker(message.from, `../assets/love/nope${Math.floor(Math.random() * 5) + 1}.gif`);
             } else if (result < 75) {
-                client.sendImageAsSticker(message.from, `../assets/love/neutral${Math.floor(Math.random() * 4) + 1}.gif`);
+                //client.sendImageAsSticker(message.from, `../assets/love/neutral${Math.floor(Math.random() * 4) + 1}.gif`);
             } else if (result <= 100) {
-                client.sendImageAsSticker(message.from, `../assets/love/happy${Math.floor(Math.random() * 5) + 1}.gif`);
+                //client.sendImageAsSticker(message.from, `../assets/love/happy${Math.floor(Math.random() * 5) + 1}.gif`);
             }
-            client.sendText(message.from, `*${fname}* _*+*_ *${sname}* = ${array[0] + "" + array[1]}%\n`);
+            client.sendText(message.from, `*${fname}* _*+*_ *${sname}* = ${result}% ${emoji}\n${advice}`);
             result = array[0] + "" + array[1] + "%";
             return result;
         }
@@ -72,21 +93,4 @@ exports.run = async (client, message, args) => {
     }
 
     calculate();
-    /*const options = {
-        method: 'GET',
-        url: 'https://love-calculator.p.rapidapi.com/getPercentage',
-        qs: { fname: fname, sname: sname },
-        headers: {
-            'x-rapidapi-key': '800da5a831msh6536a6a26e6b675p143056jsnc5446948e844',
-            'x-rapidapi-host': 'love-calculator.p.rapidapi.com',
-            useQueryString: true
-        }
-    };
-
-    request(options, function (error, response) {
-        if (error) throw new Error(error);
-        res = JSON.parse(response.body);
-        client.reply(message.from, `_${res.result}_`, message.id);
-
-    });*/
 }

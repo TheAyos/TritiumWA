@@ -1,9 +1,18 @@
-const { decryptMedia } = require('@open-wa/wa-decrypt')
-//const nrc = require('node-run-cmd')
-const fs = require('fs');
-const { exec } = require('child_process');
+exports.name = 'sticker';
 
-exports.run = async (client, message, args) => {
+exports.desc = '*CURRENTLY IN DEVELOPMENT*';
+exports.usage = `.prefix${this.name} CURRENTLY IN DEVELOPMENT`;
+exports.example = `.prefix${this.name} CURRENTLY IN DEVELOPMENT`;
+
+exports.needArgs = false;
+
+exports.run = async function (client, message, args) {
+
+    const { decryptMedia } = require('@open-wa/wa-decrypt')
+    //const nrc = require('node-run-cmd')
+    const { exec } = require('child_process');
+    const fs = require('fs');
+
     try {
         client.reply(message.from, 'Ton sticker arrive 🦅 !', message.id);
         const isQuotedImage = message.quotedMsg && message.quotedMsg.type === 'image'

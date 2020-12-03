@@ -1,6 +1,6 @@
-exports.name = 'creator';
+exports.name = 'description';
 
-exports.desc = 'Send this bot\'s creator contact info.';
+exports.desc = 'Send Group\'s description. _(not usable in dm\'s)_';
 exports.usage = `.prefix${this.name}`;
 
 exports.needArgs = false;
