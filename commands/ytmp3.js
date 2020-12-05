@@ -2,8 +2,8 @@ exports.name = 'ytmp3';
 
 exports.desc = 'Send audio from a youtube video.';
 exports.usage = `.prefix${this.name} [URL]`;
-exports.example = `.prefix${this.name} https://www.youtube.com/watch?v=QH2-TGUlwu4` +
-    `.prefix${this.name} https://m.youtube.com/watch?v=QH2-TGUlwu4` +
+exports.example = `.prefix${this.name} https://www.youtube.com/watch?v=QH2-TGUlwu4\n` +
+    `.prefix${this.name} https://m.youtube.com/watch?v=QH2-TGUlwu4\n` +
     `.prefix${this.name} https://youtu.be/QH2-TGUlwu4`;
 
 exports.needArgs = true;
@@ -15,9 +15,9 @@ exports.run = async function (client, message, args) {
 
     // managed by handler
     //if (args.length !== 1) return client.reply(message.from, '*dibile! c\'est /ytmp3 [URL]*')
-    let isLinks = args[0].match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/)
+    let isLink = args[0].match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/)
 
-    if (!isLinks) return client.reply(message.from, 'C\'est pô un lien valide ça !', message.id)
+    if (!isLink) return client.reply(message.from, 'C\'est pô un lien valide ça !', message.id)
 
     try {
         client.reply(message.from, '_J\'y travaille..._', message.id);
@@ -29,16 +29,18 @@ exports.run = async function (client, message, args) {
 
         await client.sendFileFromUrl(message.from, videoInfo.videoDetails.thumbnail.thumbnails[2].url,
             './temp/thumb.jpg', `➸ *Titre* : ${videoTitle}\n\n◌ Le fichier arrive 🦅 !`)
-            .catch((error) => client.reply(message.from, 'Erreur image :( '));
+            .catch(() => client.reply(message.from, 'Erreur image :( '));
 
         var videoReadableStream = ytdl(videoURL, { filter: 'audioonly', quality: 'lowest' });
-        //var videoWritableStream = fs.createWriteStream('./' + videoTitle + '.mp3');
-        var videoWritableStream = fs.createWriteStream('./temp/temp.mp3');
+
+        // need a queue system & then i can use id file caching
+        var tempFile = `./temp/${message.chat.id}_${videoInfo.videoDetails.videoId}.mp3`;
+        var videoWritableStream = fs.createWriteStream(tempFile);
         var stream = videoReadableStream.pipe(videoWritableStream);
 
         stream.on('finish', async function () {
-            await client.sendAudio(message.from, './temp/temp.mp3')
-                .catch((error) => client.reply(message.from, 'Erreur mp3 :( ', message.id));
+            await client.sendAudio(message.from, tempFile)
+                .catch(() => client.reply(message.from, 'Erreur mp3 :( ', message.id));
         });
 
     } catch (error) {

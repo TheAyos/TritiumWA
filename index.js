@@ -2,11 +2,11 @@ const wa = require('@open-wa/wa-automate')
 const Enmap = require('enmap');
 const fs = require('fs');
 
-const launch_options = require('./launch_options')
+const launch_options = require('./utils/launch_options')
 const config = require('./config.json')
 
-const msgHandler = require('./handler')
-const utils = require('./utils')
+const msgHandler = require('./handler/handler')
+const utils = require('./utils/utils')
 
 wa.create(launch_options(true, start)).then(client => start(client)).catch((error) => console.log(error));
 function start(client) {
@@ -26,7 +26,7 @@ function start(client) {
       if (!file.endsWith(".js")) return;
       let props = require(`./commands/${file}`);
       let commandName = file.split(".")[0];
-      console.log(`☄️  Loading command ${commandName}..`, props);
+      console.log(`☄️  Loading command ${commandName}..`);
       client.commands.set(commandName, props);
     });
   });
