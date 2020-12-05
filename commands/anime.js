@@ -8,34 +8,35 @@ exports.needArgs = true;
 
 exports.run = async function (client, message, args) {
 
-    const request = require('request');
+    const fetch = require('node-fetch');
     const { jikan } = client.utils;
     let query = args.join(' ');
 
     try {
         client.reply(message.from, '_J\'y travaille..._', message.id);
         console.log('[Command request] (anime) ' + query);
-        request({
-            url: jikan + 'search/anime?q=' + query + '&limit=1',
-            json: true
-        }, async (error, response) => {
 
-            if (error) return console.error(error);
-            let result = response.body.results[0];
-            if (result == undefined)
-                return client.reply(message.from, '*Anime not found !*', message.id);
-            //client.sendStickerfromUrl(message.from, result.image_url);
+        let url = jikan + 'search/anime?q=' + query + '&limit=1';
+        let settings = { method: "Get" };
 
-            let caption = "*_Anime found !_*\n\n" +
-                "*✨ Title : " + result.title + "*\n\n" +
-                "*_⚜️ Type :_* " + result.type + "\n" +
-                "*❤️ Score :* " + result.score + " | " +
-                "*🌟 Episodes :* " + result.episodes + "\n\n" +
-                "*🌠 Synopsis :* " + result.synopsis + "\n\n" +
-                "*🌍 URL:*\n" + result.url;
+        fetch(url, settings)
+            .then(res => res.json())
+            .then(async (body, error) => {
+                if (error) return console.log(error);
+                let result = body.results[0];
+                if (result == undefined)
+                    return client.reply(message.from, '*Anime not found !*', message.id);
 
-            client.sendFileFromUrl(message.from, result.image_url, result.image_url.split('/').pop(), caption);
-        });
+                let caption = "*_Anime found !_*\n\n" +
+                    "*✨ Title : " + result.title + "*\n\n" +
+                    "*_⚜️ Type :_* " + result.type + "\n" +
+                    "*❤️ Score :* " + result.score + " | " +
+                    "*🌟 Episodes :* " + result.episodes + "\n\n" +
+                    "*🌠 Synopsis :* " + result.synopsis + "\n\n" +
+                    "*🌍 URL:*\n" + result.url;
+
+                await client.sendFileFromUrl(message.from, result.image_url, result.image_url.split('/').pop(), caption);
+            });
     } catch (error) {
         console.log(error);
     }

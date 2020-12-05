@@ -15,9 +15,11 @@ exports.run = async function (client, message, args) {
     const fs = require('fs');
     let fname = args[0], sname = args[1];
 
-    if (!args || args.length != 2) {
+    if (!args || args.length === 1) {
         client.reply(message.from, "Enter both names 🙄!", message.id);
         return
+    } else if (args > 2) {
+        client.commands.get('help').run(client, message, this.name);
     }
 
     try {
