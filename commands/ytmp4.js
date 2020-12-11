@@ -1,6 +1,6 @@
-exports.name = 'ytmp3';
+exports.name = 'ytmp4';
 
-exports.desc = 'Send audio from a youtube video.';
+exports.desc = 'Download a youtube video.';
 exports.usage = `.prefix${this.name} [URL]`;
 exports.example = `.prefix${this.name} https://www.youtube.com/watch?v=QH2-TGUlwu4\n` +
     `.prefix${this.name} https://m.youtube.com/watch?v=QH2-TGUlwu4\n` +
@@ -31,7 +31,7 @@ exports.run = async function (client, message, args) {
             './temp/thumb.jpg', `➸ *Titre* : ${videoTitle}\n\n◌ Le fichier arrive 🦅 !`)
             .catch(() => client.reply(message.from, 'Erreur image :( '));
 
-        var videoReadableStream = ytdl(videoURL, { filter: 'audioonly', quality: 'lowest' });
+        var videoReadableStream = ytdl(videoURL, { filter: 'videoandaudio', quality: 'lowest' });
 
         // need a queue system & then i can use id file caching
         //var tempFile = `./temp/${message.chat.id}_${videoInfo.videoDetails.videoId}.mp3`;
@@ -74,8 +74,8 @@ exports.run = async function (client, message, args) {
 
         stream.on('finish', async function () {
             console.log('finished writing');
-            await client.sendAudio(message.from, `data:audio/mpeg;base64,${memStore.data.toString('base64')}`)
-                .catch((e) => client.reply(message.from, 'Erreur mp3 :( ', message.id) && console.log(e));
+            await client.sendFile(message.from, `data:video/mp4;base64,${memStore.data.toString('base64')}`)
+                .catch((e) => client.reply(message.from, 'Erreur mp4 :( ', message.id) && console.log(e));
             wstream.end();
         });
 
