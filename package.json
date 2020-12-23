@@ -12,9 +12,7 @@
   "dependencies": {
     "@open-wa/wa-automate": "^3.1.12",
     "@open-wa/wa-decrypt": "^3.0.0",
-    "axios": "^0.21.0",
     "enmap": "^5.8.2",
-    "file-type": "^16.1.0",
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.1",
     "ytdl-core": "^4.2.1"
