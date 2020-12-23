@@ -1,9 +1,9 @@
 exports.name = 'fisheye';
 
-exports.desc = 'DA FUCK IN DEV';
-exports.usage = `.prefix${this.name} [dza]`;
-exports.example = `.prefix${this.name} dzadza\n` +
-    `.prefix${this.name} zadd`;
+exports.desc = 'Apply a fish-eye effect to an image.';
+exports.usage = `.prefix${this.name} (with quoted image) [intensity]`;
+exports.example = `.prefix${this.name} (with quoted image) \n` +
+    `.prefix${this.name} (with quoted image) 90`;
 
 exports.needArgs = false;
 
@@ -14,12 +14,20 @@ exports.run = async function (client, message, args) {
     const isQuotedImage = message.quotedMsg && message.quotedMsg.type === 'image';
 
     try {
+        // The level of the craziness!
+        var level = 50; // You can put it like 100, 1000, or etc.
+        // More higher, more time to let the bot processing the images.
 
-        if ((message.isMedia || isQuotedImage) && args.length === 0) {
+        if (args.length === 1) {
+            if (isNaN(args[0]) || (args[0] < -1000 || args[0] > 1000)) {
+                client.reply(message.from, '*Argument must be a number between 0 and ±1000 😑*', message.id);
+                return
+            }
+            level = args[0];
+        }
 
-            // The level of the craziness!
-            var level = 100; // You can put it like 100, 1000, or etc.
-            // More higher, more time to let the bot processing the images.
+        if ((message.isMedia || isQuotedImage) && args.length <= 1) {
+
 
 
             client.simulateTyping(message.from, true); // ;)
@@ -40,7 +48,8 @@ exports.run = async function (client, message, args) {
 
             client.sendImage(message.from, `data:${_mimetype};base64,${processedImage.toString('base64')}`, "fisheye.png", '', message.id)
         } else {
-            return client.reply(message.from, 'Send or quote an image !', message.id);
+            client.commands.get('help').run(client, message, this.name);
+            //return client.reply(message.from, 'Send or quote an image !', message.id);
         }
 
     } catch (error) {
