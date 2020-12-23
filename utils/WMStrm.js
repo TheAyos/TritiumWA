@@ -39,7 +39,6 @@ var stream = await videoReadableStream.pipe(wstream);
 
 stream.on('finish', async function () {
     console.log('finished writing');
-    await client.sendAudio(message.from,
-        `data:audio/mpeg;base64,${wstream._memStore.data.toString('base64')}`).catch((e) => console.log(e));
+    to access written data--> wstream._memStore.data.toString('base64')
     wstream.end();
 });*/
