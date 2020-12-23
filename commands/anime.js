@@ -13,7 +13,7 @@ exports.run = async function (client, message, args) {
     let query = args.join(' ');
 
     try {
-        client.reply(message.from, '_J\'y travaille..._', message.id);
+        client.simulateTyping(message.from, true);
         console.log('[Command request] (anime) ' + query);
 
         let url = jikan + 'search/anime?q=' + query + '&limit=1';
@@ -35,9 +35,11 @@ exports.run = async function (client, message, args) {
                     "*🌠 Synopsis :* " + result.synopsis + "\n\n" +
                     "*🌍 URL:*\n" + result.url;
 
+                client.simulateTyping(message.from, false);
                 await client.sendFileFromUrl(message.from, result.image_url, result.image_url.split('/').pop(), caption);
             });
     } catch (error) {
+        client.simulateTyping(message.from, false);
         console.log(error);
     }
 }

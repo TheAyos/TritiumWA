@@ -18,7 +18,7 @@ exports.run = async function (client, message, args) {
     if (!isLink) return client.reply(message.from, 'C\'est pô un lien valide ça !', message.id)
 
     try {
-        client.reply(message.from, '_J\'y travaille..._', message.id);
+        client.simulateTyping(message.from, true);
         let videoURL = args[0].toString();
         var videoInfo = (await ytdl.getInfo(videoURL))
         var videoTitle = videoInfo.videoDetails.title.replace('|', '').toString('ascii');
@@ -41,6 +41,7 @@ exports.run = async function (client, message, args) {
 
         stream.on('finish', async function () {
             console.log('finished writing');
+            client.simulateTyping(message.from, false);
             await client.sendAudio(message.from,
                 `data:audio/mpeg;base64,${wstream._memStore.data.toString('base64')}`)
                 .catch((e) =>
@@ -54,7 +55,8 @@ exports.run = async function (client, message, args) {
         });*/
 
     } catch (error) {
-        client.reply(message.from, '*Erreur!* Le lien n\'est sûrement pas valide !', message.id)
-        console.log(client.utils.moment().format("H:mm:ss") + ' *Erreur!* Le lien n\'est sûrement pas valide !' + error)
+        client.simulateTyping(message.from, false);
+        client.reply(message.from, '*Erreur!* Le lien n\'est sûrement pas valide !', message.id);
+        console.log(client.utils.moment().format("H:mm:ss") + ' *Erreur!* ytmp3 --> ' + error);
     }
 }

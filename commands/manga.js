@@ -13,7 +13,7 @@ exports.run = async function (client, message, args) {
     let query = args.join(' ');
 
     try {
-        client.reply(message.from, '_J\'y travaille..._', message.id);
+        client.simulateTyping(message.from, true);
         console.log('[Command request] (manga) ' + query);
 
         let url = jikan + 'search/manga?q=' + query + '&limit=1';
@@ -35,11 +35,12 @@ exports.run = async function (client, message, args) {
                     "*🌟 Volumes :* " + result.volumes + "\n\n" +
                     "*🌠 Synopsis :* " + result.synopsis + "\n\n" +
                     "*🌍 URL:*\n" + result.url;
-
+                client.simulateTyping(message.from, false);
                 await client.sendFileFromUrl(message.from, result.image_url, result.image_url.split('/').pop(), caption, message.id);
             });
 
     } catch (error) {
+        client.simulateTyping(message.from, false);
         console.log(error);
     }
 }
