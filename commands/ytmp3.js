@@ -11,10 +11,8 @@ exports.needArgs = true;
 exports.run = async function (client, message, args) {
 
     const ytdl = require('ytdl-core');
-    //const fs = require('fs');
+    const WMStrm = require('../utils/WMStrm');
 
-    // managed by handler
-    //if (args.length !== 1) return client.reply(message.from, '*dibile! c\'est /ytmp3 [URL]*')
     let isLink = args[0].match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/)
 
     if (!isLink) return client.reply(message.from, 'C\'est pô un lien valide ça !', message.id)
@@ -38,7 +36,7 @@ exports.run = async function (client, message, args) {
         //var videoWritableStream = fs.createWriteStream(tempFile);
         //var stream = videoReadableStream.pipe(videoWritableStream);
 
-        var wstream = new (require('../utils/WMStrm'))('data');
+        var wstream = new WMStrm('data');
         var stream = await videoReadableStream.pipe(wstream);
 
         stream.on('finish', async function () {
