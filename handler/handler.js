@@ -12,10 +12,14 @@ module.exports = handler = async function (client, message) {
     const prefix = client.prefix;
 
     try {
-        if (message.body === 'Hi')
+        let body = message.body;
+
+
+        if (body === 'Hi')
             client.reply(message.from, `👋 *Hello ${message.sender.pushname} !*`);
 
-        let body = message.body
+        if (!message.body.startsWith(prefix))
+            return;
 
         //understand this?
         body = (message.type === 'chat' && body.startsWith(prefix)) ? body : (((message.type === 'image' || message.type === 'video') && message.caption) && caption.startsWith(prefix)) ? message.caption : ''
@@ -30,8 +34,8 @@ module.exports = handler = async function (client, message) {
 
         const cmd = client.commands.get(command); // Grab the command data from the client.commands Enmap
 
-        if (!cmd) // If that command doesn't exist, silently exit and do nothing
-            return console.log('[INFO] Unregistered command ' + command + ' from ' + message.sender.id);
+        /*if (!cmd) // If that command doesn't exist, silently exit and do nothing
+            return console.log('[INFO] Unregistered command ' + command + ' from ' + message.sender.id);*/
 
         if (cmd.needArgs && !args.length) // If command needs args but no args were given
             return helpThisPoorMan.run(client, message, cmd.name); // as array
