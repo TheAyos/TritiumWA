@@ -1,18 +1,9 @@
-/** TODO
-         * 
-         * add help manager first like koya style ```
-         * and maybe categories
-         * add aliases support
-         * 
-         */
-
-module.exports = handler = async function (client, message) {
+module.exports = async function (client, message) {
 
     const helpThisPoorMan = client.commands.get('help');
     const prefix = client.prefix;
 
     try {
-
 
         if (message.body === 'Hi')
             client.reply(message.from, `👋 *Hello ${message.sender.pushname} !*`);
@@ -32,16 +23,19 @@ module.exports = handler = async function (client, message) {
         const arg = body.substring(body.indexOf(' ') + 1); //returns part of the string, from first space to end
         const args = body.trim().split(' ').slice(1); // returns an array of args
 
-        const cmd = client.commands.get(command); // Grab the command data from the client.commands Enmap
+        const cmd = client.commands.get(command); // Grab the command data from client.commands
 
-        if (!cmd) // If that command doesn't exist, silently exit and do nothing
+        if (!cmd)
             return console.log('[INFO] Unregistered command ' + command + ' from ' + message.sender.id);
 
         if (cmd.needArgs && !args.length) // If command needs args but no args were given
-            return helpThisPoorMan.run(client, message, cmd.name); // as array
+            return helpThisPoorMan.run(client, message, cmd);
 
+        console.log(client.commands, client.aliases)
+        console.log(cmd)
         // Run the command
         cmd.run(client, message, args);
+
 
     } catch (error) {
         console.error(error);
