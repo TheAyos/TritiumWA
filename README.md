@@ -7,6 +7,7 @@
 - better conf / help handling
 - add handler for media messages
 - rethink the automatic help send on missing args
+- love add exif data love cmd - tritium
 
 
 <br>
