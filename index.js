@@ -1,36 +1,35 @@
-const wa = require('@open-wa/wa-automate')
-const Enmap = require('enmap');
-const fs = require('fs');
-
+const { create, Client } = require('@open-wa/wa-automate')
 const launch_options = require('./utils/launch_options')
-const config = require('./config.json')
 
+const Enmap = require('enmap');
+
+const config = require('./config.json')
 const msgHandler = require('./handler/handler')
 const utils = require('./utils/utils')
 
-wa.create(launch_options(true, start)).then(client => start(client)).catch((error) => console.log(error));
+/// WOOWOWOWO RED COLOR MAMAMIAAAA
+console.log("\x1b[1m\x1b[31m\x1b[40m\x1b[1m\x1b[31m\x1b[40m" + `WIN32 IS NOT OFFICIALLY SUPPORTED!
+Although there's a (very) slim chance of it working, multiple aspects of the bot are built with UNIX-like systems in mind and could break on Win32-based systems. If you want to run the bot on Windows, using Windows Subsystem for Linux is highly recommended.
+The bot will continue to run past this message, but keep in mind that it could break at any time. Continue running at your own risk; alternatively, stop the bot using Ctrl+C and install WSL.` + "\x1b[0m");
+
 function start(client) {
+
   client.config = config;
   client.prefix = config.prefix;
+  client.utils = utils;
+
+
 
   console.log('[DEV] Tritium');
   console.log('[CLIENT] Client Started! with prefix -> \'' + client.prefix + '\' \n\n');
 
-  client.utils = utils;
+
+
   client.commands = new Enmap();
+  client.aliases = new Enmap();
+  client.helps = new Enmap();
 
-  // Command loader
-  fs.readdir("./commands/", (err, files) => {
-    if (err) return console.error(err);
-    files.forEach(file => {
-      if (!file.endsWith(".js")) return;
-      let props = require(`./commands/${file}`);
-      let commandName = file.split(".")[0];
-      console.log(`☄️  Loading command ${commandName}..`);
-      client.commands.set(commandName, props);
-    });
-  });
-
+  require('./CommandLoader')(client)
 
   // Log all messages
   client.onAnyMessage((msg) => {
@@ -58,3 +57,8 @@ function start(client) {
   });
 
 }
+
+
+create(launch_options(true, start))
+  .then(client => start(client))
+  .catch((error) => console.log(error));
