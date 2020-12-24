@@ -8,6 +8,7 @@
 - add handler for media messages
 - rethink the automatic help send on missing args
 - love add exif data love cmd - tritium
+- in usage help <specify that these are optional & ...>
 
 
 <br>
