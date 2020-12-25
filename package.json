@@ -1,14 +1,20 @@
 {
   "name": "tritium-wa",
   "version": "0.1.0",
-  "description": "Tritium Bot",
+  "description": "A feature-rich WhatsApp bot",
   "main": "index.js",
+  "engines": {
+    "node": ">=12"
+  },
   "scripts": {
     "start": "node index.js"
   },
-  "author": "youbyoub",
+  "author": "TheAyos <ayosiiiofficiel@gmail.com>",
   "license": "GPL-3.0",
-  "repository": "https://github.com/TheAyos/Tritium-WA",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheAyos/Tritium-WA.git"
+  },
   "dependencies": {
     "@open-wa/wa-automate": "^3.1.12",
     "@open-wa/wa-decrypt": "^3.0.0",
