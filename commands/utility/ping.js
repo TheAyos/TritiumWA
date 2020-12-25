@@ -1,7 +1,6 @@
 module.exports = {
     triggers: ['ping', 'latency', 'speed'],
-    usage: '{command} <noting>',
-    example: '{command}',
+    usage: '{command}',
     description: 'Shows bot ping.',
 
     isNSFW: false,

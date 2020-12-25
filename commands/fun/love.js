@@ -10,7 +10,7 @@ module.exports = {
     description: 'Calculate the love percentage between two users.💞',
 
     isNSFW: false,
-    needArgs: false,
+    needArgs: true,
     cooldown: 10,
 
     run: async function (client, message, args) {

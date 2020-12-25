@@ -23,7 +23,7 @@ module.exports = async function (client, message) {
         const arg = body.substring(body.indexOf(' ') + 1); //returns part of the string, from first space to end
         const args = body.trim().split(' ').slice(1); // returns an array of args
 
-        const cmd = client.commands.get(command); // Grab the command data from client.commands
+        const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command)); // Grab the command data from client.commands
 
         if (!cmd)
             return console.log('[INFO] Unregistered command ' + command + ' from ' + message.sender.id);
@@ -31,8 +31,6 @@ module.exports = async function (client, message) {
         if (cmd.needArgs && !args.length) // If command needs args but no args were given
             return helpThisPoorMan.run(client, message, cmd);
 
-        console.log(client.commands, client.aliases)
-        console.log(cmd)
         // Run the command
         cmd.run(client, message, args);
 

@@ -27,13 +27,19 @@ function start(client) {
 
   require('./CommandLoader')(client)
 
+  console.log()
+  console.log("\x1b[1m\x1b[31m\x1b[40m");
+  console.log(client.commands);
+  console.log("\x1b[1m\x1b[31m\x1b[40m");
+  console.log(client.aliases);
+  console.log("\x1b[0m");
 
   // handle events separately after
 
   // Log all messages
   client.onAnyMessage((msg) => {
     if (msg.sender.isMe) return;
-    console.log('[MSGLog] (' + msg.sender.id + ')', msg.type, msg.body);
+    console.log('[MSGLog] ' + msg.sender.pushname + ' (' + msg.sender.id + ')', msg.type, msg.body);
   });
 
   // Force it to keep the current session
