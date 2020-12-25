@@ -25,6 +25,6 @@ module.exports = function (client) {
                 console.error(`Failed to register command from file ${file}: ${e}`);
             }
 
-        };
+        }
     });
 }
