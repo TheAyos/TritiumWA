@@ -1,6 +1,5 @@
 module.exports = async function (client, message) {
-    const helpThisPoorMan = client.commands.get("help");
-    const prefix = client.prefix;
+    const prefix = client.prefix; //server prefix after that
 
     try {
         if (message.body === "Hi")
@@ -37,9 +36,11 @@ module.exports = async function (client, message) {
                 "[INFO] Unregistered command " + command + " from " + message.sender.id,
             );
 
+        console.log("handler.js", cmd, command);
+
         if (cmd.needArgs && !args.length)
             // If command needs args but no args were given
-            return helpThisPoorMan.run(client, message, cmd);
+            return client.helpThisPoorMan(client, message, command);
 
         // Run the command
         cmd.run(client, message, args);
