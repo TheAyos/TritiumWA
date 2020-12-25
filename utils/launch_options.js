@@ -1,7 +1,6 @@
 module.exports = options = (headless, start) => {
-
     const options = {
-        sessionId: 'tritiumCarteVitale',
+        sessionId: "tritiumCarteVitale",
         headless: headless,
         autoRefresh: true,
         restartOnCrash: start,
@@ -11,13 +10,13 @@ module.exports = options = (headless, start) => {
         killProcessOnBrowserClose: true,
         throwErrorOnTosBlock: false,
         chromiumArgs: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--aggressive-cache-discard',
-            '--disable-cache',
-            '--disable-application-cache',
-            '--disable-offline-load-stale-cache',
-            '--disk-cache-size=0'/*,
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--aggressive-cache-discard",
+            "--disable-cache",
+            "--disable-application-cache",
+            "--disable-offline-load-stale-cache",
+            "--disk-cache-size=0" /*,
             '--disable-breakpad',
             '--disable-component-update',
             '--disable-hang-monitor',
@@ -26,9 +25,9 @@ module.exports = options = (headless, start) => {
             '--disable-metrics',
             '--disable-metrics-reporting',
             '--disable-dev-tools',
-            '--ssl-version-min=tl'*/
-        ]
-    }
+            '--ssl-version-min=tl'*/,
+        ],
+    };
 
     return options;
-}
+};

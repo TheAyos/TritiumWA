@@ -1,69 +1,68 @@
-const { create, Client } = require('@open-wa/wa-automate')
-const launch_options = require('./utils/launch_options')
+const { create } = require("@open-wa/wa-automate");
 
-const Enmap = require('enmap');
+const Enmap = require("enmap");
 
-const config = require('./config.json')
-const msgHandler = require('./handler/handler')
-const utils = require('./utils/utils')
-
-/// WOOWOWOWO RED COLOR MAMAMIAAAA
-console.log("\x1b[1m\x1b[31m\x1b[40m" + `should be red text` + "\x1b[0m"); console.log("should be white");
+const msgHandler = require("./handler/handler");
 
 function start(client) {
+    client.utils = require("./utils/utils");
+    client.config = require("./config.json");
+    client.prefix = client.config.default_prefix;
 
-  client.config = config;
-  client.prefix = config.default_prefix;
-  client.utils = utils;
+    console.log("[DEV] Tritium");
+    console.log(`[TRITIUM] Client Started!\n default prefix ->  '${client.prefix}' \n\n`);
 
-  console.log('[DEV] Tritium');
-  console.log('[CLIENT] Client Started!\n ' +
-    `default prefix ->  '${client.prefix}' \n\n` +
-    `default prefix ->  '${client.prefix}' \n\n`);
+    client.commands = new Enmap();
+    client.aliases = new Enmap();
 
+    require("./handler/CommandLoader")(client);
+    require("./handler/EventLoader")(client);
 
-  client.commands = new Enmap();
-  client.aliases = new Enmap();
+    console.log();
+    console.log("\x1b[1m\x1b[31m\x1b[40m");
+    console.log(client.commands);
+    console.log("\x1b[1m\x1b[31m\x1b[40m");
+    console.log(client.aliases);
+    console.log("\x1b[0m");
 
-  require('./CommandLoader')(client)
+    // Force it to keep the current session
+    client.onStateChanged((state) => {
+        console.log("[Client State]", state);
+        if (state === "CONFLICT" || state === "DISCONNECTED") client.forceRefocus();
+    });
 
-  console.log()
-  console.log("\x1b[1m\x1b[31m\x1b[40m");
-  console.log(client.commands);
-  console.log("\x1b[1m\x1b[31m\x1b[40m");
-  console.log(client.aliases);
-  console.log("\x1b[0m");
+    client.onMessage(async (message) => {
+        client.getAmountOfLoadedMessages().then((msg) => msg >= 3000 && client.cutMsgCache());
+        msgHandler(client, message);
+    });
 
-  // handle events separately after
+    client.onAddedToGroup((chat) => {
+        client.sendText(
+            chat.groupMetadata.id,
+            `Thanks for adding me *${chat.contact.name}*. Use ${client.prefix}help to see the usable commands`,
+        );
+    });
 
-  // Log all messages
-  client.onAnyMessage((msg) => {
-    if (msg.sender.isMe) return;
-    console.log('[MSGLog] ' + msg.sender.pushname + ' (' + msg.sender.id + ')', msg.type, msg.body);
-  });
+    client.onIncomingCall(async (call) => {
+        client.sendText(call.peerJid, "What up ?");
+    });
 
-  // Force it to keep the current session
-  client.onStateChanged((state) => {
-    console.log('[Client State]', state);
-    if (state === 'CONFLICT' || state === 'DISCONNECTED') client.forceRefocus();
-  });
+    // fancystuff
+    // implement client.logger first!!
 
-  client.onMessage(async (message) => {
-    client.getAmountOfLoadedMessages().then((msg) => (msg >= 3000) && client.cutMsgCache());
-    msgHandler(client, message);
-  });
+    process.on("uncaughtException", (err) => {
+        const cleanErrorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
+        //client.logger
+        console.log("error", `Uncaught Exception: ${cleanErrorMsg}`);
+        process.exit(1);
+    });
 
-  client.onAddedToGroup((chat) => {
-    client.sendText(chat.groupMetadata.id, `Thanks for adding me *${chat.contact.name}*. Use ${client.prefix}help to see the usable commands`)
-  });
-
-  client.onIncomingCall(async (call) => {
-    client.sendText(call.peerJid, "What up ?");
-  });
-
+    process.on("unhandledRejection", (err) => {
+        //client.logger
+        console.log("error", `Unhandled rejection: ${err}`);
+    });
 }
 
-
-create(launch_options(true, start))
-  .then(client => start(client))
-  .catch((error) => console.log(error));
+create(require("./utils/launch_options")(true, start))
+    .then((client) => start(client))
+    .catch((error) => console.log(error));
