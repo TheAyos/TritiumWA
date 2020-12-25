@@ -10,7 +10,6 @@ module.exports = {
 
     run: async function (client, message, args) {
         const moment = require("moment");
-        console.log("help.js args", args);
 
         try {
             if (!args.length) {
@@ -44,7 +43,12 @@ module.exports = {
                 client.reply(message.from, helpMessageFull, message.id);
             } else {
                 let cmdProps =
-                    client.commands.get(args) || client.commands.get(client.aliases.get(args));
+                    client.commands.get(args[0]) ||
+                    client.commands.get(client.aliases.get(args[0]));
+                //if requested for more than one command
+                if (args.length > 1) {
+                    cmdProps = client.commands.get("help");
+                }
                 if (!cmdProps)
                     return client.reply(
                         message.from,

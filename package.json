@@ -20,6 +20,7 @@
     "@open-wa/wa-decrypt": "^3.0.0",
     "canvas": "^2.6.1",
     "enmap": "^5.8.2",
+    "lodash.clonedeep": "^4.5.0",
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.1",
     "ytdl-core": "^4.2.1"

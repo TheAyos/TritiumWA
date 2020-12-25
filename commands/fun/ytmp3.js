@@ -13,7 +13,7 @@ module.exports = {
 
     run: async function (client, message, args) {
         const ytdl = require("ytdl-core");
-        const WMStrm = client.WMStrm;
+        const WMStrm = client.utils.WMStrm;
 
         let isLink = args[0].match(
             /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/,
