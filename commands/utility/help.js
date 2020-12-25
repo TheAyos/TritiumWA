@@ -10,10 +10,10 @@ module.exports = {
 
     run: async function (client, message, args) {
         const moment = require("moment");
-        console.log(args);
+        console.log("help.js args", args);
 
         try {
-            if (!args[0] && !args.triggers) {
+            if (!args.length) {
                 let categories = {};
                 let cmdCount = 0;
                 client.commands.forEach((cmd) => {
@@ -43,7 +43,8 @@ module.exports = {
                     helpMessageFull + `\n\n*🤖 Tritium • ${moment().format("HH:mm")}* `;
                 client.reply(message.from, helpMessageFull, message.id);
             } else {
-                let cmdProps = client.commands.get(args.triggers[0]);
+                let cmdProps =
+                    client.commands.get(args) || client.commands.get(client.aliases.get(args));
                 if (!cmdProps)
                     return client.reply(
                         message.from,

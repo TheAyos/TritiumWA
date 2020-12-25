@@ -6,6 +6,7 @@ const msgHandler = require("./handler/handler");
 
 function start(client) {
     client.utils = require("./utils/utils");
+    client.WMStrm = require("./utils/WMStrm");
     client.config = require("./config.json");
     client.prefix = client.config.default_prefix;
 
@@ -18,6 +19,9 @@ function start(client) {
     require("./handler/CommandLoader")(client);
     require("./handler/EventLoader")(client);
 
+    // for use if no args are given to a commands that needArgs
+    client.helpThisPoorMan = client.commands.get("help").run;
+
     console.log();
     console.log("\x1b[1m\x1b[31m\x1b[40m");
     console.log(client.commands);
@@ -25,26 +29,9 @@ function start(client) {
     console.log(client.aliases);
     console.log("\x1b[0m");
 
-    // Force it to keep the current session
-    client.onStateChanged((state) => {
-        console.log("[Client State]", state);
-        if (state === "CONFLICT" || state === "DISCONNECTED") client.forceRefocus();
-    });
-
     client.onMessage(async (message) => {
         client.getAmountOfLoadedMessages().then((msg) => msg >= 3000 && client.cutMsgCache());
         msgHandler(client, message);
-    });
-
-    client.onAddedToGroup((chat) => {
-        client.sendText(
-            chat.groupMetadata.id,
-            `Thanks for adding me *${chat.contact.name}*. Use ${client.prefix}help to see the usable commands`,
-        );
-    });
-
-    client.onIncomingCall(async (call) => {
-        client.sendText(call.peerJid, "What up ?");
     });
 
     // fancystuff
