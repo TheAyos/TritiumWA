@@ -13,8 +13,6 @@ function start(client) {
     require("./handlers/CommandLoader")(client);
     require("./handlers/EventLoader")(client);
 
-    client.helpThisPoorMan = client.commands.get("help").run;
-
     client.getCommand = function (args) {
         return args.triggers
             ? client.commands.find((cmd) => cmd.triggers.includes(args.triggers[0]))
@@ -32,6 +30,9 @@ function start(client) {
     console.log();
     console.log("💥🔥⚡");
     console.log();
+
+    client.helpThisPoorMan = (msg, cmd) =>
+        client.getCommand("help").run({ client, message: msg, args: cmd.triggers[0] });
 
     client.onMessage(async (message) => {
         //client.getAmountOfLoadedMessages().then((msg) => msg >= 3000 && client.cutMsgCache());
