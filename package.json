@@ -18,11 +18,16 @@
   "dependencies": {
     "@open-wa/wa-automate": "^3.1.12",
     "@open-wa/wa-decrypt": "^3.0.0",
+    "axios": "^0.21.1",
     "canvas": "^2.6.1",
+    "cheerio": "^1.0.0-rc.5",
     "enmap": "^5.8.2",
+    "eslint": "^7.16.0",
     "lodash.clonedeep": "^4.5.0",
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.1",
+    "node-gtts": "^2.0.2",
+    "public-waifulist": "0.0.2",
     "ytdl-core": "^4.2.1"
   },
   "keywords": [

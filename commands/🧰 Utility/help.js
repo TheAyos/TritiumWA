@@ -1,13 +1,14 @@
 module.exports = {
     triggers: ["help", "commands", "cmds", "helpmestepbroimstuck"],
     usage: "{command}\n" + "{command} <command>", // category??
+    params: "<command>",
     example: "{command} fisheye",
     description: "Shows a list of commands or command information.",
 
     isNSFW: false,
     needArgs: false,
     cooldown: 3,
-
+    //categories.general.push(`+ **${command}**${params ? ` ${params}` : ""} - ${description}`)
     run: async function (client, message, args) {
         const moment = require("moment");
 
@@ -42,14 +43,12 @@ module.exports = {
                     helpMessageFull + `\n\n*🤖 Tritium • ${moment().format("HH:mm")}* `;
                 client.reply(message.from, helpMessageFull, message.id);
             } else {
-                let cmdProps =
-                    client.commands.get(args[0]) ||
-                    client.commands.get(client.aliases.get(args[0]));
+                let cmdProps = client.getCommand(args[0]);
                 //if requested for more than one command
-                if (args.length > 1) {
-                    cmdProps = client.commands.get("help");
-                }
-                if (!cmdProps)
+                /*if (args.length > 1) {
+                    cmdProps = client.getCommand("help");
+                }*/
+                if (!cmdProps.triggers)
                     return client.reply(
                         message.from,
                         "*That command doesn't exist 😲 !!!*",
@@ -65,7 +64,7 @@ module.exports = {
                     // cuz example can be optional
                     example = cmdProps.example.replace(/{command}/g, client.prefix + cmdName); //same
                 let helpMessage =
-                    `*Command: ${cmdName}*\n\n` +
+                    `*Help | ${cmdName}*\n\n` +
                     "*Description:* " +
                     `${desc}` +
                     "\n" +

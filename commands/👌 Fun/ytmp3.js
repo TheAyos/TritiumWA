@@ -1,6 +1,6 @@
 module.exports = {
     triggers: ["ytmp3"],
-    usage: "{command} <URL>\n",
+    usage: "{command} [URL]\n",
     example:
         "{command} https://www.youtube.com/watch?v=QH2-TGUlwu4\n" +
         "{command} https://m.youtube.com/watch?v=QH2-TGUlwu4\n" +
@@ -27,12 +27,14 @@ module.exports = {
             var videoInfo = await ytdl.getInfo(videoURL);
             var videoTitle = videoInfo.videoDetails.title.replace("|", "").toString("ascii");
 
-            if (videoInfo.videoDetails.lengthSeconds > 5 * 60)
+            if (videoInfo.videoDetails.lengthSeconds > 5 * 60) {
+                client.simulateTyping(message.from, false);
                 return client.reply(
                     message.from,
                     "*La vidéo est trop longue (>5 min) !*\n_Ne t'inquiètes pas, c'est ce qu'elles disent toutes ;)_",
                     message.id,
                 );
+            }
 
             await client
                 .sendFileFromUrl(
@@ -41,7 +43,10 @@ module.exports = {
                     "./temp/thumb.jpg",
                     `➸ *Titre* : ${videoTitle}\n\n◌ Le fichier arrive 🦅 !`,
                 )
-                .catch(() => client.reply(message.from, "Erreur image :( "));
+                .catch(() => {
+                    client.simulateTyping(message.from, false);
+                    client.reply(message.from, "Erreur image :( ");
+                });
 
             var videoReadableStream = ytdl(videoURL, { filter: "audioonly", quality: "lowest" });
 

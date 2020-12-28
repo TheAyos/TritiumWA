@@ -1,3 +1,6 @@
+const { join } = require("path");
+const rootPath = require("path").resolve();
+
 module.exports = {
     triggers: ["reload", "rl"],
     usage: "{command} <command>",
@@ -28,10 +31,10 @@ module.exports = {
 
             client.simulateTyping(message.from, true);
             // the path is relative to the *current folder*, so just ./filename.js
-            delete require.cache[require.resolve(`./${commandName}.js`)];
+            delete require.cache[require.resolve(join(rootPath, `${commandName}.js`))];
             // We also need to delete and reload the command from the client.commands Enmap
             client.commands.delete(commandName);
-            const props = require(`./${commandName}.js`);
+            const props = require(join(rootPath, `${commandName}.js`));
             client.commands.set(commandName, props);
             client.simulateTyping(message.from, false);
             client.reply(message.from, `The command ${commandName} has been reloaded`, message.id);

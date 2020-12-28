@@ -5,7 +5,6 @@ module.exports = {
 
     isNSFW: false,
     needArgs: false,
-    //in secs
     cooldown: 3,
 
     run: async function (client, message) {
