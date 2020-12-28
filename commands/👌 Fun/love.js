@@ -13,16 +13,16 @@ module.exports = {
     needArgs: true,
     cooldown: 10,
 
-    run: async function ({ client, message, args }) {
-        const fs = require("fs");
+    run: async function ({ Tritium, msg, args }) {
+        const { readFileSync } = require("fs");
         let fname = args[0],
             sname = args[1];
 
         if (!args || args.length === 1) {
-            client.reply(message.from, "Enter both names 🙄!", message.id);
+            Tritium.reply(msg.from, "Enter both names 🙄!", msg.id);
             return;
         } else if (args > 2) {
-            client.commands.get("help").run(client, message, this.name);
+            Tritium.commands.get("help").run(Tritium, msg, this.name);
         }
 
         try {
@@ -63,41 +63,38 @@ module.exports = {
                     if (result < 25) {
                         emoji = "💔";
                         advice = "It's low, but don't give up.";
-                        reactionGif = await fs.readFileSync(
+                        reactionGif = await readFileSync(
                             `./assets/love/crying${Math.floor(Math.random() * 4) + 1}.gif`,
                             { encoding: "base64" },
                         );
                     } else if (result < 50) {
                         emoji = "❤️";
                         advice = "It's below average, you have to find someone else.";
-                        reactionGif = await fs.readFileSync(
+                        reactionGif = await readFileSync(
                             `./assets/love/nope${Math.floor(Math.random() * 5) + 1}.gif`,
                             { encoding: "base64" },
                         );
                     } else if (result < 75) {
                         emoji = "💗";
                         advice = "It's a great score!";
-                        reactionGif = await fs.readFileSync(
+                        reactionGif = await readFileSync(
                             `./assets/love/neutral${Math.floor(Math.random() * 4) + 1}.gif`,
                             { encoding: "base64" },
                         );
                     } else if (result <= 100) {
                         emoji = "💞";
                         advice = "A relationship is possible !";
-                        reactionGif = await fs.readFileSync(
+                        reactionGif = await readFileSync(
                             `./assets/love/happy${Math.floor(Math.random() * 5) + 1}.gif`,
                             { encoding: "base64" },
                         );
                     }
                 }
-                //await client.sendImageAsSticker(message.from, `data:image/gif;base64,${reactionGif.toString('base64')}`);
-                //await client.sendVideoAsGif(message.from, `data:video/mp4;base64,${reactionGif.toString('base64')}`, 'Result.mp4', `*${fname}* _*+*_ *${sname}* = ${result}% ${emoji}\n${advice}`, message.id);
-                await client.sendImageAsSticker(
-                    message.from,
-                    `data:image/gif;base64,${reactionGif}`,
-                );
-                client.sendText(
-                    message.from,
+                //await Tritium.sendImageAsSticker(msg.from, `data:image/gif;base64,${reactionGif.toString('base64')}`);
+                //await Tritium.sendVideoAsGif(msg.from, `data:video/mp4;base64,${reactionGif.toString('base64')}`, 'Result.mp4', `*${fname}* _*+*_ *${sname}* = ${result}% ${emoji}\n${advice}`, msg.id);
+                await Tritium.sendImageAsSticker(msg.from, `data:image/gif;base64,${reactionGif}`);
+                Tritium.sendText(
+                    msg.from,
                     `*${fname}* _*+*_ *${sname}* = ${result}% ${emoji}\n${advice}`,
                 );
                 result = array[0] + "" + array[1] + "%";

@@ -1,6 +1,3 @@
-const { join } = require("path");
-const rootPath = require("path").resolve();
-
 module.exports = {
     triggers: ["reload", "rl"],
     usage: "{command} <command>",
@@ -11,35 +8,33 @@ module.exports = {
     needArgs: false, //...
     cooldown: 0,
 
-    run: function ({ client, message, args }) {
+    run: async function ({ Tritium, msg, args }) {
+        const { join } = require("path");
+        const rootPath = require("path").resolve();
         try {
-            console.log(`[INFO] ${message.sender.id} requested reload`);
+            console.log(`[INFO] ${msg.sender.id} requested reload`);
 
-            if (message.sender.id !== client.config.youb_id)
-                return client.reply(message.from, "Only creator can do this.", message.id);
+            if (msg.sender.id !== Tritium.config.youb_id)
+                return Tritium.reply(msg.from, "Only creator can do this.", msg.id);
             if (!args || args.length < 1)
-                return client.reply(
-                    message.from,
-                    "Must provide a command name to reload.",
-                    message.id,
-                );
+                return Tritium.reply(msg.from, "Must provide a command name to reload.", msg.id);
             const commandName = args[0];
             // Check if the command exists and is valid
-            if (!client.commands.has(commandName)) {
-                return client.reply(message.from, "That command does not exist", message.id);
+            if (!Tritium.commands.has(commandName)) {
+                return Tritium.reply(msg.from, "That command does not exist", msg.id);
             }
 
-            client.simulateTyping(message.from, true);
+            Tritium.simulateTyping(msg.from, true);
             // the path is relative to the *current folder*, so just ./filename.js
             delete require.cache[require.resolve(join(rootPath, `${commandName}.js`))];
-            // We also need to delete and reload the command from the client.commands Enmap
-            client.commands.delete(commandName);
+            // We also need to delete and reload the command from the Tritium.commands Enmap
+            Tritium.commands.delete(commandName);
             const props = require(join(rootPath, `${commandName}.js`));
-            client.commands.set(commandName, props);
-            client.simulateTyping(message.from, false);
-            client.reply(message.from, `The command ${commandName} has been reloaded`, message.id);
+            Tritium.commands.set(commandName, props);
+            Tritium.simulateTyping(msg.from, false);
+            Tritium.reply(msg.from, `The command ${commandName} has been reloaded`, msg.id);
         } catch (error) {
-            client.simulateTyping(message.from, false);
+            Tritium.simulateTyping(msg.from, false);
             console.log(error);
         }
     },

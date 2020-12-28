@@ -1,19 +1,17 @@
 const { readdirSync } = require("fs");
-const { join } = require("path");
-const rootPath = require("path").resolve();
 
 module.exports = function (client) {
-    const categories = readdirSync(join(rootPath, "commands"));
+    const categories = readdirSync(client.fromRootPath("commands"));
     console.log(`\nFound total ${categories.length} categories.`);
 
     for (const category of categories) {
-        let categoryPath = join(rootPath, "commands", category);
+        let categoryPath = client.fromRootPath("commands", category);
         let filesInCategory = readdirSync(categoryPath);
         console.log(`\n┌ Found total ${filesInCategory.length} command(s) from ${category}`);
 
         for (const file of filesInCategory) {
             if (!file.endsWith(".js")) return;
-            let commandPath = join(categoryPath, file);
+            let commandPath = categoryPath + "/" + file;
 
             console.log(`│ ☄️ Loading command from file ${file}..`);
 
@@ -30,5 +28,6 @@ module.exports = function (client) {
                 console.error(`🔞 Failed to register command from file ${file}: ${e}`);
             }
         }
+        console.log(`└ ✨`);
     }
 };

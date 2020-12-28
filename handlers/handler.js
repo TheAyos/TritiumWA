@@ -1,4 +1,6 @@
 module.exports = async function (client, message) {
+    //client.getAmountOfLoadedMessages().then((msg) => msg >= 3000 && client.cutMsgCache());
+
     const prefix = client.prefix; //server prefix after that
 
     try {
