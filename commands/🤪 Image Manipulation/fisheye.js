@@ -57,7 +57,7 @@ module.exports = {
                     message.id,
                 );
             } else {
-                client.helpThisPoorMan(client, message, this.triggers[0]);
+                client.helpThisPoorMan(message, this);
                 //return client.reply(message.from, 'Send or quote an image !', message.id);
             }
         } catch (error) {

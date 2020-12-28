@@ -2,7 +2,7 @@ module.exports = {
     triggers: ["tts", "texttospeech", "speech", "say"],
     usage: "{command} [language] [text]",
     example: "{command} en I am a robot\n" + "{command} fr Je suis un robot",
-    description: "Converts text to speech.\nSupported languages: *en, fr, ar*",
+    description: "Converts text to speech.\nSupported languages: *en, fr, ar, de*",
 
     isNSFW: false,
     needArgs: true,
@@ -11,10 +11,10 @@ module.exports = {
     run: async function ({ client, message, args, cleanArgs }) {
         const msg = message,
             Tritium = client;
-        const supportedRE = new RegExp(/^en$|^fr$|^ar$/);
+        const supportedRE = new RegExp(/^en$|^fr$|^ar$|^de$/);
 
         if (args.length < 2 || !args[0].match(supportedRE))
-            return Tritium.helpThisPoorMan(Tritium, msg, ["tts"]);
+            return Tritium.helpThisPoorMan(msg, this);
 
         const gtts = require("node-gtts")(args[0]);
 

@@ -6,20 +6,25 @@ module.exports = {
     isNSFW: false,
     needArgs: false,
     cooldown: 10,
-    run: async function ({ client, message }) {
-        //query after & same for manga?
-        //let query = args.join(" ");
 
+    run: async function ({ client, message }) {
         try {
             client.simulateTyping(message.from, true);
             console.log("[Command request] (waifu) ");
 
             const waifuC = new (require("public-waifulist"))();
-            const waifu = await waifuC.getRandom();
+            let waifu = await waifuC.getRandom();
+
+            let i = 0;
+            do {
+                waifu = await waifuC.getRandom();
+                i++;
+            } while (i < 3 && !waifu); // if failed, tries to refetch 3 times max
+
             let caption =
-                `*_Look at that!_*\n\n` +
-                `💫 *Name: ${waifu.data.name}* ➸ from *_${waifu.data.series.name}_*\n` +
-                `⚜️ *Description:* ${waifu.data.description}`;
+                `*➸ _Look at that!_*\n\n` +
+                `💫 *${waifu.data.name}* from *_${waifu.data.series.name}_*\n\n` +
+                `🔮 *Description:* ${waifu.data.description}`;
 
             client.simulateTyping(message.from, false);
             await client.sendFileFromUrl(

@@ -30,14 +30,15 @@ module.exports = async function (client, message) {
             return console.log("[Unregistered command]" + command + " from " + message.sender.id);
 
         // If command needs args but no args were given
-        if (cmd.needArgs && !args.length)
-            return client.helpThisPoorMan(client, message, cmd.triggers);
+        if (cmd.needArgs && !args.length) return client.helpThisPoorMan(message, cmd);
 
         // Run the command
         try {
             cmd.run({
-                /*Tritium:*/ client,
-                /*msg:*/ message,
+                Tritium: client,
+                msg: message,
+                client,
+                message,
                 args,
                 cleanArgs,
             });

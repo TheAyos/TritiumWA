@@ -13,6 +13,7 @@ module.exports = {
         const moment = require("moment");
 
         try {
+            // if .help '' string empty OR help requested from other cmd with cmd.triggers
             if (!args.length) {
                 let categories = {};
                 let cmdCount = 0;
@@ -43,12 +44,9 @@ module.exports = {
                     helpMessageFull + `\n\n*🤖 Tritium • ${moment().format("HH:mm")}* `;
                 client.reply(message.from, helpMessageFull, message.id);
             } else {
-                let cmdProps = client.getCommand(args[0]);
-                //if requested for more than one command
-                /*if (args.length > 1) {
-                    cmdProps = client.getCommand("help");
-                }*/
-                if (!cmdProps.triggers)
+                let cmdProps = client.getCommand(args[0]) || client.getCommand(args);
+
+                if (!cmdProps)
                     return client.reply(
                         message.from,
                         "*That command doesn't exist 😲 !!!*",
