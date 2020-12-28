@@ -11,7 +11,7 @@ module.exports = {
     needArgs: false, //...
     cooldown: 0,
 
-    run: function (client, message, args) {
+    run: function ({ client, message, args }) {
         try {
             console.log(`[INFO] ${message.sender.id} requested reload`);
 

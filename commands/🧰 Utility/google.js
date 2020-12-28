@@ -8,7 +8,7 @@ module.exports = {
     needArgs: true,
     cooldown: 3,
 
-    run: async function (client, message, args) {
+    run: async function ({ client, message, args }) {
         try {
             // managed by handler now :(
             /*if (args == '') {

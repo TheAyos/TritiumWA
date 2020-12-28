@@ -35,13 +35,13 @@ module.exports = async function (client, message) {
 
         // Run the command
         try {
-            /*cmd.run({
-                Tritium: client,
-                msg: message,
+            cmd.run({
+                /*Tritium:*/ client,
+                /*msg:*/ message,
                 args,
                 cleanArgs,
-            });*/
-            cmd.run(client, message, args, cleanArgs);
+            });
+            //cmd.run(client, message, args, cleanArgs);
         } catch (e) {
             client.simulateTyping(message.from, false);
             console.log(error);

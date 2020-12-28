@@ -8,7 +8,7 @@ module.exports = {
     needArgs: false,
     cooldown: 10,
 
-    run: async function (client, message, args) {
+    run: async function ({ client, message, args }) {
         const fetch = require("node-fetch");
 
         let query = "";

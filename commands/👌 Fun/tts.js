@@ -8,7 +8,7 @@ module.exports = {
     needArgs: true,
     cooldown: 10,
 
-    run: async function (client, message, args, cleanArgs) {
+    run: async function ({ client, message, args, cleanArgs }) {
         const msg = message,
             Tritium = client;
         const supportedRE = new RegExp(/^en$|^fr$|^ar$/);

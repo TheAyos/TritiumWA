@@ -7,7 +7,7 @@ module.exports = {
     isNSFW: false,
     needArgs: true,
     cooldown: 10,
-    run: async function (client, message, args) {
+    run: async function ({ client, message, args }) {
         const fetch = require("node-fetch");
         const { jikan } = client.utils;
         let query = args.join(" ");

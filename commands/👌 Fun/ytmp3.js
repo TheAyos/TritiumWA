@@ -11,7 +11,7 @@ module.exports = {
     needArgs: true,
     cooldown: 15,
 
-    run: async function (client, message, args) {
+    run: async function ({ client, message, args }) {
         const ytdl = require("ytdl-core");
         const WMStrm = client.utils.WMStrm;
 

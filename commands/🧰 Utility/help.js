@@ -9,7 +9,7 @@ module.exports = {
     needArgs: false,
     cooldown: 3,
     //categories.general.push(`+ **${command}**${params ? ` ${params}` : ""} - ${description}`)
-    run: async function (client, message, args) {
+    run: async function ({ client, message, args }) {
         const moment = require("moment");
 
         try {

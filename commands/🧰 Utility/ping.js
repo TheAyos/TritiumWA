@@ -7,7 +7,7 @@ module.exports = {
     needArgs: false,
     cooldown: 3,
 
-    run: async function (client, message) {
+    run: async function ({ client, message }) {
         try {
             await client.sendText(
                 message.from,

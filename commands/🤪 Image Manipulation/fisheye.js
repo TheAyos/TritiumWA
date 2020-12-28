@@ -8,7 +8,7 @@ module.exports = {
     needArgs: false,
     cooldown: 10,
 
-    run: async function (client, message, args) {
+    run: async function ({ client, message, args }) {
         const { decryptMedia } = require("@open-wa/wa-decrypt");
         const { loadImage, createCanvas } = require("canvas");
         const isQuotedImage = message.quotedMsg && message.quotedMsg.type === "image";

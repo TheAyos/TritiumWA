@@ -6,7 +6,7 @@ module.exports = {
     isNSFW: false,
     needArgs: false,
     cooldown: 10,
-    run: async function (client, message) {
+    run: async function ({ client, message }) {
         //query after & same for manga?
         //let query = args.join(" ");
 

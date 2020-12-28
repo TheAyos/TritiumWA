@@ -7,7 +7,7 @@ module.exports = {
     isNSFW: false,
     needArgs: false,
     cooldown: 3,
-    run: async function (client, message) {
+    run: async function ({ client, message }) {
         try {
             await client.sendContact(message.from, client.config.youb_id);
         } catch (error) {

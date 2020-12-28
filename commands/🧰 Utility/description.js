@@ -7,7 +7,7 @@ module.exports = {
     isNSFW: false,
     needArgs: false,
     cooldown: 3,
-    run: async function (client, message, args) {
+    run: async function ({ client, message, args }) {
         if (message.isGroupMsg) {
             client.getChatById(message.chatId).then((value) => {
                 const desc = value.groupMetadata;

@@ -13,7 +13,7 @@ module.exports = {
     needArgs: true,
     cooldown: 10,
 
-    run: async function (client, message, args) {
+    run: async function ({ client, message, args }) {
         const fs = require("fs");
         let fname = args[0],
             sname = args[1];
