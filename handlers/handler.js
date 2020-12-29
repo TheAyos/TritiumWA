@@ -39,7 +39,6 @@ module.exports = async function (client, message) {
             cmd.run({
                 Tritium: client,
                 msg: message,
-                client,
                 message,
                 args,
                 cleanArgs,
