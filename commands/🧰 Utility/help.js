@@ -9,7 +9,7 @@ module.exports = {
     needArgs: false,
     cooldown: 3,
     //categories.general.push(`+ **${command}**${params ? ` ${params}` : ""} - ${description}`)
-    run: async function ({ client, message, args }) {
+    run: async function ({ Tritium, message, args }) {
         const moment = require("moment");
 
         try {
@@ -17,7 +17,7 @@ module.exports = {
             if (!args.length) {
                 let categories = {};
                 let cmdCount = 0;
-                client.commands.forEach((cmd) => {
+                Tritium.commands.forEach((cmd) => {
                     cmdCount++;
                     let category = categories[cmd.category];
                     if (!category) {
@@ -33,21 +33,21 @@ module.exports = {
 
                 let helpMessageFull =
                     `*Bot Commands*\n\n` +
-                    `The prefix of the bot on this server is *${client.prefix}*\n` +
-                    `*Example:* \`\`\`${client.prefix}help love\`\`\`\n` +
-                    "*Remind:* ```Don't use [] or <> in commands.```\n\n" +
+                    `The prefix of the bot on this server is *${Tritium.prefix}*\n` +
+                    `*Example:* \`\`\`${Tritium.prefix}help love\`\`\`\n` +
+                    "*Remind:* ```Don't use [ ] or <> in commands.```\n\n" +
                     `*A total of ${cmdCount} commands:*` +
                     `${commandNames}\n\n` +
-                    `For more info use \`\`\`${client.prefix}help <command>\`\`\``;
+                    `For more info use \`\`\`${Tritium.prefix}help <command>\`\`\``;
 
                 helpMessageFull =
                     helpMessageFull + `\n\n*🤖 Tritium • ${moment().format("HH:mm")}* `;
-                client.reply(message.from, helpMessageFull, message.id);
+                Tritium.reply(message.from, helpMessageFull, message.id);
             } else {
-                let cmdProps = client.getCommand(args[0]) || client.getCommand(args);
+                let cmdProps = Tritium.getCommand(args[0]) || Tritium.getCommand(args);
 
                 if (!cmdProps)
-                    return client.reply(
+                    return Tritium.reply(
                         message.from,
                         "*That command doesn't exist 😲 !!!*",
                         message.id,
@@ -55,12 +55,12 @@ module.exports = {
 
                 cmdName = cmdProps.triggers[0];
                 // /g global flag in regex to replace all matches
-                let desc = cmdProps.description.replace(/{command}/g, client.prefix + cmdName); //replace with prefix cuz can't access in modules
-                let usage = cmdProps.usage.replace(/{command}/g, client.prefix + cmdName); //same
+                let desc = cmdProps.description.replace(/{command}/g, Tritium.prefix + cmdName); //replace with prefix cuz can't access in modules
+                let usage = cmdProps.usage.replace(/{command}/g, Tritium.prefix + cmdName); //same
                 let example;
                 if (cmdProps.example)
                     // cuz example can be optional
-                    example = cmdProps.example.replace(/{command}/g, client.prefix + cmdName); //same
+                    example = cmdProps.example.replace(/{command}/g, Tritium.prefix + cmdName); //same
                 let helpMessage =
                     `*Help | ${cmdName}*\n\n` +
                     "*Description:* " +
@@ -72,7 +72,7 @@ module.exports = {
                 if (example) helpMessage = helpMessage + "\n*Example*\n" + `\`\`\`${example}\`\`\``;
 
                 helpMessage = helpMessage + `\n\n*🤖 Tritium • ${moment().format("HH:mm")}* `; // signature ;)
-                client.reply(message.from, helpMessage, message.id);
+                Tritium.reply(message.from, helpMessage, message.id);
             }
         } catch (error) {
             console.log(error);

@@ -7,13 +7,13 @@ module.exports = {
     needArgs: false,
     cooldown: 3,
 
-    run: async function ({ client, message }) {
+    run: async function ({ Tritium, message }) {
         try {
-            await client.sendText(
+            await Tritium.sendText(
                 message.from,
-                `Pong 🏓 !!\n\`\`\`Speed: ${client.utils.processTime(
+                `Pong 🏓 !!\n\`\`\`Speed: ${Tritium.utils.processTime(
                     message.t,
-                    client.utils.moment(),
+                    Tritium.utils.moment(),
                 )} s\`\`\``,
                 true,
             );

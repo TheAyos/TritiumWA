@@ -8,7 +8,7 @@ module.exports = {
     needArgs: false,
     cooldown: 10,
 
-    run: async function ({ client, message, args }) {
+    run: async function ({ Tritium, message, args }) {
         const { decryptMedia } = require("@open-wa/wa-decrypt");
         const { loadImage, createCanvas } = require("canvas");
         const isQuotedImage = message.quotedMsg && message.quotedMsg.type === "image";
@@ -18,7 +18,7 @@ module.exports = {
 
             if ((message.isMedia || isQuotedImage) && args.length <= 1) {
                 if (isNaN(args[0]) || args[0] < -1000 || args[0] > 1000) {
-                    client.reply(
+                    Tritium.reply(
                         message.from,
                         "*Argument must be a number between 0 and ±1000 😑*",
                         message.id,
@@ -27,7 +27,7 @@ module.exports = {
                 }
                 intensity = args[0];
 
-                client.simulateTyping(message.from, true); // ;)
+                Tritium.simulateTyping(message.from, true);
                 const encryptMedia = isQuotedImage ? message.quotedMsg : message;
                 const _mimetype = isQuotedImage ? message.quotedMsg.mimetype : message.mimetype;
                 const mediaData = await decryptMedia(encryptMedia);
@@ -41,15 +41,15 @@ module.exports = {
                 await ctx.drawImage(data, 0, 0);
                 await fishEye(ctx, intensity, 0, 0, data.width, data.height);
                 const processedImage = canvas.toBuffer();
-                client.simulateTyping(message.from, false);
+                Tritium.simulateTyping(message.from, false);
                 if (Buffer.byteLength(processedImage) > 8e6)
-                    return client.reply(
+                    return Tritium.reply(
                         message.from,
                         "The file is way too big for me to upload it.",
                         message.id,
                     );
 
-                client.sendImage(
+                Tritium.sendImage(
                     message.from,
                     `data:${_mimetype};base64,${processedImage.toString("base64")}`,
                     "fisheye.png",
@@ -57,11 +57,11 @@ module.exports = {
                     message.id,
                 );
             } else {
-                client.helpThisPoorMan(message, this);
-                //return client.reply(message.from, 'Send or quote an image !', message.id);
+                Tritium.helpThisPoorMan(message, this);
+                //return Tritium.reply(message.from, 'Send or quote an image !', message.id);
             }
         } catch (error) {
-            client.simulateTyping(message.from, false);
+            Tritium.simulateTyping(message.from, false);
             console.log(error);
         }
     },

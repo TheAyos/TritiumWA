@@ -11,25 +11,25 @@ module.exports = {
     needArgs: true,
     cooldown: 15,
 
-    run: async function ({ client, message, args }) {
+    run: async function ({ Tritium, message, args }) {
         const ytdl = require("ytdl-core");
-        const WMStrm = client.utils.WMStrm;
+        const WMStrm = Tritium.utils.WMStrm;
 
         let isLink = args[0].match(
             /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/,
         );
 
-        if (!isLink) return client.reply(message.from, "C'est pô un lien valide ça !", message.id);
+        if (!isLink) return Tritium.reply(message.from, "C'est pô un lien valide ça !", message.id);
 
         try {
-            client.simulateTyping(message.from, true);
+            Tritium.simulateTyping(message.from, true);
             let videoURL = args[0].toString();
             var videoInfo = await ytdl.getInfo(videoURL);
             var videoTitle = videoInfo.videoDetails.title.replace("|", "").toString("ascii");
 
             if (videoInfo.videoDetails.lengthSeconds > 5 * 60) {
-                client.simulateTyping(message.from, false);
-                return client.reply(
+                Tritium.simulateTyping(message.from, false);
+                return Tritium.reply(
                     message.from,
                     "*La vidéo est trop longue (>5 min) !*\n_Ne t'inquiètes pas, c'est ce qu'elles disent toutes ;)_",
                     message.id,
@@ -40,12 +40,12 @@ module.exports = {
                 .sendFileFromUrl(
                     message.from,
                     videoInfo.videoDetails.thumbnails[2].url,
-                    "./temp/thumb.jpg",
+                    "thumb.jpg",
                     `➸ *Titre* : ${videoTitle}\n\n◌ Le fichier arrive 🦅 !`,
                 )
                 .catch(() => {
-                    client.simulateTyping(message.from, false);
-                    client.reply(message.from, "Erreur image :( ");
+                    Tritium.simulateTyping(message.from, false);
+                    Tritium.reply(message.from, "Erreur image :( ");
                 });
 
             var videoReadableStream = ytdl(videoURL, { filter: "audioonly", quality: "lowest" });
@@ -60,7 +60,7 @@ module.exports = {
 
             stream.on("finish", async function () {
                 console.log("finished writing");
-                client.simulateTyping(message.from, false);
+                Tritium.simulateTyping(message.from, false);
                 await client
                     .sendAudio(
                         message.from,
@@ -68,20 +68,24 @@ module.exports = {
                     )
                     .catch(
                         (e) =>
-                            client.reply(message.from, "Erreur mp3 :( ", message.id) &&
+                            Tritium.reply(message.from, "Erreur mp3 :( ", message.id) &&
                             console.log(e),
                     );
                 wstream.end();
             });
 
             /*stream.on('finish', async function () {
-                await client.sendAudio(message.from, stream)
-                    .catch(() => client.reply(message.from, 'Erreur mp3 :( ', message.id));
+                await Tritium.sendAudio(message.from, stream)
+                    .catch(() => Tritium.reply(message.from, 'Erreur mp3 :( ', message.id));
             });*/
         } catch (error) {
-            client.simulateTyping(message.from, false);
-            client.reply(message.from, "*Erreur!* Le lien n'est sûrement pas valide !", message.id);
-            console.log(client.utils.moment().format("H:mm:ss") + " *Erreur!* ytmp3 --> " + error);
+            Tritium.simulateTyping(message.from, false);
+            Tritium.reply(
+                message.from,
+                "*Erreur!* Le lien n'est sûrement pas valide !",
+                message.id,
+            );
+            console.log(Tritium.utils.moment().format("H:mm:ss") + " *Erreur!* ytmp3 --> " + error);
         }
     },
 };

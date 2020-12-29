@@ -7,9 +7,9 @@ module.exports = {
     needArgs: false,
     cooldown: 10,
 
-    run: async function ({ client, message }) {
+    run: async function ({ Tritium, message }) {
         try {
-            client.simulateTyping(message.from, true);
+            Tritium.simulateTyping(message.from, true);
             console.log("[Command request] (waifu) ");
 
             const waifuC = new (require("public-waifulist"))();
@@ -26,8 +26,8 @@ module.exports = {
                 `💫 *${waifu.data.name}* from *_${waifu.data.series.name}_*\n\n` +
                 `🔮 *Description:* ${waifu.data.description}`;
 
-            client.simulateTyping(message.from, false);
-            await client.sendFileFromUrl(
+            Tritium.simulateTyping(message.from, false);
+            await Tritium.sendFileFromUrl(
                 message.from,
                 waifu.data.display_picture,
                 "waifu.jpg",
@@ -35,7 +35,7 @@ module.exports = {
                 message.id,
             );
         } catch (error) {
-            client.simulateTyping(message.from, false);
+            Tritium.simulateTyping(message.from, false);
             console.log(error);
         }
     },

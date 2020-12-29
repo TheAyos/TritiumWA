@@ -8,14 +8,14 @@ module.exports = {
     needArgs: true,
     cooldown: 3,
 
-    run: async function ({ client, message, args }) {
+    run: async function ({ Tritium, message, args }) {
         try {
             // managed by handler now :(
             /*if (args == '') {
-                await client.reply(message.from, 'Ta recherche est vide 😦!', message.id, true);
+                await Tritium.reply(message.from, 'Ta recherche est vide 😦!', message.id, true);
                 return
             }*/
-            await client.sendLinkWithAutoPreview(
+            await Tritium.sendLinkWithAutoPreview(
                 message.from,
                 "*https://www.google.com/search?q=" + args.join("%20") + "*",
             );

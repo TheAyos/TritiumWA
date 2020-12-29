@@ -7,9 +7,9 @@ module.exports = {
     isNSFW: false,
     needArgs: false,
     cooldown: 3,
-    run: async function ({ client, message }) {
+    run: async function ({ Tritium, message }) {
         try {
-            await client.sendContact(message.from, client.config.youb_id);
+            await Tritium.sendContact(message.from, Tritium.config.youb_id);
         } catch (error) {
             console.log(error);
         }

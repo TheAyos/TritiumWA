@@ -7,11 +7,11 @@ module.exports = {
     isNSFW: false,
     needArgs: false,
     cooldown: 3,
-    run: async function ({ client, message, args }) {
+    run: async function ({ Tritium, message, args }) {
         if (message.isGroupMsg) {
-            client.getChatById(message.chatId).then((value) => {
+            Tritium.getChatById(message.chatId).then((value) => {
                 const desc = value.groupMetadata;
-                client.reply(
+                Tritium.reply(
                     message.from,
                     "*" + message.chat.name + "*\n🌠️\n✨️ Description:\n " + `${desc}`,
                     message.id,
@@ -19,7 +19,7 @@ module.exports = {
                 );
             });
         } else {
-            client.reply(message.from, "On n'est pas dans un groupe ! 😤");
+            Tritium.reply(message.from, "On n'est pas dans un groupe ! 😤");
             return;
         }
     },

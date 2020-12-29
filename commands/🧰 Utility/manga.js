@@ -7,13 +7,13 @@ module.exports = {
     isNSFW: false,
     needArgs: true,
     cooldown: 10,
-    run: async function ({ client, message, args }) {
+    run: async function ({ Tritium, message, args }) {
         const fetch = require("node-fetch");
-        const { jikan } = client.utils;
+        const { jikan } = Tritium.utils;
         let query = args.join(" ");
 
         try {
-            client.simulateTyping(message.from, true);
+            Tritium.simulateTyping(message.from, true);
             console.log("[Command request] (manga) " + query);
 
             let url = `${jikan}search/manga?q=${query}&limit=1`,
@@ -24,8 +24,8 @@ module.exports = {
                 .then(async (body, error) => {
                     if (error) return console.log(error);
                     if (!body.results) {
-                        client.simulateTyping(message.from, false);
-                        return client.reply(message.from, `*Manga not found 😿!*`, message.id);
+                        Tritium.simulateTyping(message.from, false);
+                        return Tritium.reply(message.from, `*Manga not found 😿!*`, message.id);
                     }
                     let result = body.results[0];
                     if (result.volumes === 0) result.volumes = "Unknown";
@@ -37,8 +37,8 @@ module.exports = {
                         `*🌠 Synopsis :* ${result.synopsis}\n\n` +
                         `*🌍 URL :*\n${result.url}`;
 
-                    client.simulateTyping(message.from, false);
-                    await client.sendFileFromUrl(
+                    Tritium.simulateTyping(message.from, false);
+                    await Tritium.sendFileFromUrl(
                         message.from,
                         result.image_url,
                         result.image_url.split("/").pop(),
@@ -47,7 +47,7 @@ module.exports = {
                     );
                 });
         } catch (error) {
-            client.simulateTyping(message.from, false);
+            Tritium.simulateTyping(message.from, false);
             console.log(error);
         }
     },
