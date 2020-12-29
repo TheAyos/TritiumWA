@@ -21,8 +21,12 @@
 
 ```bash
 > npm install
-> sudo apt install webp
-> npm install gify-cli -g
+
+> sudo apt-get install webp libwebp-dev
+> sudo add-apt-repository ppa:dhor/myway
+> sudo apt-get update
+> sudo apt-get install graphicsmagick
+> sudo apt-get install imagemagick
 ```
 
 ### Features / Built with focus around
