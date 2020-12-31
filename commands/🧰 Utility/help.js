@@ -13,7 +13,6 @@ module.exports = {
         const moment = require("moment");
 
         try {
-            // if .help '' string empty OR help requested from other cmd with cmd.triggers
             if (!args.length) {
                 let categories = {};
                 let cmdCount = 0;

@@ -9,6 +9,7 @@ module.exports = {
 
     run: async function ({ Tritium, message }) {
         try {
+            console.log(!!this.needArgs);
             await Tritium.sendText(
                 message.from,
                 `Pong 🏓 !!\n\`\`\`Speed: ${Tritium.utils.processTime(
