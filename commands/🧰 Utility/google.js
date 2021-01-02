@@ -3,7 +3,7 @@ module.exports = new TritiumCommand(
   async ({ Tritium, msg, args }) => {
     await Tritium.sendLinkWithAutoPreview(
       msg.from,
-      "*https://www.google.com/search?q=" + args.join("%20") + "*",
+      "*https://www.google.com/search?q=" + encodeURIComponent(args.join(" ")) + "*",
     );
   },
   {
