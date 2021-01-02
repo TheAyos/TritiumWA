@@ -1,25 +1,14 @@
-module.exports = {
+const TritiumCommand = require("@models/TritiumCommand");
+module.exports = new TritiumCommand(
+  async ({ Tritium, msg }) => {
+    await Tritium.sendText(
+      msg.from,
+      `Pong 🏓 !!\n\`\`\`Speed: ${Tritium.utils.processTime(msg.t, Tritium.utils.moment())} s\`\`\``,
+      true,
+    );
+  },
+  {
     triggers: ["ping", "latency", "speed"],
-    usage: "{command}",
     description: "Shows bot ping.",
-
-    isNSFW: false,
-    needArgs: false,
-    cooldown: 3,
-
-    run: async function ({ Tritium, message }) {
-        try {
-            console.log(!!this.needArgs);
-            await Tritium.sendText(
-                message.from,
-                `Pong 🏓 !!\n\`\`\`Speed: ${Tritium.utils.processTime(
-                    message.t,
-                    Tritium.utils.moment(),
-                )} s\`\`\``,
-                true,
-            );
-        } catch (error) {
-            console.log(error);
-        }
-    },
-};
+  },
+);

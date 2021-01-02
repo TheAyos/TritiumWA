@@ -13,7 +13,7 @@ module.exports = function (client) {
       client[eventName](event.bind(this, client));
       //client[eventName](event);
     } catch (error) {
-      console.error(`Failed to register event from file ${eventFile}: ${err}`);
+      console.error(`Failed to register event from file ${eventFile}: ${error}`);
     }
   }
   console.log(`└ ☄️`);

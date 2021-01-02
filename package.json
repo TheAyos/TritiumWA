@@ -26,16 +26,23 @@
     "eslint": "^7.16.0",
     "gm": "^1.23.1",
     "lodash.clonedeep": "^4.5.0",
+    "module-alias": "^2.2.2",
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.1",
     "node-gtts": "^2.0.2",
     "public-waifulist": "0.0.2",
     "weather-js": "^2.0.0",
+    "winston": "^3.3.3",
     "ytdl-core": "^4.2.1"
   },
   "keywords": [
     "fun",
     "whatsapp",
     "bot"
-  ]
+  ],
+  "_moduleAliases": {
+    "@root": ".",
+    "@models": "./models",
+    "@utils": "./utils"
+  }
 }

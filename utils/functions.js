@@ -1,10 +1,14 @@
-module.exports = (Tritium) => {
+const winston = require("winston");
+
+module.exports = async (Tritium) => {
   Tritium.rootPath = require("path").resolve();
   Tritium.fromRootPath = (...pathS) => require("path").join(Tritium.rootPath, ...pathS);
   Tritium.getCommand = function (args) {
     return typeof args === "string"
-      ? Tritium.commands.find((cmd) => cmd.triggers.includes(args))
-      : Tritium.commands.find((cmd) => cmd.triggers.includes(args.triggers[0]));
+      ? Tritium.commands.find((c) => c.props.triggers.includes(args))
+      : args.props
+      ? Tritium.commands.find((c) => c.props.triggers.includes(args.props.triggers[0]))
+      : undefined;
   };
 
   Tritium.getCmdAliases = function (args) {
@@ -39,22 +43,28 @@ module.exports = (Tritium) => {
     return this.sort(() => Math.random() - 0.5);
   };
 
+  Tritium.logger = winston.createLogger({
+    transports: [new winston.transports.Console()],
+    format: winston.format.combine(
+      winston.format.timestamp({ format: "MM/DD/YYYY HH:mm:ss" }),
+      winston.format.printf((log) => `[${log.timestamp}] [${log.level.toUpperCase()}]: ${log.message}`),
+    ),
+  });
+
   Tritium.helpThisPoorMan = (msg, cmd) =>
     Tritium.getCommand("help").run({
       Tritium,
-      message: msg,
-      args: Tritium.getCommand(cmd).triggers[0],
+      msg,
+      args: cmd ? Tritium.getCommand(cmd).triggers[0] : "",
     });
 
   process.on("uncaughtException", (error) => {
-    const cleanErrorMsg = error.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
-    //Tritium.logger
-    console.log("error", `Uncaught Exception: ${cleanErrorMsg}`);
+    const cleanErrorMsg = error.stack.replace(new RegExp(`${Tritium.rootPath}/`, "g"), "./");
+    Tritium.logger.error(`Uncaught Exception: ${cleanErrorMsg}`);
     process.exit(1);
   });
 
-  process.on("unhandledRejection", (error) => {
-    //Tritium.logger
-    console.log("error", `Unhandled rejection: ${error}`);
+  process.on("unhandledRejection", (reason, promise) => {
+    throw reason;
   });
 };

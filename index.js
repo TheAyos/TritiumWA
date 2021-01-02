@@ -1,3 +1,6 @@
+// Enables the use of the '@' shortcuts defined in package.json :D
+require("module-alias/register");
+
 const { create } = require("@open-wa/wa-automate");
 const Enmap = require("enmap");
 
@@ -16,20 +19,23 @@ const Enmap = require("enmap");
 
 // TODO: ++IDEA: high xp ppl have a boost every week they can spend for someone that uses the bot !!
 
-async function start(Tritium) {
+function start(Tritium) {
   Tritium.utils = require("./utils/utils");
   Tritium.config = require("./config.json");
   Tritium.prefix = Tritium.config.default_prefix;
 
   Tritium.aliases = new Enmap();
   Tritium.commands = new Enmap();
-  Tritium.settings = new Enmap({ name: "settings" });
+  //Tritium.settings = new Enmap({ name: "settings" });
 
+  //Tritium.hostNumber = await Tritium.getHostNumber();
   require("./utils/functions")(Tritium);
   require("./handlers/CommandLoader")(Tritium);
   require("./handlers/EventLoader")(Tritium);
 
-  console.log("\n💥TRITIUM Started 🔥⚡\n");
+  Tritium.logger.info("💥TRITIUM Started 🔥⚡");
+  Tritium.logger.warn("💥TRITIUM Started 🔥⚡");
+  Tritium.logger.error("💥TRITIUM Started 🔥⚡");
 
   /*console.log("\x1b[1m\x1b[31m\x1b[40m");console.log("\x1b[0m");*/
 }

@@ -1,56 +1,23 @@
-module.exports = {
-  triggers: ["fisheye", "fish-eye", "explode"],
-  usage: "{command} (with quoted image)\n" + "{command} (with quoted image) <intensity>",
-  example: "{command} (with quoted image)\n" + "{command} (with quoted image) 5",
-  description: "Gotta make that image THICC. _(default intensity is 50)_",
+const TritiumCommand = require("@models/TritiumCommand");
+const { decryptMedia } = require("@open-wa/wa-decrypt");
+const { loadImage, createCanvas } = require("canvas");
 
-  groupOnly: false,
-  isNSFW: false,
-  cooldown: 10,
-  needArgs: false,
-
-  args: [
-    {
-      optional: true,
-      key: "intensity",
-      prompt: "How strong do you want the distorsion effect to be?",
-      type: "number",
-    },
-    {
-      optional: false,
-      key: "image",
-      prompt: "The image you want to apply the effect on.",
-      type: "image", // could be a quoted image or a captionned image
-    },
-    {
-      key: "image",
-      prompt: "How strong do you want the distorsion effect to be?",
-      type: "image",
-    },
-  ],
-
-  run: async function ({ Tritium, message, args }) {
-    const { decryptMedia } = require("@open-wa/wa-decrypt");
-    const { loadImage, createCanvas } = require("canvas");
-    const isQuotedImage = message.quotedMsg && message.quotedMsg.type === "image";
+module.exports = new TritiumCommand(
+  async function ({ Tritium, msg, args }) {
+    const isQuotedImage = msg.quotedMsg && msg.quotedMsg.type === "image";
 
     try {
       let intensity = 50;
 
-      if ((message.isMedia || isQuotedImage) && args.length <= 1) {
+      if ((msg.isMedia || isQuotedImage) && args.length <= 1) {
         if (args.length === 1 && (isNaN(args[0]) || args[0] < -1000 || args[0] > 1000)) {
-          return Tritium.reply(
-            message.from,
-            "*Argument must be a number between 0 and ±1000 😑*",
-            message.id,
-          );
+          return Tritium.reply(msg.from, "*Argument must be a number between 0 and ±1000 😑*", msg.id);
         } else if (args.length === 1) {
           intensity = +args[0]; // to int
         }
 
-        Tritium.simulateTyping(message.from, true);
-        const encryptMedia = isQuotedImage ? message.quotedMsg : message;
-        const _mimetype = isQuotedImage ? message.quotedMsg.mimetype : message.mimetype;
+        const encryptMedia = isQuotedImage ? msg.quotedMsg : msg;
+        const _mimetype = isQuotedImage ? msg.quotedMsg.mimetype : msg.mimetype;
         const mediaData = await decryptMedia(encryptMedia);
 
         const data = await loadImage(`data:${_mimetype};base64,${mediaData.toString("base64")}`);
@@ -60,27 +27,34 @@ module.exports = {
         await ctx.drawImage(data, 0, 0);
         await fishEye(ctx, intensity, 0, 0, data.width, data.height);
         const processedImage = canvas.toBuffer();
-        Tritium.simulateTyping(message.from, false);
         if (Buffer.byteLength(processedImage) > 8e6)
-          return Tritium.reply(message.from, "The file is way too big for me to upload it.", message.id);
+          return Tritium.reply(msg.from, "The file is way too big for me to upload it.", msg.id);
 
         Tritium.sendImage(
-          message.from,
+          msg.from,
           `data:${_mimetype};base64,${processedImage.toString("base64")}`,
           "fisheye.png",
           "",
-          message.id,
+          msg.id,
         );
       } else {
-        Tritium.helpThisPoorMan(message, this);
-        //return Tritium.reply(message.from, 'Send or quote an image !', message.id);
+        return Tritium.reply(msg.from, `${msg.sender.pushname} send or quote an image, idiot !`, msg.id);
+        Tritium.helpThisPoorMan(msg, this);
       }
     } catch (error) {
-      Tritium.simulateTyping(message.from, false);
       console.log(error);
     }
   },
-};
+  {
+    triggers: ["fisheye", "fish-eye", "explode"],
+    usage: ["{command} (with quoted image)", "{command} (with quoted image) <intensity>"],
+    example: ["{command} (with quoted image)", "{command} (with quoted image) 5"],
+    description: "Gotta make that image THICC. _(default intensity is 50)_",
+
+    cooldown: 10,
+  },
+);
+
 async function fishEye(ctx, intensity, x, y, width, height) {
   const frame = ctx.getImageData(x, y, width, height);
 

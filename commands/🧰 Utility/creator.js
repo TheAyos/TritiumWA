@@ -1,17 +1,10 @@
-module.exports = {
+const TritiumCommand = require("@models/TritiumCommand");
+module.exports = new TritiumCommand(
+  async ({ Tritium, msg }) => {
+    await Tritium.sendContact(msg.from, Tritium.config.youb_id);
+  },
+  {
     triggers: ["creator", "author", "owner", "developer"],
-    usage: "{command} <noting>",
-    example: "{command}",
-    description: "Send youbyoub's contact info.",
-
-    isNSFW: false,
-    needArgs: false,
-    cooldown: 3,
-    run: async function ({ Tritium, message }) {
-        try {
-            await Tritium.sendContact(message.from, Tritium.config.youb_id);
-        } catch (error) {
-            console.log(error);
-        }
-    },
-};
+    description: "Send youbyoub's (my papa !) contact info.",
+  },
+);
