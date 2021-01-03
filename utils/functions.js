@@ -61,7 +61,7 @@ module.exports = async (Tritium) => {
   process.on("uncaughtException", (error) => {
     const cleanErrorMsg = error.stack.replace(new RegExp(`${Tritium.rootPath}/`, "g"), "./");
     Tritium.logger.error(`Uncaught Exception: ${cleanErrorMsg}`);
-    process.exit(1);
+    //process.exit(1);
   });
 
   process.on("unhandledRejection", (reason, promise) => {

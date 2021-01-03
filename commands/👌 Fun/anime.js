@@ -44,5 +44,6 @@ module.exports = new TritiumCommand(
 
     cooldown: 10,
     minArgs: 1,
+    missingArgs: "and what should i search for, Baka ?",
   },
 );

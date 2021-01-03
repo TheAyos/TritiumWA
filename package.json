@@ -24,16 +24,21 @@
     "cheerio": "^1.0.0-rc.5",
     "enmap": "^5.8.2",
     "eslint": "^7.16.0",
+    "gif-frames": "^1.0.1",
     "gm": "^1.23.1",
+    "image-size": "^0.9.3",
+    "jimp": "^0.16.1",
     "lodash.clonedeep": "^4.5.0",
     "module-alias": "^2.2.2",
     "moment-timezone": "^0.5.32",
+    "node-cmd": "^4.0.0",
     "node-fetch": "^2.6.1",
     "node-gtts": "^2.0.2",
+    "node-run-cmd": "^1.0.1",
     "public-waifulist": "0.0.2",
     "weather-js": "^2.0.0",
     "winston": "^3.3.3",
-    "ytdl-core": "^4.2.1"
+    "ytdl-core": "^4.3.1"
   },
   "keywords": [
     "fun",
