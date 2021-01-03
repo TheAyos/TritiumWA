@@ -5,7 +5,7 @@ module.exports = new TritiumCommand(
     const ytdl = require("ytdl-core");
     const WMStrm = Tritium.utils.WMStrm;
 
-    let isLink = args[0].match(
+    const isLink = args[0].match(
       /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/,
     );
 
@@ -52,8 +52,8 @@ module.exports = new TritiumCommand(
         wstream.end();
       });
     } catch (error) {
-      Tritium.reply(msg.from, "*Erreur!* Le lien n'est sûrement pas valide !", msg.id);
-      console.log(Tritium.utils.moment().format("H:mm:ss") + " *Erreur!* ytmp3 --> " + error);
+      Tritium.reply(msg.from, "*Error!* That *_cursed_* link is probably not valid !", msg.id);
+      Tritium.logger.error("ytmp3 --> " + error);
     }
   },
   {
