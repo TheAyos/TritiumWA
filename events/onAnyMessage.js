@@ -40,7 +40,7 @@ module.exports = async (Tritium, msg) => {
     // * Helpa functions :D * //
 
     // *** Prefix+ ***
-    let prefix = Tritium.config.default_prefix;
+    let prefix = Tritium.config.defaults.prefix;
     if (msg.isGroupMsg) prefix = await Tritium.db.Settings.getPrefix(msg.groupId);
     // *** Prefix ***
 
@@ -136,22 +136,14 @@ module.exports = async (Tritium, msg) => {
       const lastUpdated = await Tritium.db.Limit.getLastUpdated(msg.sender.id);
       let limit = await Tritium.db.Limit.getLimit(msg.sender.id);
 
-      const today = new Date();
-      const midnight = new Date();
-      // Get next day time
-      midnight.setDate(today.getDate() + 1);
-      midnight.setHours(0);
-      midnight.setMinutes(0);
+      const midnight = new Date(new Date().setHours(24, 0, 0, 0));
 
-      // a day in ms : 86400000
-      console.log(today.getTime(), "now time");
       console.log(midnight.getTime(), "midnight");
       console.log(lastUpdated, "lastupdated");
-      console.log("isNewDay?", midnight.getTime() - lastUpdated < 0);
+      console.log("should reset quota ?", midnight - lastUpdated > 86400000);
 
-      // If lastupdated was the day before
-      const isNewDay = Boolean(midnight.getTime() - lastUpdated < 0);
-      if (isNewDay) {
+      // A day in ms : 86400000 (60*60*24*1000)
+      if (midnight - lastUpdated > 86400000) {
         const updatedUser = await Tritium.db.Limit.setLimit(msg.sender.id, dailyQuota);
         limit = updatedUser.limit;
       }
