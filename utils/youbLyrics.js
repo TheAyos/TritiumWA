@@ -1,4 +1,4 @@
-/*(async () => {
+/* (async () => {
   let tt = await getLyrics("34+35");
   console.log(tt);
 })();*/
@@ -9,21 +9,21 @@
 async function getLyrics(query) {
   const cheerio = require("cheerio");
 
-  let url = `https://search.azlyrics.com/search.php?q=${query.split(/ +/g).join("+")}`;
+  const url = `https://search.azlyrics.com/search.php?q=${query.split(/ +/g).join("+")}`;
   console.log(url);
-  let response = await getUrl(url);
+  const response = await getUrl(url);
   let $ = cheerio.load(response.data);
-  let links = $("td[class='text-left visitedlyr']").find("a");
+  const links = $("td[class='text-left visitedlyr']").find("a");
   if (!links.length) return;
-  let link = links.get(0).attribs.href;
+  const link = links.get(0).attribs.href;
 
   console.log(link);
 
-  let lyricPage = await getUrl(link);
+  const lyricPage = await getUrl(link);
   $ = cheerio.load(lyricPage.data);
-  let lyricDivs = $('div[class="col-xs-12 col-lg-8 text-center"]').find("div");
+  const lyricDivs = $('div[class="col-xs-12 col-lg-8 text-center"]').find("div");
 
-  let lyricss = [];
+  const lyricss = [];
   lyricDivs.each((i, e) => {
     if (!$(e).attr("class")) lyricss.push($(e).text());
   });

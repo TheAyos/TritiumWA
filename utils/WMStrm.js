@@ -1,8 +1,8 @@
 // mostly based on this incredible code from http://codewinds.com/blog/2013-08-19-nodejs-writable-streams.html#storing_data_with_writable_streams
 
-var util = require("util");
-var Writable = require("stream").Writable;
-var memStore = {};
+const util = require("util");
+const Writable = require("stream").Writable;
+const memStore = {};
 
 /* Writable memory stream */
 function WMStrm(key, options) {
@@ -18,7 +18,7 @@ util.inherits(WMStrm, Writable);
 
 WMStrm.prototype._write = function (chunk, enc, cb) {
   // our memory store stores things in buffers
-  var buffer = Buffer.isBuffer(chunk)
+  const buffer = Buffer.isBuffer(chunk)
     ? chunk // already is Buffer use it
     : Buffer.from(chunk, enc); // string, convert
 

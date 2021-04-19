@@ -116,7 +116,7 @@ module.exports = async (client, msg) => {
 
         if (now < expirationTime) {
           const timeLeft = ((expirationTime - now) / 1000).toFixed(1);
-          let msgId = await client.sendText(
+          const msgId = await client.sendText(
             msg.from,
             `You need to wait ${timeLeft}s before reusing \`${command.name}\` 😃`,
             true,

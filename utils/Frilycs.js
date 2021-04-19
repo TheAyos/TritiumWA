@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const uaOverride = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4298.0 Safari/537.36"; /*prettier-ignore*/
+const uaOverride = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4298.0 Safari/537.36"; /* prettier-ignore*/
 
 async function Frilycs(query) {
   const browser = await puppeteer.launch({
@@ -18,7 +18,7 @@ async function Frilycs(query) {
 
   page.on("request", (request) => handleBlockedRequests(request));
 
-  let genius = `https://genius.com/search?q=${encodeURIComponent(query)}`;
+  const genius = `https://genius.com/search?q=${encodeURIComponent(query)}`;
 
   console.log(genius);
 
@@ -26,12 +26,12 @@ async function Frilycs(query) {
 
   console.log("Searching for songs...");
 
-  let searchResults = await page.evaluate(() => {
-    let result = [...document.querySelectorAll("div")]
+  const searchResults = await page.evaluate(() => {
+    const result = [...document.querySelectorAll("div")]
       .find((el) => el.textContent === "Songs")
       .parentNode.querySelectorAll("mini-song-card");
 
-    let songs = [];
+    const songs = [];
     for (let i = 0; i < result.length; i++) {
       songs.push(result[i].childNodes[0].href);
     }
@@ -55,11 +55,11 @@ async function Frilycs(query) {
 
   console.log(`Using ${(await page.$$("lyrics > div > div > section > p")) ? "2nd" : "1st"} method`);
 
-  //await autoScroll(page);
+  // await autoScroll(page);
 
-  let lyrics = await page.evaluate(() => {
+  const lyrics = await page.evaluate(() => {
     let lys;
-    let lyricEl = [...document.querySelectorAll("div")].find((el) => el.className.startsWith("Ly"));
+    const lyricEl = [...document.querySelectorAll("div")].find((el) => el.className.startsWith("Ly"));
 
     if (lyricEl) {
       for (e of [...document.querySelectorAll("div")]
@@ -78,11 +78,11 @@ async function Frilycs(query) {
       .trim();
   });
 
-  let meta = await page.evaluate(() => {
-    let meta = {};
+  const meta = await page.evaluate(() => {
+    const meta = {};
 
-    let coverEl = [...document.querySelectorAll("div")].find((el) => el.className.startsWith("SizedImage"));
-    let coverElFallback = document.querySelector("img.cover_art-image");
+    const coverEl = [...document.querySelectorAll("div")].find((el) => el.className.startsWith("SizedImage"));
+    const coverElFallback = document.querySelector("img.cover_art-image");
     meta.coverImg = coverEl
       ? coverEl.innerHTML.replaceAll(/<[\/]?noscript>+/g, "").match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0]
       : coverElFallback
@@ -90,22 +90,22 @@ async function Frilycs(query) {
       : "";
     if (meta.coverImg.indexOf('"') > -1) meta.coverImg = meta.coverImg.slice(1, -1);
 
-    let aboutEl = document.querySelector("#about")
+    const aboutEl = document.querySelector("#about")
       ? [...document.querySelector("#about").parentNode.querySelectorAll("div")].find((el) =>
           el.className.startsWith("RichText"),
         )
       : "";
-    let aboutElFallback = document.querySelector("description-referent")
+    const aboutElFallback = document.querySelector("description-referent")
       ? [...document.querySelector("description-referent").querySelectorAll("div")].find(
           (el) => !el.className.includes("annotation"),
         )
       : "";
     meta.about = aboutEl ? aboutEl.innerText : aboutElFallback ? aboutElFallback.innerText : "";
 
-    let albumEl = [...document.querySelectorAll("div")].find((e) =>
+    const albumEl = [...document.querySelectorAll("div")].find((e) =>
       e.className.includes("HeaderTracklist__Album"),
     );
-    let albumElFallback = [...document.querySelectorAll("a")].find(
+    const albumElFallback = [...document.querySelectorAll("a")].find(
       (e) => e.getAttribute("ng-bind") === "album.name",
     );
     meta.albumName = albumEl
@@ -117,16 +117,16 @@ async function Frilycs(query) {
     return meta;
   });
 
-  let titleMeta = (await page.title()).split("Lyrics")[0].trim().split(" – ");
-  let metadata = { artist: titleMeta[0], song: titleMeta[1], link: searchResults[0], lyrics: lyrics };
+  const titleMeta = (await page.title()).split("Lyrics")[0].trim().split(" – ");
+  const metadata = { artist: titleMeta[0], song: titleMeta[1], link: searchResults[0], lyrics: lyrics };
 
   metadata.coverArtImgUrl = meta.coverImg;
   metadata.about = meta.about;
   metadata.album = meta.albumName;
 
-  //console.log(metadata);
+  // console.log(metadata);
 
-  //await new Promise((resolve) => setTimeout(resolve, 1e3 * 60 * 10));
+  // await new Promise((resolve) => setTimeout(resolve, 1e3 * 60 * 10));
 
   await page.close();
   await browser.close();
@@ -136,14 +136,14 @@ async function Frilycs(query) {
 
 module.exports = Frilycs;
 
-//const browser = await puppeteer.connect({ browserWSEndpoint: "ws://0.0.0.0:8080" });
-//await browser.disconnect();
+// const browser = await puppeteer.connect({ browserWSEndpoint: "ws://0.0.0.0:8080" });
+// await browser.disconnect();
 
 function handleBlockedRequests(req) {
   const resType = req.resourceType();
   const resUrl = req.url();
-  let blockedResTypes = ["font", "image", "stylessheet"];
-  let blockedDomains = [
+  const blockedResTypes = ["font", "image", "stylessheet"];
+  const blockedDomains = [
     "adsystem",
     "pubmatic",
     "taboola",
@@ -182,7 +182,7 @@ async function autoScroll(page) {
   await page.evaluate(
     () =>
       new Promise((resolve) => {
-        var scrollTop = -1;
+        let scrollTop = -1;
         const interval = setInterval(() => {
           window.scrollBy(0, 100);
           if (document.documentElement.scrollTop !== scrollTop) {

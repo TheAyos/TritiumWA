@@ -50,9 +50,9 @@ async function addMetadata(file, packname, author) {
 
   const buffer = Buffer.concat([littleEndian, buf2, buf3, buf4]);
 
-  let name = Math.random().toString(36).substring(7);
+  const name = Math.random().toString(36).substring(7);
 
-  let tempFile = `./temp/sticker/${name}.exif`;
+  const tempFile = `./temp/sticker/${name}.exif`;
 
   const { writeFileSync, unlinkSync } = require("fs");
   const { execSync } = require("child_process");
@@ -61,7 +61,7 @@ async function addMetadata(file, packname, author) {
   execSync(`webpmux -set exif ${tempFile} ${file} -o ${file}`);
 
   try {
-    //console.log(`Cleaning ${tempFile}...`);
+    // console.log(`Cleaning ${tempFile}...`);
     unlinkSync(`${tempFile}`);
   } catch (e) {
     console.log("StickerMeta: Unable to clean temp file:\n" + e);

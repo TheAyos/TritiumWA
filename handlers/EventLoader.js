@@ -7,11 +7,11 @@ module.exports = function (client) {
   for (const eventFile of eventFiles) {
     console.log(`│ ✨ Loading event from file ${eventFile}..`);
     try {
-      let event = require(client.fromRootPath("events", eventFile));
-      let eventName = eventFile.split(".").shift();
+      const event = require(client.fromRootPath("events", eventFile));
+      const eventName = eventFile.split(".").shift();
       // pass the client
       client[eventName](event.bind(this, client));
-      //client[eventName](event);
+      // client[eventName](event);
     } catch (error) {
       console.error(`Failed to register event from file ${eventFile}: ${error}`);
     }

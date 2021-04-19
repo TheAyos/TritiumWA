@@ -24,7 +24,7 @@ class Limit {
    * @param {string} [userId] - User id.
    * @returns {object} - Returns the fetched user object from database if it exists.
    */
-  //TODO: if user not existent, create here
+  // TODO: if user not existent, create here
   static async getUser(userId) {
     const user = await limits.findOne({
       _id: userId,

@@ -107,11 +107,11 @@ class Experience {
       if (!(now - lastUpdated > cooldown)) return false;
     }
 
-    //console.log("appendXP before update: ", user);
+    // console.log("appendXP before update: ", user);
     user.xp += parseInt(xp, 10);
     user.level = Math.floor(0.1 * Math.sqrt(user.xp));
     user.lastUpdated = Date.now();
-    //console.log("appendXP after update: ", user);
+    // console.log("appendXP after update: ", user);
     await user.save().catch((e) => console.log(`Failed to append xp: ${e}`));
     return Math.floor(0.1 * Math.sqrt((user.xp -= xp))) < user.level;
   }
@@ -261,9 +261,9 @@ class Experience {
 
   static async fetchLeaderboard(groupId, limit) {
     if (!groupId) throw new TypeError("No group id provided.");
-    //if (!limit) throw new TypeError("A limit was not provided.");
+    // if (!limit) throw new TypeError("A limit was not provided.");
 
-    var users = await levels
+    const users = await levels
       .find({ groupID: groupId })
       .sort([["xp", "descending"]])
       .exec();

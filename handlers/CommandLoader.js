@@ -6,12 +6,12 @@ module.exports = function (client) {
   console.log(`\nFound total ${categories.length} categories.`);
 
   for (const category of categories) {
-    let categoryPath = client.fromRootPath("commands", category);
-    let filesInCategory = readdirSync(categoryPath).filter((file) => file.endsWith(".js"));
+    const categoryPath = client.fromRootPath("commands", category);
+    const filesInCategory = readdirSync(categoryPath).filter((file) => file.endsWith(".js"));
     console.log(`\n┌ Found total ${filesInCategory.length} command(s) from ${category}`);
 
     for (const file of filesInCategory) {
-      let commandPath = categoryPath + "/" + file;
+      const commandPath = categoryPath + "/" + file;
       console.log(`│ ☄️ Loading command from file ${file}..`);
       try {
         loadCommand(client, commandPath, category);
