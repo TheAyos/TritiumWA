@@ -3,7 +3,7 @@ const Settings = require("../../utils/Settings");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, args }) {
-    let currentNsfw = await Settings.getNsfw(msg.groupId);
+    const currentNsfw = await Settings.getNsfw(msg.groupId);
     if (!args.length)
       return Tritium.reply(
         msg.from,
@@ -11,7 +11,7 @@ module.exports = new TritiumCommand(
         msg.id,
       );
 
-    let isAdmin =
+    const isAdmin =
       msg.chat.groupMetadata.participants.find((c) => c.id === msg.sender.id && c.isAdmin) ||
       msg.sender.id === Tritium.config.youb_id;
     if (!isAdmin) return Tritium.reply(msg.from, "You need to be administrator to do this.", msg.id);

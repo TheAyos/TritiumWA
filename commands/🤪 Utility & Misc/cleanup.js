@@ -9,8 +9,8 @@ module.exports = new TritiumCommand(
         leftGroups = 0;
 
       console.log(allChats);
-      for (let id of allChats) {
-        let chat = await Tritium.getChatById(id);
+      for (const id of allChats) {
+        const chat = await Tritium.getChatById(id);
         if (chat.isReadOnly) {
           await Tritium.deleteChat(id);
           deletedReadOnly++;
@@ -19,7 +19,7 @@ module.exports = new TritiumCommand(
           deletedIndividual++;
         } else if (chat.isGroup && !id.startsWith(Tritium.config.youb_id.split("@")[0])) {
           // if its a group and its not created by me
-          let groupMemCount = chat.groupMetadata.participants.length - 1;
+          const groupMemCount = chat.groupMetadata.participants.length - 1;
           if (chat.groupMetadata && groupMemCount <= 15 && groupMemCount > 0) {
             Promise.all([
               Tritium.sendText(
@@ -38,7 +38,7 @@ module.exports = new TritiumCommand(
         }
       }
 
-      let total = deletedReadOnly + deletedIndividual + leftGroups;
+      const total = deletedReadOnly + deletedIndividual + leftGroups;
       await Tritium.reply(
         msg.from,
         `*Cleanup Success ! _Deleted ${total} chats._*\n` +

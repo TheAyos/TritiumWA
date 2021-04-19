@@ -7,8 +7,8 @@ const { URL, URLSearchParams } = require("url");
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, args }) {
     try {
-      let username = args[0];
-      let url = new URL("https://feelinsonice.appspot.com/web/deeplink/snapcode");
+      const username = args[0];
+      const url = new URL("https://feelinsonice.appspot.com/web/deeplink/snapcode");
       url.search = new URLSearchParams({
         username,
         type: "PNG",

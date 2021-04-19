@@ -2,11 +2,11 @@ const TritiumCommand = require("../../models/TritiumCommand");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, args, cleanArgs }) {
-    let groupsOnly = args[0] === "groups" ? true : false;
+    const groupsOnly = args[0] === "groups" ? true : false;
     try {
       const allChats = await Tritium.getAllChatIds();
-      for (let id of allChats) {
-        let chat = await Tritium.getChatById(id);
+      for (const id of allChats) {
+        const chat = await Tritium.getChatById(id);
         if (!chat.isGroup && groupsOnly) return;
         if (chat.isReadOnly) console.log("that A READONLY CHAT -> ", chat.name);
 

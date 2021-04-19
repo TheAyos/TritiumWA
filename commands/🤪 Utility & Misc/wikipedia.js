@@ -7,7 +7,7 @@ const { URL, URLSearchParams } = require("url");
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, cleanArgs }) {
     try {
-      let url = new URL("https://en.wikipedia.org/w/api.php");
+      const url = new URL("https://en.wikipedia.org/w/api.php");
       url.search = new URLSearchParams({
         action: "query",
         prop: "extracts|pageimages",
@@ -24,10 +24,10 @@ module.exports = new TritiumCommand(
       const body = await res.json();
       const data = body.query.pages[0];
       if (data.missing) return Tritium.reply(msg.from, "Could not find any results.", msg.id);
-      /*.setDescription(shorten(data.extract.replaceAll("\n", "\n\n")));*/
-      let thumbnail = data.thumbnail ? data.thumbnail.source : "https://i.imgur.com/Z7NJBK2.png";
+      /* .setDescription(shorten(data.extract.replaceAll("\n", "\n\n")));*/
+      const thumbnail = data.thumbnail ? data.thumbnail.source : "https://i.imgur.com/Z7NJBK2.png";
 
-      let caption =
+      const caption =
         `*Wikipedia Query | _${data.title}_*\n` +
         `${data.extract.replace(/\n/g, "\n\n").trim()}\n\n` +
         `🌍 *URL:* https://en.wikipedia.org/wiki/${encodeURIComponent(cleanArgs).replace(/\)/g, "%29")}`;

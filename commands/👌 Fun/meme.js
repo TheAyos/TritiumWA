@@ -9,8 +9,8 @@ module.exports = new TritiumCommand(
     if (args.length === 1) query = args.pop();
     else if (args.length > 1) return Tritium.helpThisPoorMan(msg, this);
 
-    let url = "http://meme-api.herokuapp.com/gimme/" + query;
-    let settings = { method: "Get" };
+    const url = "http://meme-api.herokuapp.com/gimme/" + query;
+    const settings = { method: "Get" };
 
     fetch(url, settings)
       .then((res) => res.json())

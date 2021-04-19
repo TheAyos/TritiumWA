@@ -7,7 +7,7 @@ module.exports = new TritiumCommand(
     const query = cleanArgs;
     console.log("[Command request] (anime) " + query);
 
-    let url = `${jikan}search/anime?q=${query}&limit=1`,
+    const url = `${jikan}search/anime?q=${query}&limit=1`,
       settings = { method: "Get" };
 
     fetch(url, settings)
@@ -17,9 +17,9 @@ module.exports = new TritiumCommand(
         if (!body.results) {
           return Tritium.reply(msg.from, `*Anime not found 😿!*`, msg.id);
         }
-        let result = body.results[0];
+        const result = body.results[0];
         if (result.episodes === 0) result.episodes = "Unknown";
-        let caption =
+        const caption =
           "*_Anime found !_*\n\n" +
           `*✨ Title : ${result.title}*\n\n` +
           `*_⚜️ Type :_* ${result.type}\n` +

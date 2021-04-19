@@ -5,19 +5,19 @@ const fetch = require("node-fetch");
 module.exports = new TritiumCommand(
   async ({ Tritium, msg, args, cleanArgs }) => {
     let text;
-    let target = args[0];
+    const target = args[0];
 
-    /*let text = msg.type === "chat" && body.startsWith(prefix)
+    /* let text = msg.type === "chat" && body.startsWith(prefix)
     ? body
     : msg.type === "image" || msg.type === "video"
     ? msg.caption*/
 
-    //if (!msg.quotedMsg && !args.length > 0) return Tritium.helpThisPoorMan(msg, this);
+    // if (!msg.quotedMsg && !args.length > 0) return Tritium.helpThisPoorMan(msg, this);
 
-    //.trad fr text
+    // .trad fr text
     if (args.length > 1) {
       args.shift();
-      //if (!args.length) return Tritium.reply(msg.from, "You didn't give any text !", msg.id);
+      // if (!args.length) return Tritium.reply(msg.from, "You didn't give any text !", msg.id);
       text = args.join(" ");
     } else if (args.length === 1 && msg.quotedMsg) {
       text =
@@ -27,13 +27,13 @@ module.exports = new TritiumCommand(
           ? msg.quotedMsgObj.caption
           : "";
 
-      //text = msg.quotedMsg.body ?? msg.quotedMsgObj.caption;
+      // text = msg.quotedMsg.body ?? msg.quotedMsgObj.caption;
       if (!text) return Tritium.reply(msg.from, "Quoted message has no text !", msg.id);
     } else {
       return Tritium.helpThisPoorMan(msg, this.name);
     }
 
-    let translatedText = await Trenatlas(text, target);
+    const translatedText = await Trenatlas(text, target);
 
     console.log("TRAD => ", target, text);
     console.log("TRAD => ", target, translatedText);
@@ -57,12 +57,12 @@ async function Trenatlas(sourceText, target = "en", source = "auto") {
   if (!target || !target.length) target = "en";
   if (!source || !source.length) source = "auto";
 
-  let text = sourceText.replace(/\*/g, "").replace(/\_/g, "").replace(/\`/g, "");
-  let url =
+  const text = sourceText.replace(/\*/g, "").replace(/\_/g, "").replace(/\`/g, "");
+  const url =
     `https://script.google.com/macros/s/AKfycbwzT4rDHQrzxjbuPQHIfDrc4EKdhSV5OUkBSZI9BFGTG2Qsusggm-KQ/exec?q=` +
     `${encodeURIComponent(text)}&source=${source}&target=${target}`;
   do {
-    let res = await fetch(url, { method: "Get" });
+    const res = await fetch(url, { method: "Get" });
     var result = await res.json().catch((e) => {
       result = undefined;
       if (!e.message.includes("json")) console.error(e.message);

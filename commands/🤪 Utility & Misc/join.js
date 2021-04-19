@@ -18,7 +18,7 @@ module.exports = new TritiumCommand(
     if (grpInfo.size < 5) return Tritium.reply(msg.from, "The group does not have 5+ members", msg.id);
 
     let newGroup = false;
-    let t = await Tritium.getGroupInfo(grpInfo.id).catch((e) => (newGroup = true));
+    const t = await Tritium.getGroupInfo(grpInfo.id).catch((e) => (newGroup = true));
 
     console.log(t);
     if (newGroup) {

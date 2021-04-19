@@ -7,7 +7,7 @@ module.exports = new TritiumCommand(
     const query = cleanArgs;
     console.log("[Command request] (manga) " + query);
 
-    let url = `${jikan}search/manga?q=${query}&limit=1`,
+    const url = `${jikan}search/manga?q=${query}&limit=1`,
       settings = { method: "Get" };
 
     fetch(url, settings)
@@ -17,9 +17,9 @@ module.exports = new TritiumCommand(
         if (!body.results) {
           return Tritium.reply(msg.from, `*Manga not found 😿!*`, msg.id);
         }
-        let result = body.results[0];
+        const result = body.results[0];
         if (result.volumes === 0) result.volumes = "Unknown";
-        let caption =
+        const caption =
           "*_Manga found !_*\n\n" +
           `*✨ Title : ${result.title}*\n\n` +
           `*_⚜️ Publishing :_* ${result.publishing ? "Yes !" : "No :/"}\n` +

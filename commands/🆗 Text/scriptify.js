@@ -15,7 +15,7 @@ module.exports = new TritiumCommand(
 );
 
 function scriptify(text) {
-  let map = {
+  const map = {
     0: "𝟢",
     1: "𝟣",
     2: "𝟤",

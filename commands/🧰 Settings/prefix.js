@@ -3,15 +3,15 @@ const Settings = require("../../utils/Settings");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, args }) {
-    let currentPrefix = await Settings.getPrefix(msg.groupId);
+    const currentPrefix = await Settings.getPrefix(msg.groupId);
     if (!args.length) return Tritium.reply(msg.from, `*📝 Current prefix: "${currentPrefix}"*`, msg.id);
 
-    let isAdmin =
+    const isAdmin =
       msg.chat.groupMetadata.participants.find((c) => c.id === msg.sender.id && c.isAdmin) ||
       msg.sender.id === Tritium.config.youb_id;
     if (!isAdmin) return Tritium.reply(msg.from, "You need to be administrator to do this.", msg.id);
 
-    let newPrefix = args[0];
+    const newPrefix = args[0];
 
     await Settings.setPrefix(msg.groupId, newPrefix).catch((e) => console.log(e));
 

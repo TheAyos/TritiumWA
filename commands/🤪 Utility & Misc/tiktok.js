@@ -4,15 +4,15 @@ const fetch = require("node-fetch");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, args }) {
-    let urlExp = new RegExp(
+    const urlExp = new RegExp(
       "(http(s)?://.)?(www.)?[-a-zA-Z0-9@:%._+~#=]{2,256}.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)",
       "g",
     );
-    let link = args[0];
+    const link = args[0];
     if (!link.match(urlExp) && !link.includes("tiktok.com"))
       return Tritium.reply(msg.from, "Doesn't seem like a valid URL. Try again !", msg.id);
 
-    /*tiktok(link)
+    /* tiktok(link)
       .then(async (videoMeta) => {
         videoMeta = videoMeta.collector[0];
         const filename = videoMeta.authorMeta.name + ".mp4";

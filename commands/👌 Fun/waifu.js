@@ -11,7 +11,7 @@ module.exports = new TritiumCommand(
       i++;
     } while (i < 3 && !waifu); // if failed, tries to refetch 3 times max
 
-    let caption =
+    const caption =
       `*➸ _Look at that!_*\n\n` +
       `💫 *${waifu.data.name}* from *_${waifu.data.series.name}_*\n\n` +
       `🔮 *Description:* ${waifu.data.description}`;
