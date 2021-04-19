@@ -3,11 +3,10 @@ const fetch = require("node-fetch");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, cleanArgs }) {
-    const { jikan } = Tritium.utils;
     const query = cleanArgs;
     console.log("[Command request] (anime) " + query);
 
-    const url = `${jikan}search/anime?q=${query}&limit=1`,
+    const url = `${Tritium.jikan}search/anime?q=${query}&limit=1`,
       settings = { method: "Get" };
 
     fetch(url, settings)

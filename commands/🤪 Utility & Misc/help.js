@@ -2,8 +2,7 @@ const TritiumCommand = require("../../models/TritiumCommand");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, args }) {
-    const settings = require("../../utils/Settings");
-    const prefix = msg.isGroupMsg ? await settings.getPrefix(msg.groupId) : Tritium.prefix;
+    const prefix = msg.isGroupMsg ? await Tritium.db.Settings.getPrefix(msg.groupId) : Tritium.prefix;
 
     if (!args.length) {
       const categories = {};

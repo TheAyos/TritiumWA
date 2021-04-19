@@ -29,6 +29,7 @@ function loadCommand(client, commandPath, category) {
   const commandName = command.props.triggers[0];
   command.name = commandName;
   command.category = category;
-  client.commands.set(commandName, command);
-  command.props.triggers.forEach((alias) => alias != commandName && client.aliases.set(alias, commandName));
+  client.commands.push(command);
+  // client.commands.set(commandName, command);
+  // command.props.triggers.forEach((alias) => alias != commandName && client.aliases.set(alias, commandName));
 }

@@ -23,7 +23,6 @@ module.exports = new TritiumCommand(
             `🦠 *Active Cases:* ${active.toLocaleString("en")}\n` +
             `🧫 *Total Cases:* ${cases.toLocaleString("en")}\n` +
             `☣️ *Total Deaths:* ${deaths.toLocaleString("en")}\n`;
-          console.log(caption);
         });
     } else {
       url = `https://disease.sh/v3/covid-19/countries/${encodeURIComponent(cleanArgs)}`;
@@ -44,7 +43,6 @@ module.exports = new TritiumCommand(
             `🦠 *Active Cases:* ${active.toLocaleString("en")}\n` +
             `🧫 *Total Cases:* ${cases.toLocaleString("en")}\n` +
             `☣️ *Total Deaths:* ${deaths.toLocaleString("en")}\n`;
-          console.log(caption);
         });
     }
     Tritium.reply(msg.from, caption, msg.id);
@@ -56,6 +54,6 @@ module.exports = new TritiumCommand(
     example: ["{command} south africa", "{command} USA"],
 
     cooldown: 10,
-    groupOnly: true
+    groupOnly: true,
   },
 );

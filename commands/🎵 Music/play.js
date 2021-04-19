@@ -1,5 +1,4 @@
 const TritiumCommand = require("../../models/TritiumCommand");
-const WMStrm = require("../../utils/WMStrm");
 
 const ytdl = require("ytdl-core");
 const ytsr = require("youtube-sr");
@@ -55,7 +54,7 @@ module.exports = new TritiumCommand(
 
     const name = Math.random().toString(36).substring(7);
 
-    const wstream = new WMStrm(name);
+    const wstream = new Tritium.WMStrm(name);
     const stream = await videoReadableStream.pipe(wstream);
 
     stream.on("finish", async function () {

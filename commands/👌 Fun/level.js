@@ -1,11 +1,10 @@
 const TritiumCommand = require("../../models/TritiumCommand");
-const Experience = require("../../utils/Experience");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg }) {
     const target = msg.mentionedJidList[0] || msg.sender.id;
 
-    const user = await Experience.fetch(target, msg.groupId, true);
+    const user = await Tritium.db.Experience.fetch(target, msg.groupId, true);
 
     if (!user) return Tritium.reply(msg.from, "Seems like the user didn't earn any xp yet 😑.", msg.id);
 

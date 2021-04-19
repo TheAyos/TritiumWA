@@ -1,25 +1,22 @@
 const TritiumCommand = require("../../models/TritiumCommand");
-const Experience = require("../../utils/Experience");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg }) {
     const target = msg.mentionedJidList[0] || msg.sender.id;
 
-    const leaderboard = await Experience.fetchLeaderboard(msg.groupId);
+    const leaderboard = await Tritium.db.Experience.fetchLeaderboard(msg.groupId);
 
     if (leaderboard.length < 1) return Tritium.reply(msg.from, "Nobody's in leaderboard yet.", msg.id);
 
-    let position = leaderboard.findIndex((i) => i.groupID === msg.groupId && i.userID === target) + 1;
-    let user = leaderboard[position - 1];
+    const position = leaderboard.findIndex((i) => i.groupID === msg.groupId && i.userID === target) + 1;
+    const user = leaderboard[position - 1];
 
     if (!user) return Tritium.reply(msg.from, "Seems like the user didn't earn any xp yet 😑.", msg.id);
 
-    let displayName;
+    const contact = await Tritium.getContact(target);
+    const displayName = contact.pushname || msg.sender.pushname;
 
-    let contact = await Tritium.getContact(target);
-    displayName = contact.pushname ?? msg.sender.pushname;
-
-    let lbcard =
+    const lbcard =
       `*${displayName}* is\n` +
       `🥇 *${position.toOrdinal()}* in *${msg.chat.name}*\n` +
       `✨ *Level: ${user.level}*\n` +
