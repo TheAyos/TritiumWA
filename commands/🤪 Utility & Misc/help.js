@@ -1,10 +1,14 @@
-const TritiumCommand = require("@models/TritiumCommand");
+const TritiumCommand = require("../../models/TritiumCommand");
 
 module.exports = new TritiumCommand(
-  async ({ Tritium, msg, args }) => {
+  async function ({ Tritium, msg, args }) {
+    const settings = require("../../utils/Settings");
+    const prefix = msg.isGroupMsg ? await settings.getPrefix(msg.groupId) : Tritium.prefix;
+
     if (!args.length) {
-      let categories = {};
+      const categories = {};
       let cmdCount = 0;
+
       Tritium.commands.forEach((cmd) => {
         cmdCount++;
         let category = categories[cmd.category];
@@ -14,36 +18,36 @@ module.exports = new TritiumCommand(
         category.push(cmd.props.triggers[0]);
       });
 
+      const catCount = Object.keys(categories).length;
+
       let commandNames = "";
-      commandNames = Object.keys(categories).map(
-        (category) => `\n*${category}*\n\`\`\`> ${categories[category].join(", ")}\`\`\``,
-      );
+      commandNames = Object.keys(categories)
+        .map((catItems) => `\n*${catItems}*\n\`\`\`> ${categories[catItems].join(", ")}\`\`\``)
+        .join("");
 
       let helpMessageFull =
         `*Bot Commands*\n\n` +
-        `The prefix of the bot on this server is *${Tritium.prefix}*\n` +
-        `*Example:* ${Tritium.prefix}help love\n` +
+        `The prefix of the bot on this group is *${prefix}*\n` +
+        `*Example:* ${prefix}help love\n` +
         `𝙍𝙚𝙢𝙞𝙣𝙙: 𝘋𝘰𝘯'𝘵 𝘶𝘴𝘦 [ ] 𝘰𝘳 <> 𝘪𝘯 𝘤𝘰𝘮𝘮𝘢𝘯𝘥𝘴.\n\n` +
-        `*A total of ${cmdCount} commands:*` +
+        `*A total of ${cmdCount} commands in ${catCount} categories:*` +
         `${commandNames}\n\n`;
 
-      helpMessageFull += `For more info use \`\`\`${Tritium.prefix}help <command>\`\`\``;
+      helpMessageFull += `For more info use \`\`\`${prefix}help <command>\`\`\``;
       helpMessageFull += `\n*🤖 Tritium • ${require("moment")().format("HH:mm")}* `;
       Tritium.reply(msg.from, helpMessageFull, msg.id);
     } else {
-      let cmd = Tritium.getCommand(args[0]) || Tritium.getCommand(args);
+      const cmd = Tritium.commands.find((c) => c.props.triggers.includes(args[0]));
       if (!cmd) return Tritium.reply(msg.from, "*That command doesn't exist 😲 !!!*", msg.id);
-
-      // TODO: custom prefix references
-      let gPrefix = Tritium.prefix;
-
-      Tritium.reply(msg.from, cmd.getHelpMsg(gPrefix), msg.id, true);
+      await Tritium.reply(msg.from, cmd.getHelpMsg(prefix), msg.id, true);
     }
   },
   {
     triggers: ["help", "commands", "cmds", "helpmestepbroimstuck"],
-    usage: ["{command}", "{command} <command>"], //TODO: category??
+    usage: ["{command}", "{command} <command>"],
     example: "{command} fisheye",
     description: "Shows a list of commands or specific information about a command.",
+
+    groupOnly: true,
   },
 );

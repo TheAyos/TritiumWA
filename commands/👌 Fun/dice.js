@@ -1,4 +1,4 @@
-const TritiumCommand = require("@models/TritiumCommand");
+const TritiumCommand = require("../../models/TritiumCommand");
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg }) {
     await Tritium.sendStickerfromUrl(
@@ -9,5 +9,6 @@ module.exports = new TritiumCommand(
   {
     triggers: ["dice", "roll"],
     description: "Rolls a dice.",
+    groupOnly: true,
   },
 );

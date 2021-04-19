@@ -1,6 +1,6 @@
-const TritiumCommand = require("@models/TritiumCommand");
+const TritiumCommand = require("../../models/TritiumCommand");
 module.exports = new TritiumCommand(
-  async ({ Tritium, msg }) => {
+  async function ({ Tritium, msg }) {
     await Tritium.sendText(
       msg.from,
       `Pong 🏓 !!\n\`\`\`Speed: ${Tritium.utils.processTime(msg.t, Tritium.utils.moment())} s\`\`\``,

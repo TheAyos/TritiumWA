@@ -17,6 +17,7 @@ module.exports = function (client) {
         loadCommand(client, commandPath, category);
       } catch (error) {
         console.error(`🔞 Failed to load command from file ${file}: ${error}`);
+        throw Error(error);
       }
     }
     console.log(`└ ✨`);
@@ -26,6 +27,7 @@ module.exports = function (client) {
 function loadCommand(client, commandPath, category) {
   const command = require(commandPath);
   const commandName = command.props.triggers[0];
+  command.name = commandName;
   command.category = category;
   client.commands.set(commandName, command);
   command.props.triggers.forEach((alias) => alias != commandName && client.aliases.set(alias, commandName));

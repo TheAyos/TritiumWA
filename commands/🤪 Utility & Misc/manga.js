@@ -1,8 +1,8 @@
-const TritiumCommand = require("@models/TritiumCommand");
+const TritiumCommand = require("../../models/TritiumCommand");
 const fetch = require("node-fetch");
 
 module.exports = new TritiumCommand(
-  async ({ Tritium, msg, cleanArgs }) => {
+  async function ({ Tritium, msg, cleanArgs }) {
     const { jikan } = Tritium.utils;
     const query = cleanArgs;
     console.log("[Command request] (manga) " + query);
@@ -44,6 +44,7 @@ module.exports = new TritiumCommand(
 
     cooldown: 10,
     minArgs: 1,
-    missingArgs: "and what should i search for, Baka ?",
+    missingArgs: "and what should i search for ?",
+    groupOnly: true,
   },
 );

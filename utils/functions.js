@@ -1,23 +1,24 @@
-const winston = require("winston");
-
-module.exports = async (Tritium) => {
+module.exports = (Tritium) => {
   Tritium.rootPath = require("path").resolve();
   Tritium.fromRootPath = (...pathS) => require("path").join(Tritium.rootPath, ...pathS);
+
   Tritium.getCommand = function (args) {
     return typeof args === "string"
       ? Tritium.commands.find((c) => c.props.triggers.includes(args))
       : args.props
-      ? Tritium.commands.find((c) => c.props.triggers.includes(args.props.triggers[0]))
+      ? Tritium.commands.find((c) => c.props.triggers.includes(args.name))
       : undefined;
   };
 
-  Tritium.getCmdAliases = function (args) {
-    const cmdTriggers = Tritium.getCommand(args).triggers;
-    return cmdTriggers.filter((alias) => alias != cmdTriggers[0]);
+  Map.prototype.find = function find(propOrFn) {
+    if (!propOrFn || typeof propOrFn !== "function") throw new Error("Error in args");
+    const func = propOrFn;
+    for (const [key, val] of this) if (func(val, key, this)) return val;
+    return null;
   };
 
   /**
-   * Returns a string with the number in its ordinal form
+   * @returns {String} Returns a string with the number in its ordinal form
    */
   Number.prototype.toOrdinal = function () {
     return this.toString().slice(-1) === "1"
@@ -43,25 +44,20 @@ module.exports = async (Tritium) => {
     return this.sort(() => Math.random() - 0.5);
   };
 
-  Tritium.logger = winston.createLogger({
-    transports: [new winston.transports.Console()],
-    format: winston.format.combine(
-      winston.format.timestamp({ format: "MM/DD/YYYY HH:mm:ss" }),
-      winston.format.printf((log) => `[${log.timestamp}] [${log.level.toUpperCase()}]: ${log.message}`),
-    ),
-  });
+  Tritium.logger = console.log;
 
   Tritium.helpThisPoorMan = (msg, cmd) =>
     Tritium.getCommand("help").run({
       Tritium,
       msg,
-      args: cmd ? Tritium.getCommand(cmd).triggers[0] : "",
+      args:
+        typeof cmd === "string" ? Tritium.getCommand(cmd).triggers[0] : cmd.triggers ? cmd.triggers[0] : "",
     });
 
   process.on("uncaughtException", (error) => {
     const cleanErrorMsg = error.stack.replace(new RegExp(`${Tritium.rootPath}/`, "g"), "./");
     Tritium.logger.error(`Uncaught Exception: ${cleanErrorMsg}`);
-    //process.exit(1);
+    // process.exit(1);
   });
 
   process.on("unhandledRejection", (reason, promise) => {

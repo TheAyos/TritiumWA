@@ -16,38 +16,36 @@
     "url": "git+https://github.com/TheAyos/Tritium-WA.git"
   },
   "dependencies": {
-    "@open-wa/wa-automate": "^3.1.12",
+    "@open-wa/wa-automate": "^3.4.0",
     "@open-wa/wa-decrypt": "^3.0.0",
     "@tohru/gm": "^1.3.1",
     "axios": "^0.21.1",
     "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.5",
-    "enmap": "^5.8.2",
-    "eslint": "^7.16.0",
     "gif-frames": "^1.0.1",
+    "gifencoder": "^2.0.1",
     "gm": "^1.23.1",
     "image-size": "^0.9.3",
     "jimp": "^0.16.1",
-    "lodash.clonedeep": "^4.5.0",
-    "module-alias": "^2.2.2",
-    "moment-timezone": "^0.5.32",
+    "moment": "^2.29.1",
+    "mongoose": "^5.11.15",
     "node-cmd": "^4.0.0",
     "node-fetch": "^2.6.1",
     "node-gtts": "^2.0.2",
     "node-run-cmd": "^1.0.1",
     "public-waifulist": "0.0.2",
+    "tiktok-scraper": "^1.4.12",
     "weather-js": "^2.0.0",
-    "winston": "^3.3.3",
-    "ytdl-core": "^4.3.1"
+    "youtube-sr": "^3.0.4",
+    "ytdl-core": "^4.4.5"
   },
   "keywords": [
     "fun",
     "whatsapp",
     "bot"
   ],
-  "_moduleAliases": {
-    "@root": ".",
-    "@models": "./models",
-    "@utils": "./utils"
+  "devDependencies": {
+    "fluent-ffmpeg": "^2.1.2",
+    "sharp": "^0.27.0"
   }
 }

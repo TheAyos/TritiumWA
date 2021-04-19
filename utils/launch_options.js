@@ -2,6 +2,8 @@
  * @param {boolean} headless Whether run in headless mode or not
  * @param {function} callback Callback function if client crashes
  */
+// process.arch
+// "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 module.exports = options = (headless, callback) => {
   const options = {
     sessionId: "tritiumCarteVitale",
@@ -9,10 +11,13 @@ module.exports = options = (headless, callback) => {
     autoRefresh: true,
     restartOnCrash: callback,
     cacheEnabled: false,
-    //executablePath: execPath,
-    //useChrome: true,
+    // executablePath: execPath,
+    useChrome: true,
     killProcessOnBrowserClose: true,
     throwErrorOnTosBlock: false,
+    customUserAgent:
+      "WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
+    logConsole: true,
     chromiumArgs: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -20,7 +25,8 @@ module.exports = options = (headless, callback) => {
       "--disable-cache",
       "--disable-application-cache",
       "--disable-offline-load-stale-cache",
-      "--disk-cache-size=0" /*,
+      "--disk-cache-size=0",
+      /* ,
             '--disable-breakpad',
             '--disable-component-update',
             '--disable-hang-monitor',
@@ -29,7 +35,7 @@ module.exports = options = (headless, callback) => {
             '--disable-metrics',
             '--disable-metrics-reporting',
             '--disable-dev-tools',
-            '--ssl-version-min=tl'*/,
+            '--ssl-version-min=tl'*/
     ],
   };
 
