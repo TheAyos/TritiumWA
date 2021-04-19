@@ -25,8 +25,8 @@
 > sudo apt-get install webp libwebp-dev
 > sudo add-apt-repository ppa:dhor/myway
 > sudo apt-get update
-> sudo apt-get install graphicsmagick
-> sudo apt-get install imagemagick
+> sudo apt-get install graphicsmagick imagemagick
+> sudo apt-get install ffmpeg
 ```
 
 ### Features / Built with focus around
