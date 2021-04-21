@@ -42,7 +42,7 @@ module.exports = new TritiumCommand(
 
     await Tritium.sendFileFromUrl(
       msg.from,
-      trackToPlay.thumbnail.url || trackToPlay.thumbnail,
+      trackToPlay.thumbnail.url,
       "thumb.jpg",
       `➸ *${trackToPlay.title}* by _*${trackToPlay.channel.name}*_`,
     ).catch((e) => {

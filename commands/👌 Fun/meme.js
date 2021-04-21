@@ -15,7 +15,7 @@ module.exports = new TritiumCommand(
       .then((res) => res.json())
       .then(async (body, error) => {
         if (error || !body.url) return Tritium.reply(msg.from, "error: " + body.message, msg.id);
-        if (body.nsfw === true && msg.isGroupMsg && !(await Tritium.db.Settings.getNsfw(msg.groupId))) {
+        if (body.nsfw === true && msg.isGroupMsg && !(await Tritium.db.Settings.getNsfw(msg.GROUP_ID))) {
           return Tritium.reply(msg.from, "*🔞 NSFW is not allowed in this group 😏*", msg.id);
         } else await Tritium.sendFileFromUrl(msg.from, body.url, body.url.split("/").pop(), body.title);
       });

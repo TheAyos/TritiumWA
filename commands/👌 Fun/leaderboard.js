@@ -4,11 +4,11 @@ module.exports = new TritiumCommand(
   async function ({ Tritium, msg }) {
     const target = msg.mentionedJidList[0] || msg.sender.id;
 
-    const leaderboard = await Tritium.db.Experience.fetchLeaderboard(msg.groupId);
+    const leaderboard = await Tritium.db.Experience.fetchLeaderboard(msg.GROUP_ID);
 
     if (leaderboard.length < 1) return Tritium.reply(msg.from, "Nobody's in leaderboard yet.", msg.id);
 
-    const position = leaderboard.findIndex((i) => i.groupID === msg.groupId && i.userID === target) + 1;
+    const position = leaderboard.findIndex((i) => i.groupID === msg.GROUP_ID && i.userID === target) + 1;
     const user = leaderboard[position - 1];
 
     if (!user) return Tritium.reply(msg.from, "Seems like the user didn't earn any xp yet 😑.", msg.id);

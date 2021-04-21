@@ -10,11 +10,11 @@ module.exports = new TritiumCommand(
         if (!chat.isGroup && groupsOnly) return;
         if (chat.isReadOnly) console.log("that A READONLY CHAT -> ", chat.name);
 
-        if (!chat.isReadOnly) Tritium.sendText(id, `*☄️ [ζ͜͡𝗧𝗿𝗶𝘁𝗶𝘂𝗺꠸ Bot Broadcast]*\n\n${cleanArgs}`);
+        if (!chat.isReadOnly) await Tritium.sendText(id, `*☄️ [ζ͜͡𝗧𝗿𝗶𝘁𝗶𝘂𝗺꠸ Bot Broadcast]*\n\n${cleanArgs}`);
       }
-      Tritium.reply(msg.from, `*Broadcast Success ! _Broadcasted to ${allChats.length} chats._*`, msg.id);
+      await Tritium.reply(msg.from, `*Broadcast Success ! _Broadcasted to ${allChats.length} chats._*`, msg.id);
     } catch (err) {
-      return Tritium.reply(
+      return await Tritium.reply(
         msg.from,
         `Oh no, an error occurred: \`${err.message}\`. Try again later!`,
         msg.id,
