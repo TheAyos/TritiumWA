@@ -2,7 +2,7 @@ const TritiumCommand = require("../../models/TritiumCommand");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, args }) {
-    const currentPrefix = await Tritium.db.Settings.getPrefix(msg.groupId);
+    const currentPrefix = await Tritium.db.Settings.getPrefix(msg.GROUP_ID);
     if (!args.length) return Tritium.reply(msg.from, `*📝 Current prefix: "${currentPrefix}"*`, msg.id);
 
     const isAdmin =
@@ -12,7 +12,7 @@ module.exports = new TritiumCommand(
 
     const newPrefix = args[0];
 
-    await Tritium.db.Settings.setPrefix(msg.groupId, newPrefix).catch((e) => console.log(e));
+    await Tritium.db.Settings.setPrefix(msg.GROUP_ID, newPrefix).catch((e) => console.log(e));
 
     await Tritium.reply(
       msg.from,

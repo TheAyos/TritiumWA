@@ -61,9 +61,11 @@ async function Trenatlas(sourceText, target = "en", source = "auto") {
   const url =
     `https://script.google.com/macros/s/AKfycbwzT4rDHQrzxjbuPQHIfDrc4EKdhSV5OUkBSZI9BFGTG2Qsusggm-KQ/exec?q=` +
     `${encodeURIComponent(text)}&source=${source}&target=${target}`;
+
+  let result;
   do {
     const res = await fetch(url, { method: "Get" });
-    var result = await res.json().catch((e) => {
+    result = await res.json().catch((e) => {
       result = undefined;
       if (!e.message.includes("json")) console.error(e.message);
     });

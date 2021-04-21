@@ -19,15 +19,16 @@ module.exports = class Tritium {
 
   load() {
     this.db.connect(this.config.mongo_db_path);
-
     require("./handlers/CommandLoader")(this);
     // require("./handlers/EventLoader")(this);
-
     console.log("\n", this.ccolor(this.commands.length, "lightgreen"), "commands loaded\n");
   }
 
   launch(client) {
     this.client = client;
+
+    // client.onStateChanged(require("./events/onStateChanged")); EQUIVALENT IN MY WAY
+    client["onStateChanged"](require("./events/onStateChanged").bind(this, client));
 
     const fs = require("fs");
     const filePath = "./events/onAnyMessage.js";
@@ -68,10 +69,7 @@ module.exports = class Tritium {
       process.exit(1);
     });
 
-    console.log(this.ccolor("💥TRITIUM Started 🔥⚡", "grey"));
-    console.log(this.ccolor("💥TRITIUM Started 🔥⚡", "beige"));
-    console.log(this.ccolor("💥TRITIUM Started 🔥⚡"));
-    console.log(this.ccolor("💥TRITIUM Started 🔥⚡", "red"));
-    console.log(this.ccolor("💥TRITIUM Started 🔥⚡", "lightgreen"));
+    const a = "💥TRITIUM Started 🔥⚡";
+    console.log(this.ccolor(a, "lightgreen"), this.ccolor(a, "red"), this.ccolor(a, "grey"), this.ccolor(a, "beige"));
   }
 };

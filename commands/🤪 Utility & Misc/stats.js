@@ -6,7 +6,7 @@ module.exports = new TritiumCommand(
     const groups = await Tritium.getAllGroups();
     // chatIds.forEach(async (c) => !c.match("@g.us") && !c.match(Tritium.config.youb_id) && (await Tritium.deleteChat(c)));
 
-    Tritium.sendText(
+    await Tritium.sendText(
       msg.from,
       `Stats :\n• *${loadedMsgs}* Loaded messages • *${chatIds.length}* Total chats • *${groups.length}* Group chats`,
     );

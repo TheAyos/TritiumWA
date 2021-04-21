@@ -2,7 +2,7 @@ const TritiumCommand = require("../../models/TritiumCommand");
 
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, args }) {
-    const currentNsfw = await Tritium.db.Settings.getNsfw(msg.groupId);
+    const currentNsfw = await Tritium.db.Settings.getNsfw(msg.GROUP_ID);
     if (!args.length)
       return Tritium.reply(
         msg.from,
@@ -25,7 +25,7 @@ module.exports = new TritiumCommand(
       return Tritium.helpThisPoorMan(msg, this);
     }
 
-    await Tritium.db.Settings.setNsfw(msg.groupId, newNsfw).catch((e) => console.log(e));
+    await Tritium.db.Settings.setNsfw(msg.GROUP_ID, newNsfw).catch((e) => console.log(e));
 
     await Tritium.reply(msg.from, `*NSFW is now ${newNsfw ? "enabled 😏" : "disabled 😇"} here.*`, msg.id);
   },

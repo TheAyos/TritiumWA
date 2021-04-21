@@ -8,7 +8,7 @@ module.exports = async (Tritium, gChat) => {
     if (chat.id.startsWith(Tritium.config.youb_id.split("@")[0])) console.log("nrmlly would'nt bother !");
     // return;
     console.log(Tritium.ccolor("leaving group", "red"), chat.name, grpMems);
-    Promise.all([
+    await Promise.all([
       Tritium.sendText(chat.id, `This group has only ${grpMems} members, minimum is ${Tritium.minMems}.`),
       Tritium.leaveGroup(chat.id),
       Tritium.deleteChat(chat.id),
