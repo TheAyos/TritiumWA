@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 class TastyMango {
+  constructor() {
+    throw new Error(`The ${this.constructor.name} class may not be instantiated!`);
+  }
   /**
    * Connects to the mongo database. (use only once)
    * @param {string} [mongoURI] - MongoDB URI to connect to

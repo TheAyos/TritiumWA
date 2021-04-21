@@ -12,8 +12,7 @@ module.exports = (headless, callback) => {
     useChrome: true,
     killProcessOnBrowserClose: true,
     throwErrorOnTosBlock: false,
-    customUserAgent:
-      "WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
+    // customUserAgent: "WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
     logConsole: false,
     chromiumArgs: [
       "--no-sandbox",

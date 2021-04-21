@@ -16,8 +16,8 @@ module.exports = async (Tritium, event) => {
     // It is possible that multiple accounts get added
     await Promise.all(
       event.who.map(
-        (number) => Tritium.sendText(Tritium.config.youb_id, `@${number} has been added!`),
-        // Tritium.sendTextWithMentions(groupChatId, `@${number} has been added!`),
+        async (number) => await Tritium.sendText(Tritium.config.youb_id, `@${number} has been added!`),
+        // await Tritium.sendTextWithMentions(groupChatId, `@${number} has been added!`),
       ),
     );
   }
