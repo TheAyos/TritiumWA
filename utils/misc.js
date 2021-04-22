@@ -106,7 +106,7 @@ module.exports = {
     // return years + " years " +  days + " days " + hours + " hours " + minutes + " minutes " + seconds + " seconds";
   },
 
-  ccolor: (t, c) => {
+  cColor: (t, c) => {
     switch (c) {
       case "lightred":
         return `\x1b[1m\x1b[31m${t}\x1b[0m`;

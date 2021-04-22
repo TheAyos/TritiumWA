@@ -31,35 +31,11 @@ class Tritium {
     // require("./handlers/EventLoader")(this);
   }
 
-  exportCmds() {
-    const exportCmds = this.commands.map(function (cmd) {
-      return { t: cmd.props.triggers, d: cmd.props.description, u: cmd.props.usage, c: cmd.props.cooldown };
-    });
-    // require("fs").writeFile("./commands.json", JSON.stringify(exportCmds), {}, () => console.log("Exported commands.json"));
-    return JSON.stringify(exportCmds);
-  }
-
-  async launch(client) {
+  launch(client) {
     this.client = client;
+    this.cleanupPrepareTerrain();
 
-    // *** Cleanup old messages on boot ***
-    const unreadMessagesSet = new Set();
-    for (let i = 0; i < 5; i++) {
-      await client
-        .getAllUnreadMessages()
-        .then((messageArray) => messageArray.map((unreadMessage) => unreadMessagesSet.add(unreadMessage)));
-    }
-
-    await unreadMessagesSet.forEach((unreadMessage) =>
-      queue.add(
-        () =>
-          client
-            .deleteMessage(unreadMessage.chat.id, unreadMessage.id, true)
-            .then(console.log("deleted", unreadMessage.id, unreadMessage.timestamp))
-            .catch(),
-        { priority: -6 },
-      ),
-    );
+    // load events there (and maybe before too to check errors !)
 
     client["onStateChanged"](require("./events/onStateChanged").bind(this, client));
 
@@ -76,7 +52,7 @@ class Tritium {
     // *** Ma hot-reload 😎 ***
     watcher.on("change", () => {
       try {
-        console.log(this.ccolor("CHANGE DETECTED ! -", "lightred"), filePath);
+        console.log(this.cColor("CHANGE DETECTED ! -", "lightred"), filePath);
         delete require.cache[require.resolve(filePath)];
 
         proc = async (message) => {
@@ -91,11 +67,40 @@ class Tritium {
     this.ready();
   }
 
+  async cleanupPrepareTerrain() {
+    // *** Cleanup old messages on boot ***
+    const unreadMessagesSet = new Set();
+    for (let i = 0; i < 5; i++) {
+      await this.client
+        .getAllUnreadMessages()
+        .then((messageArray) => messageArray.map((unreadMessage) => unreadMessagesSet.add(unreadMessage)));
+    }
+
+    unreadMessagesSet.forEach((unreadMessage) =>
+      queue.add(
+        () =>
+          this.client
+            .deleteMessage(unreadMessage.chat.id, unreadMessage.id, true)
+            .then(console.log("deleted", unreadMessage.id, unreadMessage.timestamp))
+            .catch(),
+        { priority: -6 },
+      ),
+    );
+  }
+
   ready() {
     this.client.sendText(this.config.youb_id, `Started 🌌 Tritium at ${moment().format("HH:mm")}`);
     const a = "💥TRITIUM Started 🔥⚡";
-    console.log(this.ccolor(a, "lightgreen"), this.ccolor(a, "red"), this.ccolor(a, "grey"), this.ccolor(a, "beige"));
-    console.log(this.ccolor(this.commands.length, "lightgreen"), "commands loaded\n");
+    console.log(this.cColor(a, "lightgreen"), this.cColor(a, "red"), this.cColor(a, "grey"), this.cColor(a, "beige"));
+    console.log(this.cColor(this.commands.length, "lightgreen"), "commands loaded\n");
+  }
+
+  exportCmds() {
+    const exportCmds = this.commands.map(function (cmd) {
+      return { t: cmd.props.triggers, d: cmd.props.description, u: cmd.props.usage, c: cmd.props.cooldown };
+    });
+    // require("fs").writeFile("./commands.json", JSON.stringify(exportCmds), {}, () => console.log("Exported commands.json"));
+    return JSON.stringify(exportCmds);
   }
 }
 

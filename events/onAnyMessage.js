@@ -1,4 +1,4 @@
-const { ccolor: cc } = require("../utils/misc");
+const { cColor: cc } = require("../utils/misc");
 
 // Checks before command execution should now be handled in command class :)
 // TODO: only one db read at first & one write at end for performance boost
