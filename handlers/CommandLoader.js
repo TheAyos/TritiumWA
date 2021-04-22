@@ -17,7 +17,7 @@ module.exports = function (client) {
         loadCommand(client, commandPath, category);
       } catch (error) {
         console.error(`🔞 Failed to load command from file ${file}: ${error}`);
-        throw Error(error);
+        throw Error(`🔞 Failed to load command from file ${file}: ${error}`);
       }
     }
     console.log(`└ ✨`);
@@ -29,7 +29,12 @@ function loadCommand(client, commandPath, category) {
   const commandName = command.props.triggers[0];
   command.name = commandName;
   command.category = category;
+  const existingCommandCheck = client.commands.find((c) => c.props && c.props.triggers.includes(commandName));
+  if (existingCommandCheck)
+    throw new Error(
+      `Command loader > Command ${commandName} is already registered !\n` +
+        `New command ${command}\n` +
+        `Old command: ${existingCommandCheck}`,
+    );
   client.commands.push(command);
-  // client.commands.set(commandName, command);
-  // command.props.triggers.forEach((alias) => alias != commandName && client.aliases.set(alias, commandName));
 }

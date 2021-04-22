@@ -29,34 +29,6 @@ class Tritium {
     require("./handlers/EventLoader")(Object.assign(this.client, this));
     this.cleanupPrepareTerrain();
 
-    // load events there (and maybe before too to check errors !)
-
-    /*
-    const filePath = "./events/onAnyMessage.js";
-    const { watch } = require("fs");
-    const watcher = watch(filePath);
-
-    let proc = async (message) => {
-      require(filePath)(Object.assign(this.client, this), message);
-      return true;
-    };
-    client.onMessage((message) => queue.add(() => proc(message), { priority: 1 }));
-    queue.start();
-    // *** Ma hot-reload 😎 ***
-    watcher.on("change", () => {
-      try {
-        console.log(this.cColor("CHANGE DETECTED ! -", "lightred"), filePath);
-        delete require.cache[require.resolve(filePath)];
-
-        proc = async (message) => {
-          await require(filePath)(Object.assign(this.client, this), message);
-          return true;
-        };
-      } catch (error) {
-        console.log(error);
-      }
-    });*/
-
     this.ready();
   }
 
