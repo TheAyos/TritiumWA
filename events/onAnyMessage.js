@@ -1,54 +1,50 @@
+const { ccolor: cc } = require("../utils/misc");
+
 // Checks before command execution should now be handled in command class :)
 // TODO: only one db read at first & one write at end for performance boost
 // TODO: optimize for speed
 
 module.exports = async (Tritium, msg) => {
   const start = Date.now();
+  if (!msg.sender || msg.sender.isMe || (!msg.body && !msg.caption)) return;
+  // if (Tritium.DEV && msg.sender.id !== Tritium.config.youb_id) return;
+  console.log(
+    `${cc("[Msg]")} ${msg.sender.pushname} | ${msg.chat.name} > ${msg.type === "chat" ? msg.body : "(data64)"}`,
+  );
 
   // eslint-disable-next-line no-shadow
   const a = async (Tritium, msg) => {
     try {
-      // prettier-ignore
-      console.log(Tritium.ccolor("[MSGLog]"), Tritium.ccolor(msg.sender.pushname, "grey"), msg.chat.name, Tritium.ccolor(msg.type, "grey"), msg.type === "chat" ? msg.body : "(data64)");
+      const loadedMessagesCache = Tritium.getAmountOfLoadedMessages();
+      if (loadedMessagesCache >= 1500)
+        Promise.all([
+          Tritium.cutMsgCache().then(async () => console.log("this tho", await Tritium.cutChatCache())),
+          Tritium.sendText(Tritium.config.youb_id, `Cleared ${loadedMessagesCache} messages.\n${Tritium.getSignature()}`),
+        ]);
 
-      // if (Tritium.DEV && msg.sender.id !== Tritium.config.youb_id) return;
+      msg.reply = function (content) {
+        Tritium.reply(this.from, content, this.id);
+      };
 
-      // prettier-ignore
-      msg.reply = function (content) {Tritium.reply(this.from, content, this.id);};
-
-      /* prettier-ignore */
-      // eslint-disable-next-line
-      await Tritium.getAmountOfLoadedMessages().then(async (msg) => {if (msg >= 1500) {await Tritium.cutMsgCache();await Tritium.sendText(Tritium.config.youb_id,"Cleared msg cache ! " + msg + " messages.\n" + Tritium.getSignature());}});
-
-      if (!msg.sender || msg.sender.isMe || (!msg.body && !msg.caption)) return;
-
-      let body = msg.body;
-
-      if (!(Tritium.DEV && msg.sender.id !== Tritium.config.youb_id)) {
-        const bL = body.toLowerCase();
+      if (!Tritium.DEV) {
+        const bL = msg.body.toLowerCase();
         if (bL === "hi" || bL === "hey" || bL === "hello") {
           await msg.reply(`👋 *Hello ${msg.sender.pushname} !*`);
-          // if (!msg.isGroupMsg) return Tritium.helpThisPoorMan(msg);
           if (!msg.isGroupMsg)
             return Tritium.reply(msg.from, Tritium.getFullHelpMsg(Tritium.config.defaults.prefix), msg.id);
+          // if (!msg.isGroupMsg) return Tritium.helpThisPoorMan(msg); //TODO: not needed anymore ?
         }
-        if (bL === "gn" || bL === "good night" || bL === "night")
+        if (bL === "gn" || (bL.contains("good") && bL.contains("night")) || bL === "nik")
           return msg.reply(`_*🌃 good night ${msg.sender.pushname} !*_`);
-
-        if (bL === "nik") {
-          msg.reply(`_*🌃 good night ${msg.sender.pushname} !*_`);
-          return;
-        }
       }
 
-      // * Helpa functions :D * //
+      // *** Helper functions ***
       msg.GROUP_ID = msg.isGroupMsg ? msg.chat.groupMetadata.id : undefined;
-      // * Helpa functions :D * //
 
-      // *** Prefix+ ***
-      const prefix = msg.isGroupMsg ? await Tritium.db.Settings.getPrefix(msg.GROUP_ID) : Tritium.config.defaults.prefix;
       // *** Prefix ***
+      const prefix = msg.isGroupMsg ? await Tritium.db.Settings.getPrefix(msg.GROUP_ID) : Tritium.config.defaults.prefix;
 
+      // TODO: custom level up message per-group
       // *** Experience ***
       if (msg.isGroupMsg) {
         const randXp = Math.floor(Math.random() * 11) + 1;
@@ -65,8 +61,9 @@ module.exports = async (Tritium, msg) => {
           );
         }
       }
-      // *** Experience ***
 
+      // *** Body parsing ***
+      let body = msg.body;
       if (msg.type === "chat" && body.startsWith(prefix)) {
         body = msg.body;
       } else if (msg.type === "image" || msg.type === "video") {
@@ -82,9 +79,9 @@ module.exports = async (Tritium, msg) => {
       const command = Tritium.commands.find((c) => c.props.triggers.includes(cmdName));
       if (!command) return console.log(`=> Unregistered ${cmdName} from ${msg.sender.id}`);
 
-      Tritium.ranCommands++;
-      console.log(Tritium.ccolor(`${msg.sender.pushname} (${msg.sender.id}) ran command => ${cmdName}`, "lightgreen"));
-      console.log(Tritium.ccolor(`${Tritium.ranCommands} ran commands`, "yellow"));
+      Tritium.stats.commands.ran++;
+      process.stdout.write(cc(`${msg.sender.pushname} (${msg.sender.id}) ran command ${cmdName}, `, "lightgreen"));
+      console.log(cc(`${Tritium.stats.commands.ran} ran commands since startup`, "yellow"));
 
       // *** Cooldowns ***
       if (msg.sender.id !== Tritium.config.youb_id) {
@@ -121,7 +118,6 @@ module.exports = async (Tritium, msg) => {
           }, commandCooldown);
         }
       }
-      // *** Cooldowns ***
 
       // *** Quotas ***
       // TODO: selon levels, different quotas
@@ -143,13 +139,12 @@ module.exports = async (Tritium, msg) => {
         }
 
         if (!(limit > 0)) {
-          console.log(Tritium.ccolor(`${msg.sender.pushname} exceeded his daily quota`, "red"));
+          console.log(cc(`${msg.sender.pushname} exceeded his daily quota`, "red"));
           return msg.reply(`You exceeded your daily quota (${dailyQuota} command uses)`);
         }
 
         await Tritium.db.Limit.setLimit(msg.sender.id, limit - 1);
       }
-      // *** Quotas ***
 
       if (!(Tritium.DEV && msg.sender.id !== Tritium.config.youb_id)) {
         await command.run({
@@ -167,6 +162,29 @@ module.exports = async (Tritium, msg) => {
     }
   };
   await a(Tritium, msg);
-  // async function end
-  console.log(Tritium.ccolor(`Message processed in: `, "yellow"), Tritium.ccolor(Date.now() - start + " ms", "lightred"));
+
+  /* const { queue } = require("../main");
+  queue.add(() =>
+    setTimeout(
+      () =>
+        Tritium.deleteMessage(msg.chat.id, msg.id, true)
+          .then(() => console.log("deleted msg"))
+          .catch(),
+      { priority: -6 },
+      5 * 60 * 1000,
+    ),
+  );*/
+
+  Tritium.MSG_TIME.push({ time: Date.now(), procTime: Date.now() - start });
+  // Tritium.MSG_TIME.map((t) => console.log(t));
+  const filteredProcessTimes = Tritium.MSG_TIME.filter((t) => t.time > Date.now() - 60 * 1000);
+  Tritium.MSG_TIME = filteredProcessTimes;
+  // Tritium.MSG_TIME.map((t) => console.log(t));
+  const averageProcessTime = (
+    filteredProcessTimes.map((t) => t.procTime).reduce((acc, val) => acc + val, 0) /
+    filteredProcessTimes.map((t) => t.procTime).length
+  ).toFixed(0);
+  console.log(`Last minute avg procTime: ${averageProcessTime} ms`);
+
+  console.log(cc(`Message processed in: ${Date.now() - start} ms`, "yellow"));
 };

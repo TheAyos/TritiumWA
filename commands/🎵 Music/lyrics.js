@@ -8,13 +8,14 @@ module.exports = new TritiumCommand(
   async function ({ Tritium, msg, cleanArgs }) {
     // let lyrics = await Lyrics(cleanArgs);
     const lyrics = await Lyrics.getLyrics({
-      apiKey: "3kl-XxbwD5LkBYPdctlek24FMYSPsdSiBpt1v0Y_zLaHLkVsvG8jViLGYaNrfRoy",
+      apiKey: Tritium.config.GENIUS_API_KEY,
       title: cleanArgs,
       artist: "",
     });
     if (!lyrics) return Tritium.reply(msg.from, "Unable to find that music, Try another one !", msg.id);
     // let caption = `*${lyrics.artist}* - *${lyrics.song}*\n🎵 ${lyrics.lyrics}`;
-    await Tritium.reply(msg.from, /* caption*/ lyrics, msg.id);
+    await Tritium.reply(msg.from, lyrics, msg.id);
+    // await Tritium.reply(msg.from, caption, msg.id);
   },
   {
     triggers: ["lyrics", "ly"],

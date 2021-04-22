@@ -32,8 +32,7 @@ module.exports = new TritiumCommand(
         .then(async (body) => {
           const { country, cases, todayCases, deaths, todayDeaths, todayRecovered, active, continent } = body;
 
-          if (!country)
-            return Tritium.reply(msg.from, `Couldn't find country. Check your spelling !`, msg.id);
+          if (!country) return Tritium.reply(msg.from, `Couldn't find country. Check your spelling !`, msg.id);
 
           caption =
             `🌍 Covid info in *${country}, _${continent}_*\n\n` +
@@ -45,7 +44,7 @@ module.exports = new TritiumCommand(
             `☣️ *Total Deaths:* ${deaths.toLocaleString("en")}\n`;
         });
     }
-    Tritium.reply(msg.from, caption, msg.id);
+    if (caption) await Tritium.reply(msg.from, caption, msg.id);
   },
   {
     triggers: ["covid", "corona"],

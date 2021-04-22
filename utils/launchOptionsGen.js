@@ -1,6 +1,7 @@
 /**
- * @param {boolean} headless Whether run in headless mode or not
- * @param {function} callback Callback function if client crashes
+ * Generates an options object for Open-WA
+ * @param {boolean} headless Whether or not run in headless mode.
+ * @param {function} callback Callback function if client crashes.
  */
 module.exports = (headless, callback) => {
   return {

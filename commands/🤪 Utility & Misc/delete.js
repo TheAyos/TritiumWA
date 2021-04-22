@@ -23,6 +23,6 @@ module.exports = new TritiumCommand(
     groupOnly: true,
     cooldown: 10,
     minArgs: "quotedMsg",
-    perms: "ADMINISTRATOR",
+    userPerms: "ADMINISTRATOR",
   },
 );

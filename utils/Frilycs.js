@@ -1,6 +1,9 @@
 const puppeteer = require("puppeteer");
 const uaOverride = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4298.0 Safari/537.36"; /* prettier-ignore*/
-
+/* (async () => {
+  let tt = await Frilycs("34+35");
+  console.log(tt);
+})(); */
 async function Frilycs(query) {
   const browser = await puppeteer.launch({
     executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -102,12 +105,8 @@ async function Frilycs(query) {
       : "";
     meta.about = aboutEl ? aboutEl.innerText : aboutElFallback ? aboutElFallback.innerText : "";
 
-    const albumEl = [...document.querySelectorAll("div")].find((e) =>
-      e.className.includes("HeaderTracklist__Album"),
-    );
-    const albumElFallback = [...document.querySelectorAll("a")].find(
-      (e) => e.getAttribute("ng-bind") === "album.name",
-    );
+    const albumEl = [...document.querySelectorAll("div")].find((e) => e.className.includes("HeaderTracklist__Album"));
+    const albumElFallback = [...document.querySelectorAll("a")].find((e) => e.getAttribute("ng-bind") === "album.name");
     meta.albumName = albumEl
       ? albumEl.innerText.split(/[\n ]/).slice(-1).join("")
       : albumElFallback

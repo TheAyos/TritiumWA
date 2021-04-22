@@ -112,7 +112,7 @@ module.exports = {
         return `\x1b[1m\x1b[31m${t}\x1b[0m`;
       case "red":
         return `\x1b[31m${t}\x1b[0m`;
-      case "beige":
+      case "lightyellow":
         return `\x1b[1m\x1b[33m${t}\x1b[0m`;
       case "yellow":
         return `\x1b[33m${t}\x1b[0m`;
