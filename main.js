@@ -1,6 +1,6 @@
 const moment = require("moment");
 const { default: PQueue } = require("p-queue");
-const queue = new PQueue({ concurrency: 5, autoStart: false, timeout: 60 * 1000 });
+const queue = new PQueue({ concurrency: 5, autoStart: true, timeout: 60 * 1000 });
 
 class Tritium {
   constructor() {
@@ -10,13 +10,7 @@ class Tritium {
     this.commands = [];
     this.cooldowns = new Map();
 
-    this.stats = {
-      commands: {
-        ran: 0,
-        loaded: 0,
-        disabled: 0,
-      },
-    };
+    this.stats = { commands: { ran: 0, loaded: 0, disabled: 0 } };
     this.DEV = true;
     this.MSG_TIME = [];
 
@@ -28,17 +22,16 @@ class Tritium {
     require("./handlers/CommandLoader")(this);
     // is it useful ?
     this.stats.commands.loaded = this.commands.length;
-    // require("./handlers/EventLoader")(this);
   }
 
   launch(client) {
     this.client = client;
+    require("./handlers/EventLoader")(Object.assign(this.client, this));
     this.cleanupPrepareTerrain();
 
     // load events there (and maybe before too to check errors !)
 
-    client["onStateChanged"](require("./events/onStateChanged").bind(this, client));
-
+    /*
     const filePath = "./events/onAnyMessage.js";
     const { watch } = require("fs");
     const watcher = watch(filePath);
@@ -62,7 +55,7 @@ class Tritium {
       } catch (error) {
         console.log(error);
       }
-    });
+    });*/
 
     this.ready();
   }
