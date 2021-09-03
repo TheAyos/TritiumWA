@@ -92,7 +92,7 @@ module.exports = new TritiumCommand(
         );
       };
 
-      /*const collector = new MessageCollector(
+      /* const collector = new MessageCollector(
         await Tritium.getSessionId(),
         await Tritium.getInstanceId(),
         msg.chat.id,
@@ -155,9 +155,10 @@ module.exports = new TritiumCommand(
             });
             wstream.end();
           });
+          console.log("there1");
           return true;
         }
-
+        console.log("there2");
         const number = Number.parseInt(collected.body);
 
         if (isNaN(number)) {

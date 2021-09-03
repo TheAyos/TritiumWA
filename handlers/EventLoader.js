@@ -1,6 +1,9 @@
+const { cColor: cc } = require("../utils/misc");
+
 const { readdirSync } = require("fs");
 const { watch } = require("fs");
-const { cColor: cc } = require("../utils/misc");
+const { default: PQueue } = require("p-queue");
+const queue = new PQueue({ concurrency: 7, autoStart: true });
 
 module.exports = function (client, useHotReload = false) {
   const eventFiles = readdirSync(client.fromRootPath("events")).filter((file) => file.endsWith(".js"));
@@ -17,14 +20,14 @@ module.exports = function (client, useHotReload = false) {
         const eventPath = client.fromRootPath("events", eventFile);
         const watcher = watch(eventPath);
 
-        let freshPull = (arg) => client.queue.add(() => require(eventPath)(client, arg), { priority: 1 });
+        let freshPull = (arg) => queue.add(() => require(eventPath)(client, arg), { priority: 1 });
         client[eventName]((arg) => freshPull(arg));
 
         watcher.on("change", () => {
           try {
             console.log(cc("CHANGE DETECTED ! -", "lightred"), eventPath);
             delete require.cache[require.resolve(eventPath)];
-            freshPull = (arg) => client.queue.add(() => require(eventPath)(client, arg), { priority: 1 });
+            freshPull = (arg) => queue.add(() => require(eventPath)(client, arg), { priority: 1 });
           } catch (error) {
             console.log(error);
           }

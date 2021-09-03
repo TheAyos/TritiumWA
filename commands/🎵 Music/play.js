@@ -1,7 +1,5 @@
 const TritiumCommand = require("../../models/TritiumCommand");
-
-const ytdl = require("ytdl-core");
-const ytsr = require("youtube-sr");
+const YT = require("../../utils/YT");
 
 const MAX_LENGTH_SECONDS = 10 * 60;
 
@@ -17,36 +15,39 @@ module.exports = new TritiumCommand(
     async function ({ Tritium, msg, cleanArgs: query }) {
         let track;
 
-        if (isYTPlaylistLink(query)) return Tritium.reply(msg.from, TEXT_ERROR_LINK_IS_PLAYLIST, msg.id);
-        if (isYTVideoLink(query)) {
-            track = await getTrackFromVideoLink(query);
+        if (YT.isYTPlaylistLink(query)) return Tritium.reply(msg.from, TEXT_ERROR_LINK_IS_PLAYLIST, msg.id);
+        if (YT.isYTVideoLink(query)) {
+            track = await YT.getTrackFromVideoLink(query);
             if (!track) return Tritium.reply(msg.from, TEXT_ERROR_VIDEO_LINK, msg.id);
             if (track.isLiveContent) return Tritium.reply(msg.from, TEXT_ERROR_LIVE_VIDEO, msg.id);
         } else {
-            track = await searchTracks(query, true);
+            track = await YT.searchTracks(query, true);
             if (!track) return Tritium.reply(msg.from, TEXT_ERROR_VIDEO_QUERY, msg.id);
             if (!track.lengthSeconds) track.lengthSeconds = +track.duration / 1000;
         }
         if (track.lengthSeconds > MAX_LENGTH_SECONDS) return Tritium.reply(msg.from, TEXT_TOO_LONG, msg.id);
 
-        const caption = `➸ *${track.title}* by _*${track.channel.name}*_`;
-        await Tritium.sendFileFromUrl(msg.from, track.thumbnail.url, "thumb.jpg", caption).catch((error) => {
-            console.log(error);
-            return Tritium.reply(msg.from, TEXT_ERROR_SENDING_THUMBNAIL, msg.id);
-        });
-
-        const videoReadableStream = ytdl(track.url, { filter: "audioonly", quality: "lowest" });
-        const randomName = Math.random().toString(36).substring(7);
-        const wstream = new Tritium.WMStrm(randomName);
-        const stream = await videoReadableStream.pipe(wstream);
-        stream.on("finish", async () => {
-            const data64Audio = `data:audio/mpeg;base64,${wstream._memStore[randomName].toString("base64")}`;
-            await Tritium.sendPtt(msg.from, data64Audio).catch((error) => {
-                console.log(error);
-                return Tritium.reply(msg.from, TEXT_ERROR_SENDING_AUDIO, msg.id);
+        try {
+            const caption = `➸ *${track.title}* by _*${track.channel.name}*_`;
+            await Tritium.sendFileFromUrl(msg.from, track.thumbnail.url, "thumb.jpg", caption).catch((e) => {
+                throw e;
             });
-            wstream.end();
-        });
+        } catch (error) {
+            Tritium.error(error);
+            return Tritium.reply(msg.from, TEXT_ERROR_SENDING_THUMBNAIL, msg.id);
+        }
+
+        try {
+            const data64Audio = await YT.getData64Track(track.url).catch((e) => {
+                throw e;
+            });
+            await Tritium.sendPtt(msg.from, data64Audio).catch((e) => {
+                throw e;
+            });
+        } catch (error) {
+            Tritium.error(error);
+            return Tritium.reply(msg.from, TEXT_ERROR_SENDING_AUDIO, msg.id);
+        }
     },
     {
         triggers: ["play", "p", "music", "song"],
@@ -59,53 +60,3 @@ module.exports = new TritiumCommand(
         groupOnly: true,
     },
 );
-
-function isYTVideoLink(query) {
-    return ytsr.YouTube.validate(query, "VIDEO") || ytsr.YouTube.validate(query, "VIDEO_ID");
-}
-function isYTPlaylistLink(query) {
-    return ytsr.YouTube.validate(query, "PLAYLIST") || ytsr.YouTube.validate(query, "PLAYLIST_ID");
-}
-
-function searchTracks(query, firstOnly = false) {
-    return new Promise((resolve) => {
-        let tracks = [];
-
-        ytsr.YouTube.search(query, { type: "video" })
-            .then((results) => {
-                if (results.length !== 0) {
-                    tracks = results.map((r) => r);
-                }
-
-                if (tracks.length === 0) return null;
-
-                if (firstOnly) return resolve(tracks[0]);
-
-                return resolve(tracks);
-            })
-            .catch((e) => e);
-    });
-}
-
-async function getTrackFromVideoLink(link) {
-    let trackData;
-    trackData = await ytdl.getBasicInfo(link).catch((error) => {
-        console.log(error);
-        return null;
-    });
-    const highestQualityThumbnailIndex = trackData.videoDetails.thumbnails.length - 1;
-    trackData = {
-        title: trackData.videoDetails.title,
-        url: trackData.videoDetails.video_url,
-        views: trackData.videoDetails.viewCount,
-        thumbnail: trackData.videoDetails.thumbnails[highestQualityThumbnailIndex],
-        lengthSeconds: trackData.videoDetails.lengthSeconds,
-        isLiveContent: trackData.videoDetails.isLiveContent,
-        description: trackData.videoDetails.description,
-        author: { name: trackData.videoDetails.author.name },
-        channel: { name: trackData.videoDetails.author.name },
-    };
-    console.log(trackData);
-    // if (!trackData.channel) trackData.channel = { name: trackData.author.name };
-    return trackData;
-}

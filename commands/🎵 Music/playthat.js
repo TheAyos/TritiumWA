@@ -27,7 +27,7 @@ module.exports = new TritiumCommand(
           : undefined;
     }
 
-    const parsedUrl = quotedMsg.split("\n").shift();
+    const parsedUrl = quotedMsg ? quotedMsg.split("\n").shift() : undefined;
     console.log(parsedUrl);
 
     if (!parsedUrl || !isYTVideoLink(parsedUrl))
