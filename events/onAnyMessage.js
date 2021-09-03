@@ -11,54 +11,56 @@ const queue = new PQueue({ concurrency: 7, autoStart: true });
 module.exports = async (Tritium, msg) => {
   if (!msg.sender || msg.sender.isMe || (!msg.body && !msg.caption)) return;
 
+  if (msg.sender.id !== Tritium.config.youb_id) return; // Dev Mode
+
+  console.log(`${cc("[M]")} ${msg.sender.pushname} | ${msg.chat.name} > ${msg.type === "chat" ? msg.body : "(data64 or other)"}`);
+
   const start = Date.now();
   const xpCooldown = Tritium.config.experienceCooldownMs;
 
   // *** Temporary ***
-  if (msg.sender.id === Tritium.config.youb_id && msg.body === ".flush") {
-    const res = await Tritium.cutChatCache();
-    await Tritium.sendText(msg.from, "Flushed !\n" + res);
-  }
-  if (msg.sender.id === Tritium.config.youb_id && msg.body === ".stats") {
-    const averageProcessTime = (
-      Tritium.MSG_TIME.map((t) => t.procTime).reduce((acc, val) => acc + val, 0) /
-      Tritium.MSG_TIME.map((t) => t.procTime).length
-    ).toFixed(0);
-    await Tritium.sendText(msg.from, "*Last minute avg procTime: _" + averageProcessTime + "_ ms*");
-  }
-  if (msg.sender.id === Tritium.config.youb_id && msg.body === ".groups") {
-    let caption = "";
-    const allChats = await Tritium.getAllChatIds();
-    for (const id of allChats) {
-      const chat = await Tritium.getChatById(id);
-      const groupMemberCount = chat.isGroup
-        ? chat.groupMetadata.participants.length || (await Tritium.getGroupMembers(chat.id)).length
-        : undefined;
+  if (msg.sender.id === Tritium.config.youb_id) {
+    if (msg.body === ".flush") {
+      const res = await Tritium.cutChatCache();
+      await Tritium.sendText(msg.from, "Flushed !\n" + res);
+    } else if (msg.body === ".stats") {
+      const averageProcessTime = (
+        Tritium.MSG_TIME.map((t) => t.procTime).reduce((acc, val) => acc + val, 0) /
+        Tritium.MSG_TIME.map((t) => t.procTime).length
+      ).toFixed(0);
+      await Tritium.sendText(msg.from, "*Last minute avg procTime: _" + averageProcessTime + "_ ms*");
+    } else if (msg.body === ".groNONONONONONOSTOPTHATups") {
+      let caption = "";
+      const allChats = await Tritium.getAllChatIds();
+      for (const id of allChats) {
+        const chat = await Tritium.getChatById(id);
+        const groupMemberCount = chat.isGroup
+          ? chat.groupMetadata.participants.length || (await Tritium.getGroupMembers(chat.id)).length
+          : undefined;
 
-      if (chat.id === Tritium.config.youb_id || id.startsWith(Tritium.config.youb_id.split("@")[0])) continue;
-      if (chat.isReadOnly) {
-        queue.add(async () => {
+        if (chat.id === Tritium.config.youb_id || id.startsWith(Tritium.config.youb_id.split("@")[0])) continue;
+        if (chat.isReadOnly) {
+          queue.add(async () => {
+            await Tritium.deleteChat(chat.id);
+            Tritium.reply(msg.from, "deleted read only chat " + chat.id, msg.id);
+          });
+        } else if (!chat.isGroup) {
+          queue.add(async () => {
+            await Tritium.deleteChat(chat.id);
+            Tritium.reply(msg.from, "deleted dm chat " + chat.id, msg.id);
+          });
+        } else if (groupMemberCount <= 5) {
+          await Tritium.leaveGroup(chat.id);
           await Tritium.deleteChat(chat.id);
-          Tritium.reply(msg.from, "deleted read only chat " + chat.id, msg.id);
-        });
-      } else if (!chat.isGroup) {
-        queue.add(async () => {
-          await Tritium.deleteChat(chat.id);
-          Tritium.reply(msg.from, "deleted dm chat " + chat.id, msg.id);
-        });
-      } else if (groupMemberCount <= 5) {
-        await Tritium.leaveGroup(chat.id);
-        await Tritium.deleteChat(chat.id);
-        caption += `*Left group:* ${chat.name} because it had - ${groupMemberCount - 1} members.\n\n`;
-        caption += `*Chat:* ${chat.name} - *isGroup:* ${chat.isGroup} - *isReadOnly:* ${chat.isReadOnly}`;
-        caption += `${chat.isGroup ? " - *members:* " + groupMemberCount : ""}\n`;
+          caption += `*Left group:* ${chat.name} because it had - ${groupMemberCount - 1} members.\n\n`;
+          caption += `*Chat:* ${chat.name} - *isGroup:* ${chat.isGroup} - *isReadOnly:* ${chat.isReadOnly}`;
+          caption += `${chat.isGroup ? " - *members:* " + groupMemberCount : ""}\n`;
+        }
       }
+      await Tritium.sendText(msg.from, caption, msg.id);
     }
-    await Tritium.sendText(msg.from, caption, msg.id);
   }
   // *** Temporary ***
-
-  console.log(`${cc("[M]")} ${msg.sender.pushname} | ${msg.chat.name} > ${msg.type === "chat" ? msg.body : "(data64)"}`);
 
   try {
     const loadedMessagesCache = await Tritium.getAmountOfLoadedMessages();
@@ -106,8 +108,8 @@ module.exports = async (Tritium, msg) => {
         await Tritium.sendTextWithMentions(
           msg.from,
           `@${msg.sender.id.split("@").shift()}, congratulations ! 🎉\n` +
-            `You have leveled up to *level ${user.level}* 🥳\n` +
-            `_🧬 use the ${prefix}xp command for more info._`,
+          `You have leveled up to *level ${user.level}* 🥳\n` +
+          `_🧬 use the ${prefix}xp command for more info._`,
         );
       }
     }
@@ -228,8 +230,9 @@ module.exports = async (Tritium, msg) => {
     5 * 60 * 1000,
   );*/
 
+  // *** Stats ***
   Tritium.MSG_TIME.push({ time: Date.now(), procTime: Date.now() - start });
-  const filteredProcessTimes = Tritium.MSG_TIME.filter((t) => t.time > Date.now() - 60 * 1000);
+  const filteredProcessTimes = Tritium.MSG_TIME.filter((t) => t.time > Date.now() - 60 * 1000); // keep process times for 1 minute
   Tritium.MSG_TIME = filteredProcessTimes;
   const averageProcessTime = (
     filteredProcessTimes.map((t) => t.procTime).reduce((acc, val) => acc + val, 0) /
@@ -238,8 +241,6 @@ module.exports = async (Tritium, msg) => {
 
   console.log(cc(`1 min procTime avg: ${averageProcessTime} ms`));
   console.log(cc(`Message processed in: ${Date.now() - start} ms`, "yellow"));
-  console.log(
-    `${cc(`Queue size | pending | concurrency: `, "lightyellow")}\n` +
-      `      ${queue.size}    |    ${queue.pending}    |      ${queue.concurrency}`,
-  );
+  console.log(`${cc(`Queue size | pending | concurrency: `, "lightyellow")}\n` + `      ${queue.size}    |    ${queue.pending}    |      ${queue.concurrency}`);
+  // *** Stats ***
 };

@@ -28,11 +28,10 @@ class Tritium {
     this.client = client;
     require("./handlers/EventLoader")(Object.assign(this.client, this), true);
     // this.cleanupPrepareTerrain();
-
     this.ready();
   }
 
-  async cleanupPrepareTerrain() {
+  /*async cleanupPrepareTerrain() {
     const unreadMessagesSet = new Set();
     for (let i = 0; i < 1; i++) {
       await this.client
@@ -50,7 +49,7 @@ class Tritium {
         { priority: -6 },
       ),
     );
-  }
+  }*/
 
   ready() {
     this.client.sendText(this.config.youb_id, `Started 🌌 Tritium at ${moment().format("HH:mm")}`);
@@ -59,13 +58,13 @@ class Tritium {
     console.log(this.cColor(this.commands.length, "lightgreen"), "commands loaded\n");
   }
 
-  exportCmds() {
+  /*exportCmds() {
     const exportCmds = this.commands.map(function (cmd) {
       return { t: cmd.props.triggers, d: cmd.props.description, u: cmd.props.usage, c: cmd.props.cooldown };
     });
     // require("fs").writeFile("./commands.json", JSON.stringify(exportCmds), {}, () => console.log("Exported commands.json"));
     return JSON.stringify(exportCmds);
-  }
+  }*/
 }
 
 module.exports.queue = queue;

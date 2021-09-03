@@ -1,0 +1,56 @@
+const TritiumCommand = require("../../models/TritiumCommand");
+const { addMetadata } = require("../../utils/StickerMetadata");
+
+const { decryptMedia } = require("@open-wa/wa-decrypt");
+const { writeFileSync, readFileSync } = require("fs");
+const { execSync } = require("child_process");
+
+module.exports = new TritiumCommand(
+  async function ({ Tritium, msg, args, cleanArgs }) {
+    const isQuotedImage = msg.quotedMsg && msg.quotedMsg.type === "image";
+    // TODO: new ImageCommand class (or MediaCommand)
+    if (!msg.isMedia && !isQuotedImage)
+      return Tritium.reply(msg.from, `${msg.sender.pushname} send or quote an image !`, msg.id);
+
+    try {
+      if (args.length === 0) {
+        const encryptMedia = isQuotedImage ? msg.quotedMsg : msg;
+        const _mimetype = isQuotedImage ? msg.quotedMsg.mimetype : msg.mimetype;
+        const mediaData = await decryptMedia(encryptMedia);
+        const imageBase64 = `data:${_mimetype};base64,${mediaData.toString("base64")}`;
+        await Tritium.sendImageAsSticker(msg.from, imageBase64);
+      } else if (args.length) {
+        const mediaData = await decryptMedia(isQuotedImage ? msg.quotedMsg : msg);
+        const fileName = `./temp/sticker/${msg.from}_sticker.webp`;
+        writeFileSync(fileName, mediaData);
+        // execSync(`magick ${fileName} -quality 50 -define webp:lossless=false ${fileName}`);
+        execSync(`magick convert ${fileName} -define webp -gravity center -crop -1x512+0+0 ${fileName}`);
+        let pName = "",
+          pAuthor = "";
+        if (args.length === 1) pName = args[0];
+        else if (args.length > 1) {
+          cleanArgs = cleanArgs.indexOf("|") > -1 ? cleanArgs.split("|") : args;
+          pName = cleanArgs.shift().trim();
+          pAuthor = cleanArgs.shift().trim();
+          console.log(pName, pAuthor);
+        }
+        await addMetadata(fileName, pName, pAuthor);
+        const veryBeautifulSticker = readFileSync(fileName, { encoding: "base64" });
+        await Tritium.sendRawWebpAsSticker(msg.from, veryBeautifulSticker);
+      } else {
+        return Tritium.helpThisPoorMan(msg, this);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  {
+    triggers: ["sticker", "s", "stiker"],
+    usage: "{command} (with quoted image) <sticker name> | <sticker author>",
+    example: ["{command} (with quoted image)", "{command} (with quoted image) theayos's | tritium bot"],
+    description: "Sends a sticker from quoted image.",
+
+    cooldown: 10,
+    groupOnly: true,
+  },
+);

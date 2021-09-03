@@ -11,6 +11,11 @@ module.exports = {
   processTime: (timestamp, now) => moment.duration(now - moment(timestamp * 1000)).asSeconds(),
   getSignature: () => `\n*🤖 Tritium • ${moment().format("HH:mm")}* `,
 
+  /*handleError: function (error, msg, replyString) {
+    console.log(error);
+    return Tritium.reply(msg.from, replyString, msg.id);
+  },*/
+
   helpThisPoorMan: function (msg, givenCommand) {
     if (!givenCommand) return this.client.reply(msg.from, this.getFullHelpMsg(this.config.prefix), msg.id);
     else if (givenCommand.triggers) {

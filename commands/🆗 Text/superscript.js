@@ -1,0 +1,91 @@
+const TritiumCommand = require("../../models/TritiumCommand");
+
+module.exports = new TritiumCommand(
+  async function ({ Tritium, msg, cleanArgs }) {
+    await Tritium.reply(msg.from, superScriptify(cleanArgs), msg.id);
+  },
+  {
+    triggers: ["superscript", "sspt"],
+    description: "ˢᵘᵖᵉʳˢᶜʳⁱᵖᵗⁱᶠʸ ˢᵒᵐᵉ ᵗᵉˣᵗ",
+    usage: "{command} [ʷʰᵃᵗ ᵈᵒ ʸᵒᵘ ʷᵃⁿᵗ ᵐᵉ ᵗᵒ ˢᵃʸ]",
+
+    minArgs: 1,
+    groupOnly: true,
+  },
+);
+
+function superScriptify(text) {
+  const map = {
+    0: "⁰",
+    1: "¹",
+    2: "²",
+    3: "³",
+    4: "⁴",
+    5: "⁵",
+    6: "⁶",
+    7: "⁷",
+    8: "⁸",
+    9: "⁹",
+    a: "ᵃ",
+    b: "ᵇ",
+    c: "ᶜ",
+    d: "ᵈ",
+    e: "ᵉ",
+    f: "ᶠ",
+    g: "ᵍ",
+    h: "ʰ",
+    i: "ⁱ",
+    j: "ʲ",
+    k: "ᵏ",
+    l: "ˡ",
+    m: "ᵐ",
+    n: "ⁿ",
+    o: "ᵒ",
+    p: "ᵖ",
+    q: "q",
+    r: "ʳ",
+    s: "ˢ",
+    t: "ᵗ",
+    u: "ᵘ",
+    v: "ᵛ",
+    w: "ʷ",
+    x: "ˣ",
+    y: "ʸ",
+    z: "ᶻ",
+    A: "ᴬ",
+    B: "ᴮ",
+    C: "ᶜ",
+    D: "ᴰ",
+    E: "ᴱ",
+    F: "ᶠ",
+    G: "ᴳ",
+    H: "ᴴ",
+    I: "ᴵ",
+    J: "ᴶ",
+    K: "ᴷ",
+    L: "ᴸ",
+    M: "ᴹ",
+    N: "ᴺ",
+    O: "ᴼ",
+    P: "ᴾ",
+    Q: "Q",
+    R: "ᴿ",
+    S: "ˢ",
+    T: "ᵀ",
+    U: "ᵁ",
+    V: "ⱽ",
+    W: "ᵂ",
+    X: "ˣ",
+    Y: "ʸ",
+    Z: "ᶻ",
+    "+": "⁺",
+    "-": "⁻",
+    "=": "⁼",
+    "(": "⁽",
+    ")": "⁾",
+  };
+  text = text.split("");
+  for (let i = 0; i < text.length; i++) if (map[text[i].toLowerCase()]) text[i] = map[text[i]];
+
+  return text.join("");
+}

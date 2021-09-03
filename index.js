@@ -4,7 +4,7 @@ const { Tritium } = require("./main");
 
 const tritium = new Tritium();
 tritium.load();
-console.log(tritium.exportCmds());
+// console.log(tritium.exportCmds());
 
 // process.exit(666);
 
