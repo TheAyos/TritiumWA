@@ -21,7 +21,7 @@ module.exports = new TritiumCommand(
           // if its a group and its not created by me
           const groupMemCount = chat.groupMetadata.participants.length - 1;
           if (chat.groupMetadata && groupMemCount <= 15 && groupMemCount > 0) {
-            await Promise.all([
+            /* await Promise.all([
               Tritium.sendText(
                 id,
                 `*Leaving group because of low number of members.*\n` +
@@ -30,7 +30,7 @@ module.exports = new TritiumCommand(
               ),
               Tritium.leaveGroup(id),
               Tritium.deleteChat(id),
-            ]);
+            ]);*/
             leftGroups++;
           }
         } else {
@@ -48,11 +48,7 @@ module.exports = new TritiumCommand(
         msg.id,
       );
     } catch (err) {
-      return Tritium.reply(
-        msg.from,
-        `Oh no, an error occurred: \`\`\`${err.message}\`\`\`. Try again later!`,
-        msg.id,
-      );
+      return Tritium.reply(msg.from, `Oh no, an error occurred: \`\`\`${err.message}\`\`\`. Try again later!`, msg.id);
     }
   },
   {

@@ -17,14 +17,14 @@ module.exports = function (client, useHotReload = false) {
         const eventPath = client.fromRootPath("events", eventFile);
         const watcher = watch(eventPath);
 
-        let freshPull = async (arg) => require(eventPath)(client, arg);
+        let freshPull = (arg) => client.queue.add(() => require(eventPath)(client, arg), { priority: 1 });
         client[eventName]((arg) => freshPull(arg));
 
         watcher.on("change", () => {
           try {
             console.log(cc("CHANGE DETECTED ! -", "lightred"), eventPath);
             delete require.cache[require.resolve(eventPath)];
-            freshPull = async (arg) => require(eventPath)(client, arg);
+            freshPull = (arg) => client.queue.add(() => require(eventPath)(client, arg), { priority: 1 });
           } catch (error) {
             console.log(error);
           }
@@ -77,7 +77,7 @@ module.exports = function (client) {
         } catch (error) {
           console.log(error);
         }
-      }); 
+      });
     } catch (error) {
       throw new Error(`⌚ Failed to register event from file ${eventFile}: ${error}`);
     }

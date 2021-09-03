@@ -11,7 +11,7 @@ module.exports = new TritiumCommand(
     }
   },
   {
-    triggers: ["help", "commands", "cmds", "helpmestepbroimstuck"],
+    triggers: ["help", "commands", "menu", "cmds", "helpmestepbroimstuck"],
     usage: ["{command}", "{command} <command>"],
     example: "{command} fisheye",
     description: "Shows a list of commands or specific information about a command.",

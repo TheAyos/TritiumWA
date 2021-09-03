@@ -9,6 +9,7 @@ class Tritium {
     this.db = require("./utils/TastyMango");
     this.commands = [];
     this.cooldowns = new Map();
+    this.queue = queue;
 
     this.stats = { commands: { ran: 0, loaded: 0, disabled: 0 } };
     this.DEV = true;
@@ -20,22 +21,20 @@ class Tritium {
   load() {
     this.db.connect(this.config.mongo_db_path);
     require("./handlers/CommandLoader")(this);
-    // is it useful ?
     this.stats.commands.loaded = this.commands.length;
   }
 
   launch(client) {
     this.client = client;
-    require("./handlers/EventLoader")(Object.assign(this.client, this));
-    this.cleanupPrepareTerrain();
+    require("./handlers/EventLoader")(Object.assign(this.client, this), true);
+    // this.cleanupPrepareTerrain();
 
     this.ready();
   }
 
   async cleanupPrepareTerrain() {
-    // *** Cleanup old messages on boot ***
     const unreadMessagesSet = new Set();
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 1; i++) {
       await this.client
         .getAllUnreadMessages()
         .then((messageArray) => messageArray.map((unreadMessage) => unreadMessagesSet.add(unreadMessage)));

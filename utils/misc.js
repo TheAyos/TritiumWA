@@ -2,45 +2,36 @@ const moment = require("moment");
 const { resolve, join } = require("path");
 
 module.exports = {
+  WMStrm: require("./WMStrm"),
+  jikan: "https://api.jikan.moe/v3/",
   rootPath: resolve(),
   fromRootPath: function (...pathS) {
     return join(this.rootPath, ...pathS);
   },
-
-  WMStrm: require("./WMStrm"),
-  jikan: "https://api.jikan.moe/v3/",
   processTime: (timestamp, now) => moment.duration(now - moment(timestamp * 1000)).asSeconds(),
-
   getSignature: () => `\n*🤖 Tritium • ${moment().format("HH:mm")}* `,
 
-  getCommand: function (args) {
-    return typeof args === "string"
-      ? this.commands.find((c) => c.props.triggers.includes(args))
-      : args.props
-      ? this.commands.find((c) => c.props.triggers.includes(args.name))
-      : undefined;
+  helpThisPoorMan: function (msg, givenCommand) {
+    if (!givenCommand) return this.client.reply(msg.from, this.getFullHelpMsg(this.config.prefix), msg.id);
+    else if (givenCommand.triggers) {
+      return this.client.reply(msg.from, givenCommand.getHelpMsg(this.config.prefix), msg.id);
+    } else if (typeof givenCommand === "string") {
+      const command = this.commands.find((c) => c.props.triggers.includes(givenCommand));
+      if (command) return this.client.reply(msg.from, command.getHelpMsg(this.config.prefix), msg.id);
+    }
   },
 
-  helpThisPoorMan: function (msg, cmd) {
-    const client = this;
-    this.getCommand("help").run({
-      client,
-      msg,
-      args: typeof cmd === "string" ? client.getCommand(cmd).triggers[0] : cmd.triggers ? cmd.triggers[0] : "",
-    });
-  },
-
-  getFullHelpMsg: function (chatPrefix) {
+  getFullHelpMsg: function (prefix) {
     const categories = {};
     let cmdCount = 0;
 
-    this.commands.forEach((cmd) => {
+    this.commands.forEach((command) => {
       cmdCount++;
-      let category = categories[cmd.category];
+      let category = categories[command.category];
       if (!category) {
-        category = categories[cmd.category] = [];
+        category = categories[command.category] = [];
       }
-      category.push(cmd.props.triggers[0]);
+      category.push(command.props.triggers[0]);
     });
 
     const catCount = Object.keys(categories).length;
@@ -52,13 +43,13 @@ module.exports = {
 
     let helpMessageFull =
       `*Bot Commands*\n\n` +
-      `The prefix of the bot on this group is *${chatPrefix}*\n` +
-      `*Example:* ${chatPrefix}help love\n` +
+      `The prefix of the bot on this group is *${prefix}*\n` +
+      `*Example:* ${prefix}help love\n` +
       `𝙍𝙚𝙢𝙞𝙣𝙙: 𝘋𝘰𝘯'𝘵 𝘶𝘴𝘦 [ ] 𝘰𝘳 <> 𝘪𝘯 𝘤𝘰𝘮𝘮𝘢𝘯𝘥𝘴.\n\n` +
       `*A total of ${cmdCount} commands in ${catCount} categories:*` +
       `${commandNames}\n\n`;
 
-    helpMessageFull += `For more info use \`\`\`${chatPrefix}help <command>\`\`\``;
+    helpMessageFull += `For more info use \`\`\`${prefix}help <command>\`\`\``;
     helpMessageFull += this.getSignature();
     return helpMessageFull;
   },

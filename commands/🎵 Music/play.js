@@ -69,7 +69,7 @@ module.exports = new TritiumCommand(
     });
   },
   {
-    triggers: ["play", "p", "music"],
+    triggers: ["play", "p", "music", "song"],
     usage: ["{command} [query]", "{command} [URL]"],
     example: ["{command} nyan cat", "{command} https://youtu.be/QH2-TGUlwu4"],
     description: "Play a music 🎶",

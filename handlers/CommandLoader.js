@@ -33,8 +33,8 @@ function loadCommand(client, commandPath, category) {
   if (existingCommandCheck)
     throw new Error(
       `Command loader > Command ${commandName} is already registered !\n` +
-        `New command ${command}\n` +
-        `Old command: ${existingCommandCheck}`,
+        `Old command: \n${JSON.stringify(existingCommandCheck)}\n\n` +
+        `New command: \n${JSON.stringify(command)}\n\n`,
     );
   client.commands.push(command);
 }
