@@ -1,19 +1,18 @@
 const TritiumCommand = require("../../models/TritiumCommand");
+const TextUtils = require("../../utils/TextUtils");
+
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, cleanArgs }) {
     await Tritium.reply(
       msg.from,
-      cleanArgs
-        .split("")
-        .map((c, i) => (i % 2 ? c.toUpperCase() : c))
-        .join(""),
+      TextUtils.vaporwave(cleanArgs),
       msg.id,
     );
   },
   {
-    triggers: ["uppercase", "upc"],
-    description: "uPpErCaSe tHaT !",
-    usage: "{command} [wHaT yOu wAnT mE tO sAy]",
+    triggers: ["vaporwave", "vw"],
+    description: "*Ｖａｐｏｒｗａｖｅ ！*",
+    usage: "{command} [ｗｈａｔ ｙｏｕ ｗａｎｔ ｍｅ ｔｏ ｓａｙ]",
 
     minArgs: 1,
     groupOnly: true,

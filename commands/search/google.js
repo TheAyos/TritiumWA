@@ -9,7 +9,7 @@ module.exports = new TritiumCommand(
   {
     triggers: ["google", "googlesearch", "search", "gg"],
     usage: "{command} [search]",
-    example: "{command} how to _pécho_",
+    example: "{command} how to pécho",
     description: "Searches the web for you, majesty.",
     minArgs: 1,
     missingArgs: "Your query is empty 😦",

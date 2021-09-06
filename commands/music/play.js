@@ -7,8 +7,8 @@ const TEXT_ERROR_LINK_IS_PLAYLIST = `The given link is a playlist !`;
 const TEXT_ERROR_VIDEO_LINK = `Video unavaliable. Invalid link ? Retryyy !`;
 const TEXT_ERROR_LIVE_VIDEO = `Can't play a Live video !`;
 const TEXT_ERROR_VIDEO_QUERY = `No results ! Invalid query ? Retryyy !`;
-const TEXT_ERROR_SENDING_THUMBNAIL = `I wasn't able to send you the thumbnail this time :(`;
-const TEXT_ERROR_SENDING_AUDIO = `I wasn't able to send you the audio file this time :(`;
+const TEXT_ERROR_SENDING_INFO_CARD = `I wasn't able to send you this video's info card :(`;
+const TEXT_ERROR_SENDING_AUDIO = `I wasn't able to send you the audio track :(`;
 const TEXT_TOO_LONG = `*It's too long (>${MAX_LENGTH_SECONDS / 60} min) !*\n_don't worry that what she said..._`;
 
 module.exports = new TritiumCommand(
@@ -21,9 +21,9 @@ module.exports = new TritiumCommand(
             if (!track) return Tritium.reply(msg.from, TEXT_ERROR_VIDEO_LINK, msg.id);
             if (track.isLiveContent) return Tritium.reply(msg.from, TEXT_ERROR_LIVE_VIDEO, msg.id);
         } else {
-            track = await YT.searchTracks(query, true);
+            track = await YT.searchTrack(query, true);
             if (!track) return Tritium.reply(msg.from, TEXT_ERROR_VIDEO_QUERY, msg.id);
-            if (!track.lengthSeconds) track.lengthSeconds = +track.duration / 1000;
+            if (!track.lengthSeconds) track.lengthSeconds = +track.duration / 1000; // TODO investigate ??
         }
         if (track.lengthSeconds > MAX_LENGTH_SECONDS) return Tritium.reply(msg.from, TEXT_TOO_LONG, msg.id);
 
@@ -34,10 +34,23 @@ module.exports = new TritiumCommand(
             });
         } catch (error) {
             Tritium.error(error);
-            return Tritium.reply(msg.from, TEXT_ERROR_SENDING_THUMBNAIL, msg.id);
+            return Tritium.reply(msg.from, TEXT_ERROR_SENDING_INFO_CARD, msg.id);
         }
 
-        try {
+        const videoReadableStream = require("ytdl-core")(track.url, { filter: "audioonly", quality: "lowest" });
+        const randomName = Math.random().toString(36).substring(7);
+        const wstream = new Tritium.WMStrm(randomName);
+        const stream = await videoReadableStream.pipe(wstream);
+        stream.on("finish", async () => {
+            const data64Audio = `data:audio/mpeg;base64,${wstream._memStore[randomName].toString("base64")}`;
+            await Tritium.sendPtt(msg.from, data64Audio).catch((error) => {
+                console.log(error);
+                return Tritium.reply(msg.from, TEXT_ERROR_SENDING_AUDIO, msg.id);
+            });
+            wstream.end();
+        });
+
+        /* try {
             const data64Audio = await YT.getData64Track(track.url).catch((e) => {
                 throw e;
             });
@@ -47,7 +60,7 @@ module.exports = new TritiumCommand(
         } catch (error) {
             Tritium.error(error);
             return Tritium.reply(msg.from, TEXT_ERROR_SENDING_AUDIO, msg.id);
-        }
+        }*/
     },
     {
         triggers: ["play", "p", "music", "song"],

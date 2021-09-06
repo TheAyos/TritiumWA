@@ -1,7 +1,9 @@
 const TritiumCommand = require("../../models/TritiumCommand");
+const TextUtils = require("../../utils/TextUtils");
+
 module.exports = new TritiumCommand(
   async function ({ Tritium, msg, cleanArgs }) {
-    await Tritium.reply(msg.from, cleanArgs.split("").join("̳") + "̳", msg.id);
+    await Tritium.reply(msg.from, TextUtils.underline(cleanArgs), msg.id);
   },
   {
     triggers: ["underline", "ul"],

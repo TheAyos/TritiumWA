@@ -160,7 +160,6 @@ Array.prototype.toScrambled = function () {
 };
 
 process.on("uncaughtException", (error) => {
-    // const cleanErrorMsg = error.stack.replace(new RegExp(`${this.rootPath}/`, "g"), "./");
     require("./Logger")(`Uncaught Exception: ${error.stack}`, "error");
     process.exit(1);
 });

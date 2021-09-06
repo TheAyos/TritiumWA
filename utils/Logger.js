@@ -1,11 +1,19 @@
 const { resolve } = require("path");
 
+// TODO centralize colors in one file (probably misc.js)
+
+const COLOR_RESET = "\x1b[0m";
+const COLOR_BOLD = "\x1b[1m";
+const COLOR_RED = "\x1b[31m";
+const COLOR_GREEN = "\x1b[32m";
+const COLOR_YELLOW = "\x1b[33m";
+
 function logger(message, name = "info") {
     const date = Date().toString().split(" ").slice(1, 5).join(" ");
     message = message instanceof Object ? require("util").inspect(message) : message;
     message = message.replace(new RegExp(resolve(), "gi"), ".");
-    const color = name === "info" ? "\x1b[1m\x1b[32m" : name === "error" ? "\x1b[31m" : "";
-    console.log(`\n\x1b[33m[${date}] ${color}\x1b[1m${name} > \x1b[0m${message}\n`);
+    const color = name === "info" ? COLOR_GREEN : name === "error" ? COLOR_RED : COLOR_GREEN;
+    console.log(`${COLOR_YELLOW}[${date}] ${color}${COLOR_BOLD}${name} > ${COLOR_RESET}${message}`);
 }
 module.exports = logger;
 

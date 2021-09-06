@@ -61,6 +61,7 @@ module.exports = new TritiumCommand(
     }
     try {
       reactionGif = readFileSync(reactionGif, { encoding: "base64" });
+      // look weird on phone (not correctly cropped)
       // await Tritium.sendRawWebpAsSticker(msg.from, reactionGif);
       await Tritium.sendText(msg.from, `*${fname}* _*+*_ *${sname}* = ${result}% ${emoji}\n${advice}`);
     } catch (e) {

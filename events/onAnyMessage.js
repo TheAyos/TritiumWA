@@ -1,75 +1,48 @@
-const { cColor : cc } = require("../utils/misc");
+const { cColor: cc } = require("../utils/misc");
 
 const { default: PQueue } = require("p-queue");
 const queue = new PQueue({ concurrency: 7, autoStart: true });
 
 // Checks before command execution should now be handled in command class :)
-// TODO: only one db read at first & one write at end for performance boost
-// TODO: optimize for speed
+
+// ME, ANAS, SALMA
+const VIP_PEOPLE = ["212641715835", "212671421331", "212648539080"];
+
+async function cleanMsgCacheIfNeeded(Tritium) {
+    const loadedMessagesCache = await Tritium.getAmountOfLoadedMessages();
+    if (loadedMessagesCache >= 666) {
+        const afterCutInfo = await Tritium.cutChatCache();
+        const caption =
+            `Msgs cache reached ${loadedMessagesCache} messages. Cleaning...\n` +
+            `Went from ${afterCutInfo.before.chats} chats and ${afterCutInfo.before.msgs} msgs.\n` +
+            `To ${afterCutInfo.after.chats} chats and ${afterCutInfo.after.msgs} msgs.\n${Tritium.getSignature()}`;
+        Tritium.sendText(Tritium.config.youb_id, caption);
+    }
+}
 
 module.exports = async (Tritium, msg) => {
     if (!msg.sender || msg.sender.isMe || (!msg.body && !msg.caption)) return;
 
-    if (msg.sender.id !== Tritium.config.youb_id) return; // Dev Mode
-
-    console.log(`${cc("[M]")} ${msg.sender.pushname} | ${msg.chat.name} > ${msg.type === "chat" ? msg.body : "(data64 or other)"}`);
-
     const start = Date.now();
     const xpCooldown = Tritium.config.experienceCooldownMs;
 
-    // *** Temporary ***
-    if (msg.sender.id === Tritium.config.youb_id) {
-        if (msg.body === ".flush") {
-            const res = await Tritium.cutChatCache();
-            await Tritium.sendText(msg.from, "Flushed !\n" + res);
-        } else if (msg.body === ".stats") {
-            const averageProcessTime = (
-                Tritium.MSG_TIME.map((t) => t.procTime).reduce((acc, val) => acc + val, 0) / Tritium.MSG_TIME.map((t) => t.procTime).length
-            ).toFixed(0);
-            await Tritium.sendText(msg.from, "*Last minute avg procTime: _" + averageProcessTime + "_ ms*");
-        } else if (msg.body === ".groNONONONONONOSTOPTHATups") {
-            let caption = "";
-            const allChats = await Tritium.getAllChatIds();
-            for (const id of allChats) {
-                const chat = await Tritium.getChatById(id);
-                const groupMemberCount = chat.isGroup ? chat.groupMetadata.participants.length || (await Tritium.getGroupMembers(chat.id)).length : undefined;
+    msg.sender.PHONE_NUMBER = msg.sender.id.split("@").shift();
+    msg.sender.IS_VIP = VIP_PEOPLE.includes(msg.sender.id.split("@").shift());
+    msg.reply = function (content) { Tritium.reply(this.from, content, this.id); }; /* prettier-ignore */
 
-                if (chat.id === Tritium.config.youb_id || id.startsWith(Tritium.config.youb_id.split("@")[0])) continue;
-                if (chat.isReadOnly) {
-                    queue.add(async () => {
-                        await Tritium.deleteChat(chat.id);
-                        Tritium.reply(msg.from, "deleted read only chat " + chat.id, msg.id);
-                    });
-                } else if (!chat.isGroup) {
-                    queue.add(async () => {
-                        await Tritium.deleteChat(chat.id);
-                        Tritium.reply(msg.from, "deleted dm chat " + chat.id, msg.id);
-                    });
-                } else if (groupMemberCount <= 5) {
-                    await Tritium.leaveGroup(chat.id);
-                    await Tritium.deleteChat(chat.id);
-                    caption += `*Left group:* ${chat.name} because it had - ${groupMemberCount - 1} members.\n\n`;
-                    caption += `*Chat:* ${chat.name} - *isGroup:* ${chat.isGroup} - *isReadOnly:* ${chat.isReadOnly}`;
-                    caption += `${chat.isGroup ? " - *members:* " + groupMemberCount : ""}\n`;
-                }
-            }
-            await Tritium.sendText(msg.from, caption, msg.id);
-        }
-    }
+    // Testing mode
+    if (!VIP_PEOPLE.includes(msg.sender.PHONE_NUMBER)) return;
+
+    Tritium.log(`${msg.type === "chat" ? msg.body : "(data64 or other)"}`, `${msg.sender.IS_VIP ? "(VIP) " : ""}${msg.sender.pushname} | ${msg.chat.name}`);
+
     // *** Temporary ***
+    if (msg.sender.id === Tritium.config.youb_id && msg.body === ".stats") {
+        const averageProcessTime = (Tritium.MSG_TIME.map((t) => t.procTime).reduce((acc, val) => acc + val, 0) / Tritium.MSG_TIME.map((t) => t.procTime).length).toFixed(0);
+        await Tritium.sendText(msg.from, "*Last minute avg procTime: _" + averageProcessTime + "_ ms*");
+    }
 
     try {
-        const loadedMessagesCache = await Tritium.getAmountOfLoadedMessages();
-        if (loadedMessagesCache >= 1600)
-            Promise.all([
-                Tritium.cutMsgCache(),
-                // .then(async () => console.log("this tho\n\n\n\n\n\n", await Tritium.cutChatCache())),
-                Tritium.sendText(Tritium.config.youb_id, `Cleared ${loadedMessagesCache} messages.\n${Tritium.getSignature()}`),
-            ]);
-
-        msg.reply = function (content) {
-            Tritium.reply(this.from, content, this.id);
-        };
+        cleanMsgCacheIfNeeded(Tritium);
 
         const bL = msg.body.toLowerCase();
         if (bL === "hi" || bL === "hey" || bL === "hello") {
@@ -78,13 +51,13 @@ module.exports = async (Tritium, msg) => {
             // if (!msg.isGroupMsg) return Tritium.helpThisPoorMan(msg); //TODO: not needed anymore ?
         }
         if (bL === "gn" || (bL.includes("good") && bL.includes("night")) || bL === "nik") return msg.reply(`_*🌃 good night ${msg.sender.pushname} !*_`);
-        if (bL.includes("jordi") && bL.includes("nino")) return msg.reply(`_*Father ?*_`);
-        if ((bL.includes("mia") && bL.includes("khalifa")) || bL.includes("khalifa")) return msg.reply(`_*Mama ?*_`);
+        const wordInString = (s, word) => new RegExp('\\b' + word + '\\b', 'i').test(s);
+        if (["jordi", "nino", "pola"].map((s) => wordInString("jdordi ninod polaa", s)).reduce((a, b) => a || b)) return msg.reply(`_*Father ?*_`);
+        if ((bL.includes("mia") && bL.includes("khalifa")) || bL.includes("khalifa")) return msg.reply(`_*Mamma ?*_`);
         if (bL.includes("fuck me")) return msg.reply(`_*Let's do that !*_`);
         if (bL.includes("fuck me pls")) return msg.reply(`_*Let's do that ! Now.*_`);
         if (bL.includes("wanna go out ?")) return msg.reply(`_*i'm up*_`);
         if (bL.includes("i need a gf")) return msg.reply(`_*pick ya up at 8 ?*_`);
-        if (bL.includes("i need a bf")) return msg.reply(`_*i'm gay actually but i'm sure i can do somthing for ya ;)*_`);
 
         // *** Helper functions ***
         msg.GROUP_ID = msg.isGroupMsg ? msg.chat.groupMetadata.id : undefined;
@@ -101,9 +74,7 @@ module.exports = async (Tritium, msg) => {
                 const user = await Tritium.db.Experience.fetch(msg.sender.id, msg.GROUP_ID);
                 await Tritium.sendTextWithMentions(
                     msg.from,
-                    `@${msg.sender.id.split("@").shift()}, congratulations ! 🎉\n` +
-                        `You have leveled up to *level ${user.level}* 🥳\n` +
-                        `_🧬 use the ${prefix}xp command for more info._`,
+                    `@${msg.sender.PHONE_NUMBER}, congratulations ! 🎉\n` + `You have leveled up to *level ${user.level}* 🥳\n` + `_🧬 use the ${prefix}xp command for more info._`,
                 );
             }
         }
@@ -132,11 +103,12 @@ module.exports = async (Tritium, msg) => {
         const cleanArgs = args.join(" ");
 
         const command = Tritium.commands.find((c) => c.props.triggers.includes(cmdName));
-        if (!command) return console.log(`=> Unregistered ${cmdName} from ${msg.sender.id}`);
+        if (!command) return Tritium.log(`=> Unregistered ${cmdName} from ${msg.sender.id}`);
 
         Tritium.stats.commands.ran++;
-        process.stdout.write(cc(`${msg.sender.pushname} (${msg.sender.id}) ran command ${cmdName}, `, "lightgreen"));
-        console.log(cc(`${Tritium.stats.commands.ran} ran commands since startup`, "yellow"));
+        // process.stdout.write(cc(`${msg.sender.pushname} (${msg.sender.id}) ran command ${cmdName}, `, "lightgreen"));
+        Tritium.log(`ran command ${cmdName}`, `${msg.sender.pushname} (${msg.sender.id})`);
+        Tritium.log(cc(`${Tritium.stats.commands.ran} ran commands since startup`, "yellow"));
 
         /* // *** Quotas *** // TODO: selon levels, different quotas
     const dailyQuota = Tritium.config.dailyQuota;
@@ -188,7 +160,7 @@ module.exports = async (Tritium, msg) => {
                 setTimeout(
                     () =>
                         queue.add(
-                            () => Tritium.deleteMessage(msg.chat.contact.id, msgId),
+                            async () => await Tritium.deleteMessage(msg.chat.contact.id, msgId),
                             // && console.log(`${msg.sender.id}'s cooldown for command ${command.name} expired !`, timestamps),
                             { priority: 0 },
                         ),
@@ -224,14 +196,11 @@ module.exports = async (Tritium, msg) => {
     Tritium.MSG_TIME.push({ time: Date.now(), procTime: Date.now() - start });
     const filteredProcessTimes = Tritium.MSG_TIME.filter((t) => t.time > Date.now() - 60 * 1000); // keep process times for 1 minute
     Tritium.MSG_TIME = filteredProcessTimes;
-    const averageProcessTime = (
-        filteredProcessTimes.map((t) => t.procTime).reduce((acc, val) => acc + val, 0) / filteredProcessTimes.map((t) => t.procTime).length
-    ).toFixed(0);
+    const averageProcessTime = (filteredProcessTimes.map((t) => t.procTime).reduce((acc, val) => acc + val, 0) / filteredProcessTimes.map((t) => t.procTime).length).toFixed(0);
 
-    console.log(cc(`1 min procTime avg: ${averageProcessTime} ms`));
-    console.log(cc(`Message processed in: ${Date.now() - start} ms`, "yellow"));
-    console.log(
-        `${cc(`Queue size | pending | concurrency: `, "lightyellow")}\n` + `      ${queue.size}    |    ${queue.pending}    |      ${queue.concurrency}`,
-    );
+    Tritium.log(cc(`1 min procTime avg: ${averageProcessTime} ms`));
+    Tritium.log(cc(`Message processed in: ${Date.now() - start} ms`, "yellow"));
+    Tritium.log(cc(`Queue size | pending | concurrency:`, "lightyellow"));
+    Tritium.log(`      ${queue.size}    |    ${queue.pending}    |      ${queue.concurrency}`);
     // *** Stats ***
 };

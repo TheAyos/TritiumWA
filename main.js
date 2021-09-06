@@ -1,6 +1,7 @@
 const Logger = require("./utils/Logger");
 const TastyMango = require("./utils/TastyMango");
 const Config = require("./config.json");
+const MiscellaneousFuncs = require("./utils/misc");
 
 const moment = require("moment");
 
@@ -17,7 +18,7 @@ class Tritium {
         this.MSG_TIME = [];
         this.DEV = true;
 
-        Object.assign(this, require("./utils/misc"));
+        Object.assign(this, MiscellaneousFuncs);
     }
 
     load() {
@@ -29,7 +30,7 @@ class Tritium {
     launch(client) {
         this.client = client;
         require("./handlers/EventLoader")(Object.assign(this.client, this), true);
-        // this.cleanupPrepareTerrain();
+        // await this.cleanupPrepareTerrain();
         this.ready();
     }
 
