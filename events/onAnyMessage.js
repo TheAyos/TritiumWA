@@ -8,27 +8,25 @@ const queue = new PQueue({ concurrency: 7, autoStart: true });
 // ME, ANAS, SALMA
 const VIP_PEOPLE = ["212641715835", "212671421331", "212648539080"];
 
-async function cleanMsgCacheIfNeeded(Tritium) {
-    const loadedMessagesCache = await Tritium.getAmountOfLoadedMessages();
-    if (loadedMessagesCache >= 666) {
-        const afterCutInfo = await Tritium.cutChatCache();
-        const caption =
-            `Msgs cache reached ${loadedMessagesCache} messages. Cleaning...\n` +
-            `Went from ${afterCutInfo.before.chats} chats and ${afterCutInfo.before.msgs} msgs.\n` +
-            `To ${afterCutInfo.after.chats} chats and ${afterCutInfo.after.msgs} msgs.\n${Tritium.getSignature()}`;
-        Tritium.sendText(Tritium.config.youb_id, caption);
-    }
-}
-
 module.exports = async (Tritium, msg) => {
     if (!msg.sender || msg.sender.isMe || (!msg.body && !msg.caption)) return;
 
     const start = Date.now();
     const xpCooldown = Tritium.config.experienceCooldownMs;
 
+    // *** Helper functions ***
+    msg.GROUP_ID = msg.isGroupMsg ? msg.chat.groupMetadata.id : undefined;
     msg.sender.PHONE_NUMBER = msg.sender.id.split("@").shift();
     msg.sender.IS_VIP = VIP_PEOPLE.includes(msg.sender.id.split("@").shift());
     msg.reply = function (content) { Tritium.reply(this.from, content, this.id); }; /* prettier-ignore */
+    msg._quotedMsg = msg.quotedMsg || msg.quotedMsgObj || {};
+    msg._quotedMsg.type = msg._quotedMsg ? msg._quotedMsg.type : undefined;
+
+    msg._hasQuotedImage = msg.type === "image" || (msg.quotedMsg && msg._quotedMsg.type === "image") ? true : false;
+    msg._hasQuotedVideo = msg.type === "video" || (msg.quotedMsg && msg._quotedMsg.type === "video") ? true : false;
+    msg._hasQuotedPtt = msg.type === "ptt" || (msg.quotedMsg && msg._quotedMsg.type === "ptt") ? true : false;
+
+    msg._mediaMimetype = msg.isMedia ? msg.mimetype : msg.quotedMsg && msg.quotedMsg.isMedia ? msg.quotedMsg.mimetype : undefined;
 
     // Testing mode
     if (!VIP_PEOPLE.includes(msg.sender.PHONE_NUMBER)) return;
@@ -44,23 +42,7 @@ module.exports = async (Tritium, msg) => {
     try {
         cleanMsgCacheIfNeeded(Tritium);
 
-        const bL = msg.body.toLowerCase();
-        if (bL === "hi" || bL === "hey" || bL === "hello") {
-            await msg.reply(`👋 *Hello ${msg.sender.pushname} !*`);
-            if (!msg.isGroupMsg) return Tritium.reply(msg.from, Tritium.getFullHelpMsg(Tritium.config.prefix), msg.id);
-            // if (!msg.isGroupMsg) return Tritium.helpThisPoorMan(msg); //TODO: not needed anymore ?
-        }
-        if (bL === "gn" || (bL.includes("good") && bL.includes("night")) || bL === "nik") return msg.reply(`_*🌃 good night ${msg.sender.pushname} !*_`);
-        const wordInString = (s, word) => new RegExp('\\b' + word + '\\b', 'i').test(s);
-        if (["jordi", "nino", "pola"].map((s) => wordInString("jdordi ninod polaa", s)).reduce((a, b) => a || b)) return msg.reply(`_*Father ?*_`);
-        if ((bL.includes("mia") && bL.includes("khalifa")) || bL.includes("khalifa")) return msg.reply(`_*Mamma ?*_`);
-        if (bL.includes("fuck me")) return msg.reply(`_*Let's do that !*_`);
-        if (bL.includes("fuck me pls")) return msg.reply(`_*Let's do that ! Now.*_`);
-        if (bL.includes("wanna go out ?")) return msg.reply(`_*i'm up*_`);
-        if (bL.includes("i need a gf")) return msg.reply(`_*pick ya up at 8 ?*_`);
-
-        // *** Helper functions ***
-        msg.GROUP_ID = msg.isGroupMsg ? msg.chat.groupMetadata.id : undefined;
+        randomVeryFunnyResponses(Tritium, msg);
 
         // *** Prefix ***
         const prefix = msg.isGroupMsg ? await Tritium.db.Settings.getPrefix(msg.GROUP_ID) : Tritium.config.prefix;
@@ -82,28 +64,22 @@ module.exports = async (Tritium, msg) => {
         // *** Body parsing ***
         let body = msg.body;
         if (msg.type === "chat" && body.startsWith(prefix)) {
+            console.log("msg if of type chat and starts with prefix");
             body = msg.body;
         } else if (msg.type === "image" || msg.type === "video") {
+            console.log("msg is of type img or video");
             if (msg.caption && msg.caption.startsWith(prefix)) {
+                console.log("and it has a caption that starts with the prefix");
                 body = msg.caption;
             }
         } else return;
-
-        /* let bbody =
-      msg.type === "chat" && msg.body.startsWith(prefix)
-        ? msg.body
-        : (msg.type === "image" || msg.type === "video") && msg.caption && msg.caption.startsWith(prefix)
-        ? msg.caption
-        : undefined;
-
-    console.log(bbody);*/
 
         const args = body.slice(prefix.length).trim().split(/[ ]+/g);
         const cmdName = args.shift().toLowerCase();
         const cleanArgs = args.join(" ");
 
         const command = Tritium.commands.find((c) => c.props.triggers.includes(cmdName));
-        if (!command) return Tritium.log(`=> Unregistered ${cmdName} from ${msg.sender.id}`);
+        if (!command) return Tritium.log(`=> Unregistered ${msg.type === "chat" ? cmdName : "data64"} from ${msg.sender.id}`);
 
         Tritium.stats.commands.ran++;
         // process.stdout.write(cc(`${msg.sender.pushname} (${msg.sender.id}) ran command ${cmdName}, `, "lightgreen"));
@@ -204,3 +180,31 @@ module.exports = async (Tritium, msg) => {
     Tritium.log(`      ${queue.size}    |    ${queue.pending}    |      ${queue.concurrency}`);
     // *** Stats ***
 };
+
+async function cleanMsgCacheIfNeeded(Tritium) {
+    const loadedMessagesCache = await Tritium.getAmountOfLoadedMessages();
+    if (loadedMessagesCache >= 666) {
+        const afterCutInfo = await Tritium.cutChatCache();
+        const caption =
+            `Msgs cache reached ${loadedMessagesCache} messages. Cleaning...\n` +
+            `Went from ${afterCutInfo.before.chats} chats and ${afterCutInfo.before.msgs} msgs.\n` +
+            `To ${afterCutInfo.after.chats} chats and ${afterCutInfo.after.msgs} msgs.\n${Tritium.getSignature()}`;
+        Tritium.sendText(Tritium.config.youb_id, caption);
+    }
+}
+
+async function randomVeryFunnyResponses(Tritium, msg) {
+    const bL = msg.body.toLowerCase();
+    if (bL === "hi" || bL === "hey" || bL === "hello") {
+        await msg.reply(`👋 *Hello ${msg.sender.pushname} !*`);
+        if (!msg.isGroupMsg) return Tritium.reply(msg.from, Tritium.getFullHelpMsg(Tritium.config.prefix), msg.id);
+    }
+    if (bL === "gn" || (bL.includes("good") && bL.includes("night")) || bL === "nik") return msg.reply(`_*🌃 good night ${msg.sender.pushname} !*_`);
+    const wordInString = (s, word) => new RegExp("\\b" + word + "\\b", "i").test(s);
+    if (["jordi", "nino", "pola"].map((s) => wordInString("jdordi ninod polaa", s)).reduce((a, b) => a || b)) return msg.reply(`_*Father ?*_`);
+    if ((bL.includes("mia") && bL.includes("khalifa")) || bL.includes("khalifa")) return msg.reply(`_*Mamma ?*_`);
+    if (bL.includes("fuck me")) return msg.reply(`_*Let's do that !*_`);
+    if (bL.includes("fuck me pls")) return msg.reply(`_*Let's do that ! Now.*_`);
+    if (bL.includes("wanna go out ?")) return msg.reply(`_*i'm up*_`);
+    if (bL.includes("i need a gf")) return msg.reply(`_*pick ya up at 8 ?*_`);
+}

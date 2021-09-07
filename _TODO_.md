@@ -1,5 +1,7 @@
 Fix all this
 
+CLEANING OF TEMP GIF FILES AND WRAP UP
+
 [] .json file handling for each category directory
 [] hidden & shown commands handling
 [] hidden & shown categories handling

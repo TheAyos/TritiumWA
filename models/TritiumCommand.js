@@ -61,41 +61,34 @@ module.exports = class TritiumCommand {
         }
 
         // *** Group only checks ***
-        if (this.props.groupOnly && !msg.isGroupMsg) {
-            return Tritium.reply(msg.from, `😿 Sorry ${msg.sender.pushname}, this command is only available in groups !`, msg.id, true);
-        }
+        if (this.props.groupOnly && !msg.isGroupMsg) return Tritium.reply(msg.from, `😿 Sorry ${msg.sender.pushname}, this command is only available in groups !`, msg.id, true);
 
         // *** User permissions checks ***
-        const isAdmin = msg.isGroupMsg
-            ? msg.chat.groupMetadata.participants.find((u) => u.id === msg.sender.id && u.isAdmin) || msg.sender.id === Tritium.config.youb_id
-            : undefined;
-        if (this.props.userPerms && this.props.userPerms.includes("ADMINISTRATOR") && !isAdmin) {
+        const isAdmin = msg.isGroupMsg ? msg.chat.groupMetadata.participants.find((u) => u.id === msg.sender.id && u.isAdmin) || msg.sender.id === Tritium.config.youb_id : undefined;
+        if (this.props.userPerms && this.props.userPerms.includes("ADMINISTRATOR") && !isAdmin)
             return Tritium.reply(msg.from, `Sorry ${msg.sender.pushname}, you need to be administrator to do this.`, msg.id, true);
-        }
 
-        // *** Arguments checks ***
-        // *** Types: number of args, 'quotedMsg', ..., + missingArgs reply handling ***
+        // *** Arguments checks *** => Types: number of args, 'quotedMsg', ..., + missingArgs reply handling
         if (this.props.minArgs && typeof this.props.minArgs === "string") {
             if (this.props.minArgs === "quotedMsg" && !msg.quotedMsg) return await Tritium.reply(msg.from, "*💭 You need to quote a message !*", msg.id);
+            // if (this.props.minArgs === "quotedImg" && !msg....) return await Tritium.reply(msg.from, "*💭 You need to quote a picc !*", msg.id); // TODO
         } else if (this.props.minArgs && args.length < this.props.minArgs) {
-            if (this.props.missingArgs && args.length < 1) {
-                return Tritium.reply(msg.from, this.props.missingArgs, msg.id, true);
-            } else {
-                return Tritium.reply(msg.from, this.getHelpMsg(chatPrefix), msg.id, true);
-            }
+            return Tritium.reply(msg.from, this.props.missingArgs ? this.props.missingArgs : this.getHelpMsg(chatPrefix), msg.id, true);
         }
 
-        // *** Cooldown updating and checking ***
+        // *** Cooldown updating and checking (last step before execution in case user fails argument checks so he doesn't get a cooldown) ***
         if (await updateCooldowns(this)) return;
 
-        // *** Command execution & error handling ***
+        // *** Fancy stuff ***
         Tritium.simulateTyping(msg.from, true);
+
+        // *** Command execution & error handling ***
         try {
-            await this.callback({ Tritium, msg, args, cleanArgs, chatPrefix, usedAlias }).catch((e) => Tritium.log(e, "error"));
+            await this.callback({ Tritium, msg, args, cleanArgs, chatPrefix, usedAlias }).catch((e) => Tritium.error(e));
         } catch (error) {
             await Tritium.simulateTyping(msg.from, false);
             await Tritium.reply(msg.from, `An error occurred: \`${error.message}\`. Try again later!`, msg.id);
-            Tritium.log(error, "error");
+            Tritium.error(error);
         }
         await Tritium.simulateTyping(msg.from, false);
     }
@@ -106,10 +99,7 @@ module.exports = class TritiumCommand {
 
         const aliasHelp = this.props.triggers.filter((a) => a != this.props.triggers[0]);
 
-        let helpMessage =
-            `*Help | ${this.name}*\n\n` +
-            `*Description:* ${this.props.description}\n` +
-            `*Remind:* *[ ]* means an argument is required and *<>* means it is optional.\n`;
+        let helpMessage = `*Help | ${this.name}*\n\n` + `*Description:* ${this.props.description}\n` + `*Remind:* *[ ]* means an argument is required and *<>* means it is optional.\n`;
         helpMessage += this.props.notice ? `*Notice: _${this.props.notice}_*\n` : "";
         helpMessage += usage ? `\n*Usage*\n\`\`\`${usage}\`\`\`` : "";
         helpMessage += example ? `\n` + `*Example*\n\`\`\`${example}\`\`\`` : "";
