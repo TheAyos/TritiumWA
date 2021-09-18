@@ -12,6 +12,7 @@ class YoutubeFunctions {
         return ytsr.YouTube.validate(query, "VIDEO") || ytsr.YouTube.validate(query, "VIDEO_ID");
     }
     static isYTPlaylistLink(query) {
+        query = query.split("&list").shift(); // should allow playing single video coming from a playlist
         return ytsr.YouTube.validate(query, "PLAYLIST") || ytsr.YouTube.validate(query, "PLAYLIST_ID");
     }
 

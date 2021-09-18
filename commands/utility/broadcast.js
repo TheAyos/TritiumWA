@@ -28,6 +28,5 @@ module.exports = new TritiumCommand(
 
     ownerOnly: true,
     minArgs: 1,
-    groupOnly: true,
   },
 );

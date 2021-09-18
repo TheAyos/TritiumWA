@@ -1,15 +1,15 @@
-const moment = require("moment");
-const { resolve, join } = require("path");
+const moment = require('moment');
+const { resolve, join } = require('path');
 
 module.exports = {
-    WMStrm: require("./WMStrm"),
-    jikan: "https://api.jikan.moe/v3/",
+    WMStrm: require('./WMStrm'),
+    jikan: 'https://api.jikan.moe/v3/',
     rootPath: resolve(),
     fromRootPath: function (...pathS) {
         return join(this.rootPath, ...pathS);
     },
     processTime: (timestamp, now) => moment.duration(now - moment(timestamp * 1000)).asSeconds(),
-    getSignature: () => `\n*🤖 Tritium • ${moment().format("HH:mm")}* `,
+    getSignature: () => `\n*🤖 Tritium • ${moment().format('HH:mm')}* `,
 
     /* handleError: function (error, msg, replyString) {
     console.log(error);
@@ -20,7 +20,7 @@ module.exports = {
         if (!givenCommand) return this.client.reply(msg.from, this.getFullHelpMsg(this.config.prefix), msg.id);
         else if (givenCommand.triggers) {
             return this.client.reply(msg.from, givenCommand.getHelpMsg(this.config.prefix), msg.id);
-        } else if (typeof givenCommand === "string") {
+        } else if (typeof givenCommand === 'string') {
             const command = this.commands.find((c) => c.props.triggers.includes(givenCommand));
             if (command) return this.client.reply(msg.from, command.getHelpMsg(this.config.prefix), msg.id);
         }
@@ -36,15 +36,15 @@ module.exports = {
             if (!category) {
                 category = categories[command.category] = [];
             }
-            category.push(command.props.triggers[0]);
+            if (!command.props.hidden) category.push(command.props.triggers[0]);
         });
 
         const catCount = Object.keys(categories).length;
 
-        let commandNames = "";
+        let commandNames = '';
         commandNames = Object.keys(categories)
-            .map((catItems) => `\n*${catItems}*\n\`\`\`> ${categories[catItems].join(", ")}\`\`\``)
-            .join("");
+            .map((catItems) => `\n*${catItems}*\n\`\`\`> ${categories[catItems].join(', ')}\`\`\``)
+            .join('');
 
         let helpMessageFull =
             `*Bot Commands*\n\n` +
@@ -54,7 +54,8 @@ module.exports = {
             `*A total of ${cmdCount} commands in ${catCount} categories:*` +
             `${commandNames}\n\n`;
 
-        helpMessageFull += `For more info use \`\`\`${prefix}help <command>\`\`\``;
+        helpMessageFull += `You can get more info about a specific command with \`\`\`${prefix}help <command_name>\`\`\`\n`;
+        helpMessageFull += `*DO NOT FORGET* \`\`\`to have fun !\`\`\``;
         helpMessageFull += this.getSignature();
         return helpMessageFull;
     },
@@ -62,13 +63,13 @@ module.exports = {
     /**
      * Converts a number into an simplified format (that resembles youtube view count numbers)
      * @param {number} num - The number to format
-     * @example viewFormatter(1705000000); // (One billion five million)
+     * @example viewFormatter(1705000000); // (One billion seven hundred five million)
      * @returns {string} Formatted number (i.e. "1.7B")
      */
     viewFormatter: function (num = 0) {
-        if (Math.abs(num) > 10e8 - 1) return (Math.sign(num) * (Math.abs(num) / 10e8).toFixed(1)).toLocaleString("en") + "B";
-        else if (Math.abs(num) > 10e5 - 1) return (Math.sign(num) * (Math.abs(num) / 10e5).toFixed(1)).toLocaleString("en") + "M";
-        else if (Math.abs(num) > 10e2 - 1) return (Math.sign(num) * (Math.abs(num) / 10e2).toFixed(1)).toLocaleString("en") + "K";
+        if (Math.abs(num) > 10e8 - 1) return (Math.sign(num) * (Math.abs(num) / 10e8).toFixed(1)).toLocaleString('en') + 'B';
+        else if (Math.abs(num) > 10e5 - 1) return (Math.sign(num) * (Math.abs(num) / 10e5).toFixed(1)).toLocaleString('en') + 'M';
+        else if (Math.abs(num) > 10e2 - 1) return (Math.sign(num) * (Math.abs(num) / 10e2).toFixed(1)).toLocaleString('en') + 'K';
         else return Math.sign(num) * Math.abs(num);
     },
 
@@ -95,26 +96,26 @@ module.exports = {
 
         if (seconds) res.push(seconds);
 
-        res = res.map((n) => (n < 9 ? "0" + n.toString() : n));
-        return res.join(":");
+        res = res.map((n) => (n < 9 ? '0' + n.toString() : n));
+        return res.join(':');
         // return years + " years " +  days + " days " + hours + " hours " + minutes + " minutes " + seconds + " seconds";
     },
 
     cColor: (t, c) => {
         switch (c) {
-            case "lightred":
+            case 'lightred':
                 return `\x1b[1m\x1b[31m${t}\x1b[0m`;
-            case "red":
+            case 'red':
                 return `\x1b[31m${t}\x1b[0m`;
-            case "lightyellow":
+            case 'lightyellow':
                 return `\x1b[1m\x1b[33m${t}\x1b[0m`;
-            case "yellow":
+            case 'yellow':
                 return `\x1b[33m${t}\x1b[0m`;
-            case "grey":
+            case 'grey':
                 return `\x1b[1m\x1b[30m${t}\x1b[0m`;
-            case "lightgreen":
+            case 'lightgreen':
                 return `\x1b[1m\x1b[32m${t}\x1b[0m`;
-            case "green":
+            case 'green':
             default:
                 return `\x1b[32m${t}\x1b[0m`;
         }
@@ -122,11 +123,11 @@ module.exports = {
 };
 
 String.prototype.limit = function (length) {
-    return this.length > length ? this.substring(0, length) + "..." : this;
+    return this.length > length ? this.substring(0, length) + '...' : this;
 };
 
 Map.prototype.find = function find(propOrFn) {
-    if (!propOrFn || typeof propOrFn !== "function") throw new Error("Error in args");
+    if (!propOrFn || typeof propOrFn !== 'function') throw new Error('Error in args');
     const func = propOrFn;
     for (const [key, val] of this) if (func(val, key, this)) return val;
     return null;
@@ -136,13 +137,7 @@ Map.prototype.find = function find(propOrFn) {
  * @returns {String} Returns a string with the number in its ordinal form
  */
 Number.prototype.toOrdinal = function () {
-    return this.toString().slice(-1) === "1"
-        ? `${this}st`
-        : this.toString().slice(-1) === "2"
-        ? `${this}nd`
-        : this.toString().slice(-1) === "3"
-        ? `${this}rd`
-        : `${this}th`;
+    return this.toString().slice(-1) === '1' ? `${this}st` : this.toString().slice(-1) === '2' ? `${this}nd` : this.toString().slice(-1) === '3' ? `${this}rd` : `${this}th`;
 };
 
 /**
@@ -159,12 +154,12 @@ Array.prototype.toScrambled = function () {
     return this.sort(() => Math.random() - 0.5);
 };
 
-process.on("uncaughtException", (error) => {
-    require("./Logger")(`Uncaught Exception: ${error.stack}`, "error");
-    process.exit(1);
+process.on('uncaughtException', (error) => {
+    require('./Logger')(`Uncaught Exception: ${error.stack}`, 'error');
+    // process.exit(1);
 });
 
-process.on("unhandledRejection", (reason) => {
-    require("./Logger")(`Uncaught Exception: ${reason}`, "error");
+process.on('unhandledRejection', (reason) => {
+    require('./Logger')(`Uncaught Exception: ${reason}`, 'error');
     throw reason;
 });

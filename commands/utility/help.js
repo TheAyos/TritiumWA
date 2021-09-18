@@ -1,23 +1,23 @@
-const TritiumCommand = require("../../models/TritiumCommand");
+const TritiumCommand = require('../../models/TritiumCommand');
 
 module.exports = new TritiumCommand(
-  async function ({ Tritium, msg, args, chatPrefix }) {
-    if (!args.length) {
-      await Tritium.reply(msg.from, Tritium.getFullHelpMsg(chatPrefix), msg.id);
-    } else {
-      const cmd = Tritium.commands.find((c) => c.props.triggers.includes(args[0]));
-      if (!cmd) return Tritium.reply(msg.from, "*That command doesn't exist 😲 !!!*", msg.id);
-      await Tritium.reply(msg.from, cmd.getHelpMsg(chatPrefix), msg.id, true);
-    }
-  },
-  {
-    triggers: ["help", "commands", "menu", "cmds", "helpmestepbroimstuck"],
-    usage: ["{command}", "{command} <command>"],
-    example: "{command} fisheye",
-    description: "Shows a list of commands or specific information about a command.",
+    async function ({ Tritium, msg, args, chatPrefix }) {
+        if (!args.length) {
+            await Tritium.reply(msg.from, Tritium.getFullHelpMsg(chatPrefix), msg.id);
+        } else {
+            const cmd = Tritium.commands.find((c) => c.props.triggers.includes(args[0]));
+            if (!cmd) return Tritium.reply(msg.from, "*That command doesn't exist 😲 !!!*", msg.id);
+            await Tritium.reply(msg.from, cmd.getHelpMsg(chatPrefix), msg.id, true);
+        }
+    },
+    {
+        triggers: ['help', 'command', 'commands', 'menu', 'cmd', 'cmds', 'helpmestepbroimstuck'],
+        usage: ['{command}', '{command} <command>'],
+        example: '{command} fisheye',
+        description: 'Shows a list of commands or specific information about a command.',
 
-    groupOnly: true,
-  },
+        groupOnly: true,
+    },
 );
 
 /* function getFullHelpMsg(chatPrefix) {

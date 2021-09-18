@@ -43,6 +43,19 @@ class ImageTools {
         return result;
     }
 
+    static async convertStickerTransparentWebPAndResize(imageData) {
+        if (!imageData) throw new TypeError(`Given image data is empty !`);
+        const random = Math.random().toString(36).substring(7);
+        const tmpFileName = `./temp/sticker/convertStickerTransparentWebP_${random}`;
+        writeFileSync(`${tmpFileName}.webp`, imageData);
+        await runAsync(`convert ${tmpFileName}.webp -fuzz 10% -transparent white ${tmpFileName}.webp`);
+        await ImageTools.cropAndResizeImageCorrectly(`${tmpFileName}.webp`, imageSize(`${tmpFileName}.webp`));
+        console.log("convertStickerTransparentWebP final size: " + Math.round(statSync(`${tmpFileName}.webp`).size / 1024) + " Ko");
+        const result = readFileSync(`${tmpFileName}.webp`/* , { encoding: "base64" }*/);
+        await runAsync(`rm ${tmpFileName}.webp`);
+        return result;
+    }
+
     static async cropAndResizeImageCorrectly(imagePath, dimensions) {
         if (!existsSync(imagePath)) throw new TypeError(`Given image path doesn't exist ! '${imagePath}'`);
         console.log(dimensions.width + "x" + dimensions.height);

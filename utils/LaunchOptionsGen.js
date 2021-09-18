@@ -7,7 +7,8 @@ module.exports = (headless, callback) => {
   return {
     sessionId: "tritiumCarteVitale",
     headless: headless,
-    autoRefresh: true,
+    autoRefresh: false,
+    qrRefreshS:30,
     restartOnCrash: callback,
     cacheEnabled: false,
     useChrome: true,

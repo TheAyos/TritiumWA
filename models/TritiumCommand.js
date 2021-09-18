@@ -1,4 +1,4 @@
-const { getSignature } = require("../utils/misc");
+const { getSignature } = require('../utils/misc');
 
 module.exports = class TritiumCommand {
     /**
@@ -27,37 +27,35 @@ module.exports = class TritiumCommand {
         this.callback = _run;
         this.props = Object.assign(
             {
-                triggers: [""],
-                description: "",
-                usage: "{command}",
-                notice: "",
-                example: "",
+                triggers: [''],
+                description: '',
+                usage: '{command}',
+                notice: '',
+                example: '',
                 groupOnly: false,
                 ownerOnly: false,
-                clientPerms: "",
-                userPerms: "",
+                clientPerms: '',
+                userPerms: '',
                 isNSFW: false,
                 cooldown: 3,
                 minArgs: 0,
-                missingArgs: "",
+                missingArgs: '',
                 hidden: false,
             },
             props,
         );
 
         this.name = this.props.triggers[0];
-        this.props.usage = typeof this.props.usage === "string" ? [this.props.usage] : this.props.usage;
-        this.props.example = typeof this.props.example === "string" ? [this.props.example] : this.props.example;
-        this.props.clientPerms = typeof this.props.clientPerms === "string" ? [this.props.clientPerms] : this.props.clientPerms;
-        this.props.userPerms = typeof this.props.userPerms === "string" ? [this.props.userPerms] : this.props.userPerms;
+        this.props.usage = typeof this.props.usage === 'string' ? [this.props.usage] : this.props.usage;
+        this.props.example = typeof this.props.example === 'string' ? [this.props.example] : this.props.example;
+        this.props.clientPerms = typeof this.props.clientPerms === 'string' ? [this.props.clientPerms] : this.props.clientPerms;
+        this.props.userPerms = typeof this.props.userPerms === 'string' ? [this.props.userPerms] : this.props.userPerms;
     }
 
     async run({ Tritium, msg, args, cleanArgs, chatPrefix, usedAlias, updateCooldowns }) {
-        // TODO: cooldowns baby ;)
-
         // *** Owner only checks***
         if (this.props.ownerOnly && msg.sender.id !== Tritium.config.youb_id) {
-            return Tritium.reply(msg.from, "*🤏 Owner only can use this command !*", msg.id);
+            return Tritium.reply(msg.from, '*🤏 Owner only can use this command !*', msg.id);
         }
 
         // *** Group only checks ***
@@ -65,13 +63,13 @@ module.exports = class TritiumCommand {
 
         // *** User permissions checks ***
         const isAdmin = msg.isGroupMsg ? msg.chat.groupMetadata.participants.find((u) => u.id === msg.sender.id && u.isAdmin) || msg.sender.id === Tritium.config.youb_id : undefined;
-        if (this.props.userPerms && this.props.userPerms.includes("ADMINISTRATOR") && !isAdmin)
+        if (this.props.userPerms && this.props.userPerms.includes('ADMINISTRATOR') && !isAdmin)
             return Tritium.reply(msg.from, `Sorry ${msg.sender.pushname}, you need to be administrator to do this.`, msg.id, true);
 
         // *** Arguments checks *** => Types: number of args, 'quotedMsg', ..., + missingArgs reply handling
-        if (this.props.minArgs && typeof this.props.minArgs === "string") {
-            if (this.props.minArgs === "quotedMsg" && !msg.quotedMsg) return await Tritium.reply(msg.from, "*💭 You need to quote a message !*", msg.id);
-            // if (this.props.minArgs === "quotedImg" && !msg....) return await Tritium.reply(msg.from, "*💭 You need to quote a picc !*", msg.id); // TODO
+        if (this.props.minArgs && typeof this.props.minArgs === 'string') {
+            if (this.props.minArgs === 'quotedMsg' && !msg.quotedMsg) return await Tritium.reply(msg.from, '*💭 You need to quote a message !*', msg.id);
+            if (this.props.minArgs === 'quotedImg' && !msg._hasQuotedImage) return await Tritium.reply(msg.from, '*📸 You need to send or quote a picture !*', msg.id); // TODO
         } else if (this.props.minArgs && args.length < this.props.minArgs) {
             return Tritium.reply(msg.from, this.props.missingArgs ? this.props.missingArgs : this.getHelpMsg(chatPrefix), msg.id, true);
         }
@@ -94,16 +92,16 @@ module.exports = class TritiumCommand {
     }
 
     getHelpMsg(prefix) {
-        const usage = this.props.usage ? this.props.usage.join("\n").trim() : "";
-        const example = this.props.example ? this.props.example.join("\n").trim() : "";
+        const usage = this.props.usage ? this.props.usage.join('\n').trim() : '';
+        const example = this.props.example ? this.props.example.join('\n').trim() : '';
 
         const aliasHelp = this.props.triggers.filter((a) => a != this.props.triggers[0]);
 
         let helpMessage = `*Help | ${this.name}*\n\n` + `*Description:* ${this.props.description}\n` + `*Remind:* *[ ]* means an argument is required and *<>* means it is optional.\n`;
-        helpMessage += this.props.notice ? `*Notice: _${this.props.notice}_*\n` : "";
-        helpMessage += usage ? `\n*Usage*\n\`\`\`${usage}\`\`\`` : "";
-        helpMessage += example ? `\n` + `*Example*\n\`\`\`${example}\`\`\`` : "";
-        helpMessage += aliasHelp.length ? `\n*Aliases*\n\`\`\`${aliasHelp.join(", ")}\`\`\`` : "";
+        helpMessage += this.props.notice ? `*Notice: _${this.props.notice}_*\n` : '';
+        helpMessage += usage ? `\n*Usage*\n\`\`\`${usage}\`\`\`` : '';
+        helpMessage += example ? `\n` + `*Example*\n\`\`\`${example}\`\`\`` : '';
+        helpMessage += aliasHelp.length ? `\n*Aliases*\n\`\`\`${aliasHelp.join(', ')}\`\`\`` : '';
 
         helpMessage += getSignature();
         helpMessage = helpMessage.replace(/{command}/g, prefix + this.name).replace(/{prefix}/g, prefix);

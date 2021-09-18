@@ -45,21 +45,15 @@ module.exports = new TritiumCommand(
 
         try {
             const caption = `➸ *${track.title}* by _*${track.channel.name}*_`;
-            await Tritium.sendFileFromUrl(msg.from, track.thumbnail.url, "thumb.jpg", caption).catch((e) => {
-                throw e;
-            });
+            await Tritium.sendFileFromUrl(msg.from, track.thumbnail.url, "thumb.jpg", caption).catch((e) => e);
         } catch (error) {
             Tritium.error(error);
             return Tritium.reply(msg.from, TEXT_ERROR_SENDING_INFO_CARD, msg.id);
         }
 
         try {
-            const data64Audio = await YT.getData64Track(track.url).catch((e) => {
-                throw e;
-            });
-            await Tritium.sendPtt(msg.from, data64Audio).catch((e) => {
-                throw e;
-            });
+            const data64Audio = await YT.getData64Track(track.url).catch((e) => e);
+            await Tritium.sendPtt(msg.from, data64Audio).catch((e) => e);
         } catch (error) {
             Tritium.error(error);
             return Tritium.reply(msg.from, TEXT_ERROR_SENDING_AUDIO, msg.id);
