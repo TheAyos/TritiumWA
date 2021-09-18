@@ -48,7 +48,7 @@ module.exports = new TritiumCommand(
         }
     },
     {
-        triggers: ["triggered"],
+        triggers: ["triggered", "trigger"],
         usage: ["{command} <User mention>"],
         example: ["{command} @☄️ζ͜͡𝗧𝗿𝗶𝘁𝗶𝘂𝗺꠸"],
         description: 'Makes a user\'s profile pic in a "Triggered" meme !',

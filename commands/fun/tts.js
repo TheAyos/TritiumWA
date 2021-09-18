@@ -2,7 +2,7 @@ const TritiumCommand = require("../../models/TritiumCommand");
 
 module.exports = new TritiumCommand(
   async ({ Tritium, msg, args, cleanArgs }) => {
-    const supportedRE = new RegExp(/^en$|^fr$|^ar$|^de$|^it$|^ru$|^zh$/);
+    const supportedRE = new RegExp(/^en$|^fr$|^ar$|^de$|^it$|^ru$|^zh$|^ja$/);
 
     if (args.length < 2 || !args[0].match(supportedRE)) return await Tritium.helpThisPoorMan(msg, this);
 
@@ -28,7 +28,7 @@ module.exports = new TritiumCommand(
     triggers: ["tts", "texttospeech", "speech", "say"],
     usage: "{command} [language] [text]",
     example: ["{command} en I am a robot", "{command} fr Je suis un robot"],
-    description: "Converts text to speech.\nSupported languages: *en, fr, ar, de, it, ru, zh*",
+    description: "Converts text to speech.\nSupported languages: *en, fr, ar, de, it, ru, zh, ja*",
 
     cooldown: 10,
     minArgs: 2,

@@ -8,9 +8,8 @@ module.exports = new TritiumCommand(
     {
         triggers: ["uppercase", "upc"],
         description: "uPpErCaSe tHaT !",
-        usage: "{command} [wHaT yOu wAnT mE tO sAy]",
+        usage: "{command} [some_text]",
 
         minArgs: 1,
-        groupOnly: true,
     },
 );

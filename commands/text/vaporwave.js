@@ -12,9 +12,8 @@ module.exports = new TritiumCommand(
   {
     triggers: ["vaporwave", "vw"],
     description: "*Ｖａｐｏｒｗａｖｅ ！*",
-    usage: "{command} [ｗｈａｔ ｙｏｕ ｗａｎｔ ｍｅ ｔｏ ｓａｙ]",
+    usage: "{command} [some_text]",
 
     minArgs: 1,
-    groupOnly: true,
   },
 );

@@ -14,7 +14,7 @@ module.exports = async (Tritium, msg) => {
     if (!msg.sender || msg.sender.isMe || (!msg.body && !msg.caption)) return;
     Tritium.log(`${msg.sender.pushname} | ${msg.chat.name} -> ${msg.type === 'chat' ? msg.body : '(data64 or other)'}`, `${msg.sender.IS_VIP ? '(VIP) ' : '(plebs)'}`);
 
-    // if (!VIP_PEOPLE.includes(msg.sender.PHONE_NUMBER)) return; // Testing mode
+    // if (!VIP_PEOPLE.includes(msg.PHONE_NUMBER)) return; // Testing mode
 
     const start = Date.now();
     const xpCooldown = Tritium.config.experienceCooldownMs;
@@ -23,8 +23,8 @@ module.exports = async (Tritium, msg) => {
     msg.reply = function (content) { Tritium.reply(this.from, content, this.id); }; /* prettier-ignore */
     msg.GROUP_ID = msg.isGroupMsg ? msg.chat.groupMetadata.id : undefined;
 
-    msg.sender.PHONE_NUMBER = msg.sender.id.split('@').shift();
-    msg.sender.IS_VIP = VIP_PEOPLE.includes(msg.sender.id.split('@').shift());
+    msg.PHONE_NUMBER = msg.sender.id.split('@').shift();
+    msg.IS_VIP = VIP_PEOPLE.includes(msg.sender.id.split('@').shift());
 
     msg._quotedMsg = msg.quotedMsg || msg.quotedMsgObj;
     msg._hasQuotedImage = msg.type === 'image' || (msg.quotedMsg && msg._quotedMsg.type === 'image') ? true : false;
@@ -50,7 +50,7 @@ module.exports = async (Tritium, msg) => {
                 const user = await Tritium.db.Experience.fetch(msg.sender.id, msg.GROUP_ID);
                 await Tritium.sendTextWithMentions(
                     msg.from,
-                    `@${msg.sender.PHONE_NUMBER}, congratulations ! 🎉\n` + `You have leveled up to *level ${user.level}* 🥳\n` + `_🧬 use the ${prefix}xp command for more info._`,
+                    `@${msg.PHONE_NUMBER}, congratulations ! 🎉\n` + `You have leveled up to *level ${user.level}* 🥳\n` + `_🧬 use the ${prefix}xp command for more info._`,
                 );
             }
         }
@@ -152,13 +152,13 @@ module.exports = async (Tritium, msg) => {
 
     // *** Cooldowns ***
     async function updateCooldowns(command) {
-        if (VIP_PEOPLE.includes(msg.sender.PHONE_NUMBER)) return false;
+        if (VIP_PEOPLE.includes(msg.PHONE_NUMBER)) return false;
         if (!Tritium.cooldowns.has(command.name)) Tritium.cooldowns.set(command.name, new Map());
         const now = Date.now();
         const timestamps = Tritium.cooldowns.get(command.name);
 
         let commandCooldown = command.props.cooldown * 1000;
-        if (PEOPLE_PLUS.includes(msg.sender.PHONE_NUMBER)) commandCooldown = commandCooldown / 2;
+        if (PEOPLE_PLUS.includes(msg.PHONE_NUMBER)) commandCooldown = commandCooldown / 2;
 
         if (timestamps.has(msg.sender.id)) {
             const expirationTime = timestamps.get(msg.sender.id) + commandCooldown;
@@ -203,7 +203,7 @@ async function cleanMsgCacheIfNeeded(Tritium) {
             `Msgs cache reached ${loadedMessagesCache} messages. Cleaning...\n` +
             `Went from ${afterCutInfo.before.chats} chats and ${afterCutInfo.before.msgs} msgs.\n` +
             `To ${afterCutInfo.after.chats} chats and ${afterCutInfo.after.msgs} msgs.\n${Tritium.getSignature()}`;
-        Tritium.sendText(Tritium.config.youb_id, caption);
+        // Tritium.sendText(Tritium.config.youb_id, caption);
     }
 }
 
@@ -211,7 +211,7 @@ async function randomVeryFunnyResponses(Tritium, msg) {
     const bL = msg.body.toLowerCase();
     if (bL === 'hi' || bL === 'hey' || bL === 'hello') {
         await msg.reply(`👋 *Hello ${msg.sender.pushname} !*`);
-        if (!msg.isGroupMsg) return Tritium.reply(msg.from, Tritium.getFullHelpMsg(Tritium.config.prefix), msg.id);
+        if (!msg.isGroupMsg) return Tritium.reply(msg.from, Tritium.getFullHelpMsg(Tritium.config.prefix, msg.IS_VIP), msg.id);
         else return Tritium.reply(msg.from, `You should maybe use .help ;) ? Recommended commands of the day: .covid, .play, .yt, .wikipedia, .tts`, msg.id); // TODO: add msg.CHAT_PREFIX
     }
 
@@ -229,8 +229,8 @@ async function randomVeryFunnyResponses(Tritium, msg) {
 async function updateQuotas(Tritium, msg) {
     let dailyQuota = Tritium.config.dailyQuota;
 
-    if (VIP_PEOPLE.includes(msg.sender.PHONE_NUMBER)) return false;
-    else if (PEOPLE_PLUS.includes(msg.sender.PHONE_NUMBER)) dailyQuota = dailyQuota * 2;
+    if (VIP_PEOPLE.includes(msg.PHONE_NUMBER)) return false;
+    else if (PEOPLE_PLUS.includes(msg.PHONE_NUMBER)) dailyQuota = dailyQuota * 2;
 
     const lastUpdated = await Tritium.db.Limit.getLastUpdated(msg.sender.id);
     let limit = await Tritium.db.Limit.getLimit(msg.sender.id);

@@ -5,5 +5,5 @@ const commands = require("fs")
 
 module.exports = {
     commands,
-    name: "📷 Image Manipulation",
+    name: "🔥 User experience",
 };

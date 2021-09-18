@@ -16,6 +16,7 @@ module.exports = {
     return Tritium.reply(msg.from, replyString, msg.id);
   },*/
 
+    // TODO: deprecate this
     helpThisPoorMan: function (msg, givenCommand) {
         if (!givenCommand) return this.client.reply(msg.from, this.getFullHelpMsg(this.config.prefix), msg.id);
         else if (givenCommand.triggers) {
@@ -26,7 +27,7 @@ module.exports = {
         }
     },
 
-    getFullHelpMsg: function (prefix) {
+    getFullHelpMsg: function (prefix, IS_VIP = false) {
         const categories = {};
         let cmdCount = 0;
 
@@ -36,7 +37,7 @@ module.exports = {
             if (!category) {
                 category = categories[command.category] = [];
             }
-            if (!command.props.hidden) category.push(command.props.triggers[0]);
+            if (!command.props.hidden || IS_VIP) category.push(command.props.triggers[0]);
         });
 
         const catCount = Object.keys(categories).length;

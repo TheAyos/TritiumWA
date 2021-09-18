@@ -6,11 +6,10 @@ module.exports = new TritiumCommand(
         await Tritium.reply(msg.from, TextUtils.superScriptify(cleanArgs), msg.id);
     },
     {
-        triggers: ["superscript", "sspt"],
+        triggers: ["superscript", "superscriptify", "sspt"],
         description: "ˢᵘᵖᵉʳˢᶜʳⁱᵖᵗⁱᶠʸ ˢᵒᵐᵉ ᵗᵉˣᵗ",
-        usage: "{command} [ʷʰᵃᵗ ᵈᵒ ʸᵒᵘ ʷᵃⁿᵗ ᵐᵉ ᵗᵒ ˢᵃʸ]",
+        usage: "{command} [some_text]",
 
         minArgs: 1,
-        groupOnly: true,
     },
 );

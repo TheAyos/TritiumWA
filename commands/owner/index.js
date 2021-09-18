@@ -5,5 +5,6 @@ const commands = require("fs")
 
 module.exports = {
     commands,
-    name: "📷 Image Manipulation",
+    name: "⚡ Owner-only",
+    hidden: true,
 };

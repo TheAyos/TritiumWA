@@ -5,5 +5,5 @@ const commands = require("fs")
 
 module.exports = {
     commands,
-    name: "📷 Image Manipulation",
+    name: "🈶 Otaku ヲタク (manga/anime related)",
 };
