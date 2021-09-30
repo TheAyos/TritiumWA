@@ -23,6 +23,7 @@
     "canvas": "^2.8.0",
     "cheerio": "^1.0.0-rc.10",
     "cheerio-without-node-native": "^1.0.0-rc.2",
+    "genius-lyrics-api": "^3.2.0",
     "gif-frames": "^1.0.1",
     "gifencoder": "^2.0.1",
     "image-size": "^1.0.0",
@@ -36,12 +37,13 @@
     "node-run-cmd": "^1.0.1",
     "p-queue": "^6.6.2",
     "public-waifulist": "0.0.2",
+    "seedrandom": "^3.0.5",
     "systeminformation": "^5.9.3",
     "tiktok-scraper": "^1.4.36",
     "tiny-glob": "^0.2.9",
     "weather-js": "^2.0.0",
     "youtube-sr": "^4.1.7",
-    "ytdl-core": "^4.9.1"
+    "ytdl-core": "4.9.1"
   },
   "keywords": [
     "fun",
@@ -55,6 +57,7 @@
     "eslint-plugin-security-node": "^1.0.14",
     "fluent-ffmpeg": "^2.1.2",
     "gm": "^1.23.1",
+    "puppeteer": "^10.2.0",
     "sharp": "0.28.1"
   }
 }

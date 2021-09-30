@@ -16,7 +16,7 @@ module.exports = new TritiumCommand(
         }
 
         try {
-            const loveThat = await fetch(`https://youbyoub.herokuapp.com/api/v1/phub` + `?text1=${encodeURIComponent(pp) | ""}` + `&text2=${encodeURIComponent(hub) | ""}`);
+            const loveThat = await fetch(`https://youbyoub.herokuapp.com/api/v1/phub` + `?text1=${encodeURIComponent(pp) || ""}` + `&text2=${encodeURIComponent(hub) || ""}`);
             const processedImage = await loveThat.buffer();
             await Tritium.sendFile(msg.from, `data:image/png;base64,${processedImage.toString("base64")}`, "phub.png", "", msg.id);
         } catch (error) {
@@ -25,7 +25,7 @@ module.exports = new TritiumCommand(
         }
     },
     {
-        triggers: ["phub", "ph"],
+        triggers: ["phub", "ph", "pornhub"],
         usage: ["{command} [1st text] [2nd text]"],
         example: ["{command} Nrop hub..."],
         description: "Generates a P**nHub logo from given text !",

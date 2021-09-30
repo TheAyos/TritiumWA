@@ -6,7 +6,7 @@ module.exports = new TritiumCommand(
         const contact = await Tritium.getContact(target);
         if (contact.isMe) return Tritium.reply(msg.from, '*I would say not far from _♾️infinity♾️_*', msg.id);
 
-        const targetName = contact.formattedName.startsWith('+') ? '@' + contact.id : contact.pushname || contact.formattedName;
+        const targetName = contact.formattedName.startsWith('+') ? '@' + contact.id.split('@').shift() : contact.pushname || contact.formattedName;
 
         const user = await Tritium.db.Experience.fetch(target, msg.GROUP_ID, true);
 

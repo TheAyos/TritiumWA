@@ -17,7 +17,7 @@ module.exports = {
   },*/
 
     // TODO: deprecate this
-    helpThisPoorMan: function (msg, givenCommand) {
+    /* helpThisPoorMan: function (msg, givenCommand) {
         if (!givenCommand) return this.client.reply(msg.from, this.getFullHelpMsg(this.config.prefix), msg.id);
         else if (givenCommand.triggers) {
             return this.client.reply(msg.from, givenCommand.getHelpMsg(this.config.prefix), msg.id);
@@ -25,7 +25,7 @@ module.exports = {
             const command = this.commands.find((c) => c.props.triggers.includes(givenCommand));
             if (command) return this.client.reply(msg.from, command.getHelpMsg(this.config.prefix), msg.id);
         }
-    },
+    },*/
 
     getFullHelpMsg: function (prefix, IS_VIP = false) {
         const categories = {};
@@ -100,6 +100,18 @@ module.exports = {
         res = res.map((n) => (n < 9 ? '0' + n.toString() : n));
         return res.join(':');
         // return years + " years " +  days + " days " + hours + " hours " + minutes + " minutes " + seconds + " seconds";
+    },
+
+    /**
+     * Generate a seeded random number between 0 and 1 (if no upper bound is specified)
+     * @param {string} seed A string to seed the PRNG function.
+     * @param {number} max Upper bound (e.g. if 100 is specified, the given number will be between 0 and 100).
+     * @returns {number} A number between 0 and the upper bound.
+     */
+    getRandomSeededNumber(seed, max = 1) {
+        const seedrandom = require('seedrandom');
+        const rng = seedrandom(seed + 'r8waifu');
+        return max === 1 ? rng : Math.floor(rng() * max) + 1;
     },
 
     cColor: (t, c) => {

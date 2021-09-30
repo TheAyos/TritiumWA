@@ -6,7 +6,7 @@ module.exports = new TritiumCommand(
         const contact = await Tritium.getContact(target);
         if (contact.isMe) return Tritium.reply(msg.from, '*I would say not far from _♾️infinity♾️_*', msg.id);
 
-        const targetName = contact.formattedName.startsWith('+') ? '@' + contact.id : contact.pushname || contact.formattedName;
+        const targetName = contact.formattedName.startsWith('+') ? '@' + contact.id.split('@').shift() : contact.pushname || contact.formattedName;
 
         const limit = await Tritium.db.Limit.getLimit(target);
         // if (!user) return Tritium.reply(msg.from, "Seems like the user didn't earn any xp yet 😑.", msg.id);

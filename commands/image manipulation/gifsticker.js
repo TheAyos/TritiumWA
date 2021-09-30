@@ -1,23 +1,23 @@
-const TritiumCommand = require("../../models/TritiumCommand");
-const { DEFAULT_STICKERPACK_NAME, DEFAULT_STICKERPACK_AUTHOR } = require("../../config.json");
-const { cropAndResizeImageCorrectly, parseArgsAndSetMetadataWebP, convertGifTransparentWebPAndResize } = require("../../utils/ImageTools");
+const TritiumCommand = require('../../models/TritiumCommand');
+const { DEFAULT_STICKERPACK_NAME, DEFAULT_STICKERPACK_AUTHOR } = require('../../config.json');
+const { cropAndResizeImageCorrectly, parseArgsAndSetMetadataWebP, convertGifTransparentWebPAndResize } = require('../../utils/ImageTools');
 
-const { decryptMedia } = require("@open-wa/wa-decrypt");
-const { writeFileSync, statSync, readFileSync, existsSync, unlinkSync } = require("fs");
-const mime = require("mime-types");
-const sizeOf = require("image-size");
-const { rgbaToInt, intToRGBA, read } = require("jimp");
+const { decryptMedia } = require('@open-wa/wa-decrypt');
+const { writeFileSync, statSync, readFileSync, existsSync, unlinkSync } = require('fs');
+const mime = require('mime-types');
+const sizeOf = require('image-size');
+const { rgbaToInt, intToRGBA, read } = require('jimp');
 
-const nrc = require("node-cmd");
-const Promise = require("bluebird");
+const nrc = require('node-cmd');
+const Promise = require('bluebird');
 const runAsync = Promise.promisify(nrc.get, { multiArgs: true, context: nrc });
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 module.exports = new TritiumCommand(
-    async function ({ Tritium, msg, args, cleanArgs }) {
-        const isQuotedVideo = msg.quotedMsg && msg.quotedMsg.type === "video";
-        if (!msg.isMedia && !isQuotedVideo) return Tritium.helpThisPoorMan(msg, this);
+    async function ({ Tritium, msg, args, cleanArgs, chatPrefix }) {
+        const isQuotedVideo = msg.quotedMsg && msg.quotedMsg.type === 'video';
+        if (!msg.isMedia && !isQuotedVideo) return await msg.reply(this.getHelpMsg(chatPrefix), true);
 
         const encryptedMedia = isQuotedVideo ? msg.quotedMsg : msg;
         const mimetype = isQuotedVideo ? msg.quotedMsg.mimetype : msg.mimetype;
@@ -26,14 +26,14 @@ module.exports = new TritiumCommand(
         const decryptedData = await decryptMedia(encryptedMedia);
 
         try {
-            if (args[0] === "transparent") {
+            if (args[0] === 'transparent') {
                 args.shift();
-                cleanArgs = args.join(" ");
+                cleanArgs = args.join(' ');
 
                 const result = await convertGifTransparentWebPAndResize(decryptedData);
                 writeFileSync(`${tmpFileName}.webp`, result);
                 parseArgsAndSetMetadataWebP(`${tmpFileName}.webp`, args, cleanArgs);
-                console.log("transparentgif final webp size: " + Math.round(statSync(`${tmpFileName}.webp`).size / 1024) + " Ko");
+                console.log('transparentgif final webp size: ' + Math.round(statSync(`${tmpFileName}.webp`).size / 1024) + ' Ko');
             } else {
                 writeFileSync(`${tmpFileName}.${mime.extension(mimetype)}`, decryptedData);
 
@@ -70,7 +70,7 @@ module.exports = new TritiumCommand(
                             image.write(`${tmpFileName}.png`);
                         })
                         .catch((error) => {
-                            console.log("ERROR: " + error);
+                            console.log('ERROR: ' + error);
                         });
                 }
 
@@ -79,17 +79,17 @@ module.exports = new TritiumCommand(
 
                 await runAsync(`convert ${tmpFileName}.png ${tmpFileName}.gif -gravity center -crop -1x256+0+0 ${tmpFileName}.gif`);
                 await runAsync(`gif2webp ${tmpFileName}.gif -o ${tmpFileName}.webp`);
-                console.log("gifsticker final webp size: " + Math.round(statSync(`${tmpFileName}.webp`).size / 1024) + " Ko");
+                console.log('gifsticker final webp size: ' + Math.round(statSync(`${tmpFileName}.webp`).size / 1024) + ' Ko');
             }
 
             try {
                 const finalSticker = readFileSync(`${tmpFileName}.webp`);
                 if (args.length) {
-                    let pName = "",
-                        pAuthor = "";
+                    let pName = '',
+                        pAuthor = '';
                     if (args.length === 1) pName = args[0];
                     else if (args.length > 1) {
-                        cleanArgs = cleanArgs.indexOf("|") > -1 ? cleanArgs.split("|") : args;
+                        cleanArgs = cleanArgs.indexOf('|') > -1 ? cleanArgs.split('|') : args;
                         pName = cleanArgs.shift().trim();
                         pAuthor = cleanArgs.shift().trim();
                         console.log(pName, pAuthor);
@@ -100,18 +100,18 @@ module.exports = new TritiumCommand(
                 }
                 if (existsSync(`${tmpFileName}.webp`)) unlinkSync(`${tmpFileName}.webp`);
             } catch (error) {
-                return Tritium.reply(msg.from, "The generated sticker was too big :/ Try with another one !", msg.id);
+                return await Tritium.reply(msg.from, 'The generated sticker was too big :/ Try with another one !', msg.id);
             }
         } catch (error) {
             console.log(error);
-            Tritium.reply(msg.from, "*An error has occured because of this hecking image 😡*", msg.id);
+            await Tritium.reply(msg.from, '*An error has occured because of this hecking image 😡*', msg.id);
         }
     },
     {
-        triggers: ["gifsticker", "stickergif", "sgif", "stikergif", "gifstiker"],
-        usage: "{command} (with quoted gif)",
-        example: "{command} (with quoted gif)",
-        description: "Sends a sticker from quoted image.",
+        triggers: ['gifsticker', 'stickergif', 'sgif', 'stikergif', 'gifstiker'],
+        usage: '{command} (with quoted gif)',
+        example: ['{command} (with quoted gif)', '{command} (with quoted gif) <author_name> | <pack_name>', '{command} (with quoted gif) transparent'],
+        description: ['Sends a sticker from quoted gif. Has option "transparent"', '\nUse "transparent" with a gif that has a white background to remove it.'],
 
         cooldown: 20,
         groupOnly: true,

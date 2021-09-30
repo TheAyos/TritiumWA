@@ -6,7 +6,7 @@ module.exports = new TritiumCommand(
 
         const contact = await Tritium.getContact(target);
         if (contact.isMe) return Tritium.reply(msg.from, '*For _obvious fair-play reasons_, i do not include myself in the leaderboard*', msg.id);
-        const targetName = contact.formattedName.startsWith('+') ? '@' + contact.id : contact.pushname || contact.formattedName;
+        const targetName = contact.formattedName.startsWith('+') ? '@' + contact.id.split('@').shift() : contact.pushname || contact.formattedName;
 
         const leaderboard = await Tritium.db.Experience.fetchLeaderboard(msg.GROUP_ID);
 

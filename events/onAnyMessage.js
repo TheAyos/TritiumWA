@@ -20,7 +20,7 @@ module.exports = async (Tritium, msg) => {
     const xpCooldown = Tritium.config.experienceCooldownMs;
 
     // *** Helper functions ***
-    msg.reply = function (content) { Tritium.reply(this.from, content, this.id); }; /* prettier-ignore */
+    msg.reply = function (content, sendSeen = false) { Tritium.reply(this.from, content, this.id, sendSeen); }; /* prettier-ignore */
     msg.GROUP_ID = msg.isGroupMsg ? msg.chat.groupMetadata.id : undefined;
 
     msg.PHONE_NUMBER = msg.sender.id.split('@').shift();
@@ -71,7 +71,7 @@ module.exports = async (Tritium, msg) => {
         const args = body.slice(prefix.length).trim().split(/[ ]+/g);
         const cmdName = args.shift().toLowerCase();
         const cleanArgs = args.join(' ');
-/*
+        /*
         if (cmdName === 'lovedev') {
             if (cleanArgs.includes('+')) cleanArgs.replace('+', ''), args.length--;
             else if (cleanArgs.includes('|')) cleanArgs.replace('|', ''), args.length--;
@@ -81,8 +81,8 @@ module.exports = async (Tritium, msg) => {
                 const target = msg.mentionedJidList[0] || msg.sender.id;
                 const contact = await Tritium.getContact(target);
 
-                let targetName = contact.formattedName.startsWith('+') ? '@' + contact.id : contact.pushname || contact.formattedName;
-                if (contact.isMe) targetName = contact.id;
+                let targetName = contact.formattedName.startsWith('+') ? '@' + contact.id.split('@').shift() : contact.pushname || contact.formattedName;
+                if (contact.isMe) targetName = contact.id.split('@').shift();
 
                 if (targetName.startsWith('@')) Tritium.sendTextWithMentions(msg.from, targetName, msg.id);
                 else Tritium.reply(msg.from, target, msg.id);
@@ -90,8 +90,8 @@ module.exports = async (Tritium, msg) => {
                 const target2 = msg.mentionedJidList[1] || msg.sender.id;
                 const contact2 = await Tritium.getContact(target2);
 
-                let targetName2 = contact2.formattedName.startsWith('+') ? '@' + contact2.id : contact2.pushname || contact2.formattedName;
-                if (contact.isMe) targetName2 = '@' + contact.id;
+                let targetName2 = contact2.formattedName.startsWith('+') ? '@' + contact2.id.split('@').shift() : contact2.pushname || contact2.formattedName;
+                if (contact.isMe) targetName2 = '@' + contact2.id.split('@').shift();
 
                 if (targetName2.startsWith('@')) Tritium.sendTextWithMentions(msg.from, targetName2, msg.id);
                 else Tritium.reply(msg.from, targetName2, msg.id);

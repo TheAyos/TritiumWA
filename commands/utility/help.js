@@ -3,11 +3,11 @@ const TritiumCommand = require('../../models/TritiumCommand');
 module.exports = new TritiumCommand(
     async function ({ Tritium, msg, args, chatPrefix }) {
         if (!args.length) {
-            await Tritium.reply(msg.from, Tritium.getFullHelpMsg(chatPrefix, msg.IS_VIP), msg.id);
+            return await Tritium.reply(msg.from, Tritium.getFullHelpMsg(chatPrefix, msg.IS_VIP), msg.id);
         } else {
             const cmd = Tritium.commands.find((c) => c.props.triggers.includes(args[0]));
             if (!cmd) return Tritium.reply(msg.from, "*That command doesn't exist 😲 !!!*", msg.id);
-            await Tritium.reply(msg.from, cmd.getHelpMsg(chatPrefix), msg.id, true);
+            return await Tritium.reply(msg.from, cmd.getHelpMsg(chatPrefix), msg.id, true);
         }
     },
     {

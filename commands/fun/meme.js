@@ -1,32 +1,23 @@
-const TritiumCommand = require("../../models/TritiumCommand");
+const TritiumCommand = require('../../models/TritiumCommand');
 
-const fetch = require("node-fetch");
+const fetch = require('node-fetch');
 
 module.exports = new TritiumCommand(
-  async function ({ Tritium, msg, args }) {
-    let query = "";
-    if (args.length === 1) query = args.pop();
-    else if (args.length > 1) return Tritium.helpThisPoorMan(msg, this);
+    async function ({ Tritium, msg }) {
+        const url = 'http://meme-api.herokuapp.com/gimme/';
+        const res = await fetch(url, { method: 'Get' });
+        const json = await res.json();
 
-    const url = "http://meme-api.herokuapp.com/gimme/" + query;
-    const settings = { method: "Get" };
+        if (!json.url) return await Tritium.reply(msg.from, 'error: ' + json.message, msg.id);
+        await Tritium.sendFileFromUrl(msg.from, json.url, json.url.split('/').pop(), json.title);
+    },
+    {
+        triggers: ['meme'],
+        usage: ['{command}'],
+        example: ['{command}'],
+        description: 'Send an ePiC meme from Reddit!',
 
-    fetch(url, settings)
-      .then((res) => res.json())
-      .then(async (body, error) => {
-        if (error || !body.url) return Tritium.reply(msg.from, "error: " + body.message, msg.id);
-        if (body.nsfw === true && msg.isGroupMsg && !(await Tritium.db.Settings.getNsfw(msg.GROUP_ID))) {
-          return Tritium.reply(msg.from, "*🔞 NSFW is not allowed in this group 😏*", msg.id);
-        } else await Tritium.sendFileFromUrl(msg.from, body.url, body.url.split("/").pop(), body.title);
-      });
-  },
-  {
-    triggers: ["meme", "reddit", "subreddit", "sr"],
-    usage: ["{command}", "{command} <a subreddit to search into>"],
-    example: ["{command}", "{command} cursed_comments"],
-    description: "Send an ePiC meme from Reddit!",
-
-    cooldown: 10,
-    groupOnly: true,
-  },
+        cooldown: 10,
+        groupOnly: true,
+    },
 );

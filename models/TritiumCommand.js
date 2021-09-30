@@ -71,7 +71,7 @@ module.exports = class TritiumCommand {
             if (this.props.minArgs === 'quotedMsg' && !msg.quotedMsg) return await Tritium.reply(msg.from, '*💭 You need to quote a message !*', msg.id);
             if (this.props.minArgs === 'quotedImg' && !msg._hasQuotedImage) return await Tritium.reply(msg.from, '*📸 You need to send or quote a picture !*', msg.id); // TODO
         } else if (this.props.minArgs && args.length < this.props.minArgs) {
-            return Tritium.reply(msg.from, this.props.missingArgs ? this.props.missingArgs : this.getHelpMsg(chatPrefix), msg.id, true);
+            return await Tritium.reply(msg.from, this.props.missingArgs ? this.props.missingArgs : this.getHelpMsg(chatPrefix), msg.id, true);
         }
 
         // *** Cooldown updating and checking (last step before execution in case user fails argument checks so he doesn't get a cooldown) ***
@@ -91,6 +91,11 @@ module.exports = class TritiumCommand {
         await Tritium.simulateTyping(msg.from, false);
     }
 
+    /**
+     * Generate a formatted help message specific to this command.
+     * @param {string} prefix - The string containing the chat prefix to use.
+     * @return {string} The formatted help message.
+     */
     getHelpMsg(prefix) {
         const usage = this.props.usage ? this.props.usage.join('\n').trim() : '';
         const example = this.props.example ? this.props.example.join('\n').trim() : '';

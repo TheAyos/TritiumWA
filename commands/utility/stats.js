@@ -20,7 +20,7 @@ module.exports = new TritiumCommand(
             `*Last minute average msg procTime: _${averageProcessTime} ms_*\n` +
             `• *${loadedMsgs}* Loaded messages • *${chatIds.length}* Total chats • *${groups.length}* Group chats \n` +
             `\`\`\`CPU : ${Math.floor(Math.random() * 5) + 1 === 0 ? 'A big brain @ 6.9 GHz' : cleanedCpuName}\n` +
-            `RAM : ${Math.round(mem.available / 1024 / 1024)} MiB / ${Math.round(mem.total / 1024 / 1024)} MiB\`\`\`\n` +
+            `RAM : ${Math.round((mem.total - mem.available) / 1024 / 1024)} MiB / ${Math.round(mem.total / 1024 / 1024)} MiB\`\`\`\n` +
             // `${process.uptime() % 84600} days, ${process.uptime() % 3600} hours, ${process.uptime() % 60} minutes and ${process.uptime()} seconds` +
             Tritium.getSignature();
 
